@@ -1,0 +1,35 @@
+extends layout
+
+block content
+    script(src = "/javascripts/bufferLoader.js")
+    script(src = "/javascripts/builder.js")
+    script(src="https://kit.fontawesome.com/caf9832e26.js", crossorigin="anonymous")
+    #chModel(style="display: none")= chModel
+
+    audio#chSound(src="ch.wav")
+    audio#m1Sound(src="m1.wav")
+    audio#m2Sound(src="m2.wav")
+
+    h1(style="float: left")= title
+
+    i.fas.fa-play#playButton
+
+    .tempoCon
+        input.tempoInfo#tempoInput(type="number", value="120")
+        .bpmSuff= "bpm"
+
+    br
+    br
+
+    .display#display
+        .playHead#playHead
+
+    br
+    h2= "Complexity"
+    input#complexity.slider(type="range", min="0.001", max="1", value="0.5", step="0.001")
+
+    h2= "Ancestral Influence"
+    input#ancestral.slider(type="range", min="0", max="1", value="0.5", step="0.001")
+
+    br
+    br
