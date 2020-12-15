@@ -1,14 +1,21 @@
+// Page Elements
 let display = null;
 let complexitySlider = null;
 let ancestralSlider = null;
 let playHead = null;
 let tempoInfo = null;
 
+// Step constants
+const barLength = 1 / 8;
+const noteLength = 1 / 32;
+const stepLength = 1 / 256;
+
 let noteArr = null;
 
 let chModel = null;
-let numOfDivs = 64;
+let numOfDivs = 32;
 let notes = null;
+
 
 let playing = false;
 
@@ -27,26 +34,9 @@ let relNextBar = 0;
 
 let m1;
 let m2;
+let ch;
 
-let bufferLoader = new BufferLoader(
-  audioCtx,
-  ["m1.wav", "m2.wav"],
-  finishedLoading
-);
-bufferLoader.load();
-
-function finishedLoading(bufferList) {
-  m1 = bufferList[0];
-  m2 = bufferList[1];
-}
-
-function playSound(buffer, time) {
-  let source = audioCtx.createBufferSource();
-  source.buffer = buffer;
-  source.connect(audioCtx.destination);
-  source.start(time);
-}
-
+// PLAY PROCESSING-------------------------------------------------------------------------
 function Playing() {
   let timeDelta = audioCtx.currentTime - prevPlayPos;
   prevPlayPos = audioCtx.currentTime;
@@ -59,22 +49,6 @@ function Playing() {
   }
 
   SetHeadPos();
-}
-
-function NextBar() {
-  scheduleMets(nextBar);
-
-  setNextBar(nextBar + 1 / 8);
-}
-
-function scheduleMets(barStart) {
-  let beatDur = 60.0 / tempoInfo.value;
-  let trackLength = (60.0 / tempoInfo.value) * 32;
-
-  playSound(m1, playStart + barStart * trackLength);
-  playSound(m2, playStart + (barStart * trackLength + beatDur));
-  playSound(m2, playStart + (barStart * trackLength + beatDur * 2));
-  playSound(m2, playStart + (barStart * trackLength + beatDur * 3));
 }
 
 function TogglePlaying(pos, val) {
@@ -99,16 +73,69 @@ function setPlayPos(pos) {
   relPlayPos = playPos % 1;
 }
 
-function setNextBar(bar) {
-  nextBar = bar;
-  relNextBar = nextBar % 1;
-}
-
 function SetHeadPos() {
   playHead.style.left =
     relPlayPos * (display.offsetWidth - 1) + display.offsetLeft + "px";
 }
 
+function NextBar() {
+  scheduleMets(relNextBar);
+  scheduleNotes(relNextBar)
+
+  setNextBar(nextBar + barLength);
+}
+
+function setNextBar(bar) {
+  nextBar = bar;
+  relNextBar = nextBar % 1;
+}
+
+// NOTE PLAYING-------------------------------------------------------------------------
+function scheduleNotes(barStart) {
+  for(let i = 0; i < 32; i++){
+    const step = (barStart * 256) + i;
+
+    if(noteArr[step] > 0){
+      playSound(ch, step * stepLength);
+    }
+  }
+}
+
+// METRONOME-----------------------------------------------------------------------------
+function scheduleMets(barStart) {
+
+  playSound(m1, barStart);
+  playSound(m2, barStart + noteLength);
+  playSound(m2, barStart + (2 * noteLength));
+  playSound(m2, barStart + (3 * noteLength));
+}
+
+// AUDIO PROCESSING------------------------------------------------------------
+let bufferLoader = new BufferLoader(
+    audioCtx,
+    ["m1.wav", "m2.wav", "ch.wav"],
+    finishedLoading
+);
+bufferLoader.load();
+
+function finishedLoading(bufferList) {
+  m1 = bufferList[0];
+  m2 = bufferList[1];
+  ch = bufferList[2];
+}
+
+function playSound(buffer, pos) {
+  let source = audioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioCtx.destination);
+
+  let trackLength = (60.0 / tempoInfo.value) * 32;
+  let loopStart = audioCtx.currentTime - (relPlayPos * trackLength);
+
+  source.start(loopStart + (pos * trackLength));
+}
+
+// SETUP AND WINDOW STUFF-----------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
   display = document.getElementById("display");
 
@@ -134,16 +161,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   notes = InitialiseNotes();
 
-  noteArr = CalculateNotes();
+  CalculateNotes();
   DisplayNotes(noteArr, notes);
 
   complexitySlider.addEventListener("input", function () {
-    noteArr = CalculateNotes();
+    CalculateNotes();
     DisplayNotes(noteArr, notes);
   });
 
   ancestralSlider.addEventListener("input", function () {
-    noteArr = CalculateNotes();
+    CalculateNotes();
     DisplayNotes(noteArr, notes);
   });
 });
@@ -154,8 +181,9 @@ window.addEventListener("resize", function () {
   }
 });
 
+// ALGORITHM STUFF---------------------------------------------------------------------
 function CalculateNotes() {
-  let noteArr = [];
+  noteArr = [];
 
   for (let i = 0; i < 256; i++) {
     let trueValue = chModel.positional[i];
@@ -187,13 +215,12 @@ function CalculateNotes() {
       noteArr[i] = 0;
     }
   }
-  return noteArr;
 }
 
 // VISUAL STUFF----------------------------------------------------------------------
 function InitialiseNotes() {
   for (let i = 0; i < 256; i++) {
-    CreateNote(i, i / 256);
+    CreateNote(i);
   }
 
   return document.getElementsByClassName("note");
@@ -233,7 +260,7 @@ function DisplayDivisions() {
 
     div.className = "division";
     div.id = "div" + i;
-    div.style.opacity = "" + 1 / Math.log2(GetDenominator(i, numOfDivs));
+    div.style.opacity = "" + (i % 4 === 0 ? 1 : 0.3);
     div.style.left = (i / numOfDivs) * 100 + "%";
 
     display.appendChild(div);
@@ -242,14 +269,4 @@ function DisplayDivisions() {
   for (let i = 1; i < numOfDivs; i++) {
     CreateDivision(i);
   }
-}
-
-function GetDenominator(num, den) {
-  let gcd = 1;
-  for (let i = 1; i <= den / 2; i++) {
-    if (num % i === 0 && den % i === 0) {
-      gcd = i;
-    }
-  }
-  return den / gcd;
 }

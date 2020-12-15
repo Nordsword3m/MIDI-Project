@@ -1,4 +1,3 @@
-const print = console.log;
 const mh = require("./MidiHandling");
 const unzipper = require('unzipper');
 
@@ -9,8 +8,8 @@ async function Unzip(zipFile){
 
     for(let i = 0; i < directory.files.length; i++){
         let path = directory.files[i].path.split('/');
-        if(path.length == 3 && path[2].length > 0){
-            files.push([path[2] == 'ch.mid' ? mh.ch : mh.kick, [...await directory.files[i].buffer()]]);
+        if(path.length === 3 && path[2].length > 0){
+            files.push([path[2] === 'ch.mid' ? mh.ch : mh.kick, [...await directory.files[i].buffer()]]);
 
         }
     }

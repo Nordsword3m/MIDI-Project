@@ -1,4 +1,3 @@
-const print = console.log;
 const mh = require("./MidiHandling")
 
 module.exports = {GenerateModel}
@@ -42,7 +41,7 @@ function GenerateModel(beats){
                 //Articulation
                 let found = false;
                 for(let n = 0; n < articulation[div]; n++){
-                    if(articulation[n][0] == beats[beat][div]){
+                    if(articulation[n][0] === beats[beat][div]){
                         articulation[n][1]++;
                         found=true;
                         break;

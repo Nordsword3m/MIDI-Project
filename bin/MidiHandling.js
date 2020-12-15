@@ -1,5 +1,3 @@
-const print = console.log;
-
 const divs = 1 / 8;
 const bars = 8;
 
@@ -65,9 +63,9 @@ function ParseBatch(files){
     let chArr = [];
 
     for(let f = 0; f < files.length; f++){
-        if(files[f][0] == kick){
+        if(files[f][0] === kick){
             kikArr.push(ParseMidiBytes(files[f][1]));
-        } else if(files[f][0] == ch){
+        } else if(files[f][0] === ch){
             chArr.push(ParseMidiBytes(files[f][1]));
         }
     }
