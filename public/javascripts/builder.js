@@ -4,48 +4,53 @@ let complexitySlider = null;
 let ancestralSlider = null;
 let playHead = null;
 let tempoInfo = null;
+let notes = null;
 
 // Step constants
 const barLength = 1 / 8;
 const noteLength = 1 / 32;
 const stepLength = 1 / 256;
 
-let noteArr = null;
+const numOfDivs = 32;
 
-let chModel = null;
-let numOfDivs = 32;
-let notes = null;
-
-
-let playing = false;
-
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-
+// Play position tracking
 let prevPlayPos;
 let playPos = 0;
 let relPlayPos = 0;
 
-let playTimerID;
+let playTimerID; // Keeps track of the "Playing" routine
 let playStart = 0;
 
-let nextBar = 0;
-let relNextBar = 0;
+let playing = false;
 
+let nextChunk = 0;
+let relNextChunk = 0;
+
+const chunkSize = noteLength;
+
+// Note calculation processing
+let noteArr = null;
+let chModel = null;
+
+// Audio context objects
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+
+// Audio buffers
 let m1;
 let m2;
 let ch;
 
 // PLAY PROCESSING-------------------------------------------------------------------------
-function Playing() {
+function Playing() { // Playing routine, run as frequently as possible
   let timeDelta = audioCtx.currentTime - prevPlayPos;
   prevPlayPos = audioCtx.currentTime;
   let trackLength = (60.0 / tempoInfo.value) * 32;
 
   setPlayPos(playPos + timeDelta / trackLength);
 
-  if (playPos >= nextBar) {
-    NextBar();
+  if (playPos >= nextChunk) {
+    NextChunk();
   }
 
   SetHeadPos();
@@ -62,7 +67,7 @@ function TogglePlaying(pos, val) {
   } else {
     clearInterval(playTimerID);
     setPlayPos(0);
-    setNextBar(0);
+    setNextChunk(0);
   }
 
   SetHeadPos();
@@ -78,22 +83,22 @@ function SetHeadPos() {
     relPlayPos * (display.offsetWidth - 1) + display.offsetLeft + "px";
 }
 
-function NextBar() {
-  scheduleMets(relNextBar);
-  scheduleNotes(relNextBar)
+function NextChunk() {
+  scheduleMets(relNextChunk);
+  scheduleNotes(relNextChunk)
 
-  setNextBar(nextBar + barLength);
+  setNextChunk(nextChunk + chunkSize);
 }
 
-function setNextBar(bar) {
-  nextBar = bar;
-  relNextBar = nextBar % 1;
+function setNextChunk(chunk) {
+  nextChunk = chunk;
+  relNextChunk = nextChunk % 1;
 }
 
 // NOTE PLAYING-------------------------------------------------------------------------
-function scheduleNotes(barStart) {
-  for(let i = 0; i < 32; i++){
-    const step = (barStart * 256) + i;
+function scheduleNotes(chunkStart) {
+  for(let i = 0; i < chunkSize * 256; i++){
+    const step = (chunkStart * 256) + i;
 
     if(noteArr[step] > 0){
       playSound(ch, step * stepLength);
@@ -102,12 +107,19 @@ function scheduleNotes(barStart) {
 }
 
 // METRONOME-----------------------------------------------------------------------------
-function scheduleMets(barStart) {
+function scheduleMets(chunkStart) {
 
-  playSound(m1, barStart);
-  playSound(m2, barStart + noteLength);
-  playSound(m2, barStart + (2 * noteLength));
-  playSound(m2, barStart + (3 * noteLength));
+  for(let i = 0; i < chunkSize * 256; i++){
+    const step = (chunkStart * 256) + i;
+
+    if((step / (256 * noteLength)) % 1 === 0){
+      if((step / (256 * barLength)) % 1 === 0){
+        playSound(m1, step * stepLength);
+      } else {
+        playSound(m2, step * stepLength);
+      }
+    }
+  }
 }
 
 // AUDIO PROCESSING------------------------------------------------------------
