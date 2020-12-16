@@ -16,6 +16,7 @@ body {
   height: 40px;
   width: 150px;
   float: right;
+  margin-left: 20px;
   margin-right: 20px;
 }
 
@@ -46,10 +47,14 @@ body {
   z-index: 2;
 }
 
-.fas.fa-play, .fas.fa-pause{
+.fas.fa-play, .fas.fa-pause, .fas.fa-clock{
   font-size: 35px;
   color: #737373;
   float: right;
+}
+
+.iconOff{
+  color: #d6d6d6 !important;
 }
 
 .note{

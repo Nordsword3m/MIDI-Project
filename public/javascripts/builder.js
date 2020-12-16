@@ -44,6 +44,9 @@ let m1;
 let m2;
 let ch;
 
+//State variables
+let metroActive = true;
+
 // PLAY PROCESSING-------------------------------------------------------------------------
 function Playing() {
   // Playing routine, run as frequently as possible
@@ -127,17 +130,24 @@ function scheduleNotes() {
 
 // METRONOME-----------------------------------------------------------------------------
 function scheduleMets() {
-  for (let i = 0; i < chunkSize * 256; i++) {
-    const step = relNextChunk * 256 + i;
+  if (metroActive) {
+    for (let i = 0; i < chunkSize * 256; i++) {
+      const step = relNextChunk * 256 + i;
 
-    if ((step / (256 * noteLength)) % 1 === 0) {
-      if ((step / (256 * barLength)) % 1 === 0) {
-        playSound(m1, step * stepLength);
-      } else {
-        playSound(m2, step * stepLength);
+      if ((step / (256 * noteLength)) % 1 === 0) {
+        if ((step / (256 * barLength)) % 1 === 0) {
+          playSound(m1, step * stepLength);
+        } else {
+          playSound(m2, step * stepLength);
+        }
       }
     }
   }
+}
+
+function toggleMetronome(elem) {
+  elem.classList.toggle("iconOff");
+  metroActive = !metroActive;
 }
 
 // AUDIO PROCESSING------------------------------------------------------------
