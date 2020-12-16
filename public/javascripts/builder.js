@@ -6,8 +6,12 @@ const getById = function (id) {
 let display = null;
 let divisionDisplay = null;
 let hihatDisplay = null;
+let snareDisplay = null;
+
 let complexitySlider = null;
 let ancestralSlider = null;
+let snarePattern = null;
+
 let playHead = null;
 let tempoInfo = null;
 let notes = null;
@@ -35,16 +39,24 @@ let relNextChunk = 0;
 const chunkSize = barLength;
 
 // Note calculation processing
-let noteArr = null;
+let chNoteArr = null;
+let snrNoteArr = null;
 let chModel = null;
 
 // Audio context objects
 let audioCtx;
 
 // Audio buffers
-let m1;
-let m2;
-let ch;
+let m1Audio;
+let m2Audio;
+let chAudio;
+let snrAudio;
+
+// Index ids
+const ch = 0;
+const snr = 1;
+const kik = 2;
+const oh = 3;
 
 //State variables
 let metroActive = true;
@@ -123,8 +135,12 @@ function scheduleNotes() {
   for (let i = 0; i < chunkSize * 256; i++) {
     const step = relNextChunk * 256 + i;
 
-    if (noteArr[step] > 0) {
-      playSound(ch, step * stepLength);
+    if (chNoteArr[step] > 0) {
+      playSound(chAudio, step * stepLength);
+    }
+
+    if (snrNoteArr[step] > 0) {
+      playSound(snrAudio, step * stepLength);
     }
   }
 }
@@ -137,9 +153,9 @@ function scheduleMets() {
 
       if ((step / (256 * noteLength)) % 1 === 0) {
         if ((step / (256 * barLength)) % 1 === 0) {
-          playSound(m1, step * stepLength);
+          playSound(m1Audio, step * stepLength);
         } else {
-          playSound(m2, step * stepLength);
+          playSound(m2Audio, step * stepLength);
         }
       }
     }
@@ -157,7 +173,7 @@ async function NewContext() {
 
   let bl = new BufferLoader(
     audioCtx,
-    ["m1.wav", "m2.wav", "ch.wav"],
+    ["m1.wav", "m2.wav", "ch.wav", "snr.wav"],
     finishedLoading
   );
 
@@ -165,9 +181,10 @@ async function NewContext() {
 }
 
 function finishedLoading(bufferList) {
-  m1 = bufferList[0];
-  m2 = bufferList[1];
-  ch = bufferList[2];
+  m1Audio = bufferList[0];
+  m2Audio = bufferList[1];
+  chAudio = bufferList[2];
+  snrAudio = bufferList[3];
 }
 
 function playSound(buffer, pos) {
@@ -186,21 +203,25 @@ document.addEventListener("DOMContentLoaded", function () {
   display = getById("display");
   divisionDisplay = getById("divDisp");
   hihatDisplay = getById("hihatDisp");
+  snareDisplay = getById("snareDisp");
 
   display.addEventListener("click", function (event) {
     TogglePlaying(
       (event.pageX - display.offsetLeft) / display.offsetWidth,
       true
-    );
+    ).then();
   });
 
   getById("playButton").addEventListener("click", function () {
-    TogglePlaying(0, !playing);
+    TogglePlaying(0, !playing).then();
   });
 
   playHead = getById("playHead");
   complexitySlider = getById("complexity");
   ancestralSlider = getById("ancestral");
+
+  snarePattern = getById("snarePatternSelect");
+
   tempoInfo = getById("tempoInput");
 
   DisplayDivisions();
@@ -209,29 +230,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
   notes = InitialiseNotes();
 
-  CalculateNotes();
-  DisplayNotes(noteArr, notes);
+  ShowNotes();
+
+  snarePattern.addEventListener("input", function () {
+    ShowNotes();
+  });
 
   complexitySlider.addEventListener("input", function () {
-    CalculateNotes();
-    DisplayNotes(noteArr, notes);
+    ShowNotes();
   });
 
   ancestralSlider.addEventListener("input", function () {
-    CalculateNotes();
-    DisplayNotes(noteArr, notes);
+    ShowNotes();
   });
 });
 
+function ShowNotes() {
+  CalculateChNotes();
+  SetSnareNotes();
+  DisplayNotes(chNoteArr, notes[ch]);
+  DisplayNotes(snrNoteArr, notes[snr]);
+}
+
 window.addEventListener("resize", function () {
   for (let i = 0; i < 256; i++) {
-    PlaceNote(notes[i]);
+    PlaceNote(notes[ch][i], i / 256, hihatDisplay);
   }
 });
 
 // ALGORITHM STUFF---------------------------------------------------------------------
-function CalculateNotes() {
-  noteArr = [];
+function SetSnareNotes() {
+  snrNoteArr = new Array(256).fill(0);
+
+  for (let i = 0; i < 256; i++) {
+    if ((i / (256 * noteLength)) % 1 === 0) {
+      if ((i / (256 * barLength)) % 1 !== 0) {
+        let notePos = i * barLength;
+
+        if (snarePattern.value === "3" && notePos % 4 === 2) {
+          snrNoteArr[i] = 60;
+        } else if (
+          snarePattern.value === "2and4" &&
+          (notePos % 4 === 1 || notePos % 4 === 3)
+        ) {
+          snrNoteArr[i] = 60;
+        }
+      }
+    }
+  }
+}
+
+function CalculateChNotes() {
+  chNoteArr = [];
 
   for (let i = 0; i < 256; i++) {
     let trueValue = chModel.positional[i];
@@ -240,7 +290,7 @@ function CalculateNotes() {
     let validAncestors = 0;
 
     for (let div = 0; div < chModel.ancestralProbability[i].length; div++) {
-      if (noteArr[div] > 0) {
+      if (chNoteArr[div] > 0) {
         ancestralValue += chModel.ancestralProbability[i][div];
         validAncestors += 1;
       }
@@ -258,48 +308,73 @@ function CalculateNotes() {
       (ancestralValue - chModel.positional[i]) * ancestralSlider.value;
 
     if (trueValue >= 1 - complexitySlider.value) {
-      noteArr[i] = 60;
+      chNoteArr[i] = 60;
     } else {
-      noteArr[i] = 0;
+      chNoteArr[i] = 0;
     }
   }
 }
 
 // VISUAL STUFF----------------------------------------------------------------------
 function InitialiseNotes() {
+  let chNotes = new Array(256);
+  let snrNotes = new Array(256);
+
   for (let i = 0; i < 256; i++) {
-    CreateNote(i);
+    chNotes[i] = CreateChNote(i);
+
+    if ((i / (256 * noteLength)) % 1 === 0) {
+      if ((i / (256 * barLength)) % 1 !== 0) {
+        snrNotes[i] = CreateSnrNote(i, i / 256);
+      }
+    }
   }
 
-  return document.getElementsByClassName("note");
+  return [chNotes, snrNotes];
 }
 
 function DisplayNotes(notes, noteObjs) {
   for (let i = 0; i < 256; i++) {
-    if (notes[i] === 0) {
-      noteObjs[i].style.visibility = "hidden";
-    } else {
-      noteObjs[i].style.visibility = "visible";
+    if (noteObjs[i]) {
+      if (notes[i] === 0) {
+        noteObjs[i].style.visibility = "hidden";
+      } else {
+        noteObjs[i].style.visibility = "visible";
+      }
     }
   }
 }
 
-function PlaceNote(note) {
+function PlaceNote(note, disp) {
   note.style.left =
-    (parseInt(note.id.substring(4)) / 256) * hihatDisplay.offsetWidth +
-    hihatDisplay.offsetLeft +
+    (parseInt(note.id.substring(note.id.search("Note") + 4)) / 256) *
+      disp.offsetWidth +
+    disp.offsetLeft +
     "px";
 }
 
-function CreateNote(i) {
+function CreateChNote(i) {
   let note = document.createElement("div");
 
-  note.id = "note" + i;
+  note.id = "chNote" + i;
   note.className = "note";
 
-  PlaceNote(note);
+  PlaceNote(note, hihatDisplay);
 
   hihatDisplay.appendChild(note);
+  return note;
+}
+
+function CreateSnrNote(i) {
+  let note = document.createElement("div");
+
+  note.id = "snrNote" + i;
+  note.className = "note";
+
+  PlaceNote(note, snareDisplay);
+
+  snareDisplay.appendChild(note);
+  return note;
 }
 
 function DisplayDivisions() {

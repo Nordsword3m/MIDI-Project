@@ -31,8 +31,9 @@ block content
         .display#display
             .playHead#playHead
             .divDisp#divDisp
-            .instrumentDisp#hihatDisp
-            .instrumentDisp#snareDisp
+            .instrumentCon
+                .instrumentDisp#hihatDisp
+                .instrumentDisp#snareDisp
 
     .configPanel
         .instrumentPanel
@@ -49,6 +50,6 @@ block content
 
             h3= "Patten"
 
-            select#snarePattern
+            select#snarePatternSelect
                 option(value="3")= "on 3"
                 option(value="2and4")= "on 2 and 4"
