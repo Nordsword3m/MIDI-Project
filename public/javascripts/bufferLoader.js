@@ -6,41 +6,51 @@ function BufferLoader(context, urlList, callback) {
   this.loadCount = 0;
 }
 
-BufferLoader.prototype.loadBuffer = function (url, index) {
+BufferLoader.prototype.loadBuffer = function (url) {
   // Load buffer asynchronously
   let request = new XMLHttpRequest();
-  request.open("GET", url, true);
-  request.responseType = "arraybuffer";
+  let ctx = this.context;
 
-  let loader = this;
+  return new Promise(function (resolve, reject) {
+    request.open("GET", url, true);
+    request.responseType = "arraybuffer";
 
-  request.onload = function () {
-    // Asynchronously decode the audio file data in request.response
-    loader.context.decodeAudioData(
-      request.response,
-      function (buffer) {
-        if (!buffer) {
-          alert("error decoding file data: " + url);
-          return;
+    request.onload = function () {
+      // Asynchronously decode the audio file data in request.response
+      ctx.decodeAudioData(
+        request.response,
+        function (buffer) {
+          if (!buffer) {
+            alert("error decoding file data: " + url);
+            reject();
+          } else {
+            resolve(buffer);
+          }
+        },
+        function (error) {
+          reject();
+          console.error("decodeAudioData error", error);
         }
-        loader.bufferList[index] = buffer;
-        if (++loader.loadCount === loader.urlList.length)
-          loader.onload(loader.bufferList);
-      },
-      function (error) {
-        console.error("decodeAudioData error", error);
-      }
-    );
-  };
+      );
+    };
 
-  request.onerror = function () {
-    alert("BufferLoader: XHR error");
-  };
+    request.onerror = function () {
+      alert("BufferLoader: XHR error");
+      reject();
+    };
 
-  request.send();
+    request.send();
+  });
 };
 
-BufferLoader.prototype.load = function () {
-  for (let i = 0; i < this.urlList.length; ++i)
-    this.loadBuffer(this.urlList[i], i);
+BufferLoader.prototype.load = async function () {
+  let loader = this;
+  for (let i = 0; i < loader.urlList.length; ++i) {
+    await loader.loadBuffer(loader.urlList[i]).then(function (buffer) {
+      loader.bufferList[i] = buffer;
+      if (++loader.loadCount === loader.urlList.length) {
+        loader.onload(loader.bufferList);
+      }
+    });
+  }
 };

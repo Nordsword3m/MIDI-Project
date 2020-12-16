@@ -1,3 +1,7 @@
+const getById = function (id) {
+  return document.getElementById(id);
+};
+
 // Page Elements
 let display = null;
 let complexitySlider = null;
@@ -14,7 +18,7 @@ const stepLength = 1 / 256;
 const numOfDivs = 32;
 
 // Play position tracking
-let prevPlayPos;
+let prevPlayTime;
 let playPos = 0;
 let relPlayPos = 0;
 
@@ -26,15 +30,14 @@ let playing = false;
 let nextChunk = 0;
 let relNextChunk = 0;
 
-const chunkSize = noteLength;
+const chunkSize = barLength;
 
 // Note calculation processing
 let noteArr = null;
 let chModel = null;
 
 // Audio context objects
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
+let audioCtx;
 
 // Audio buffers
 let m1;
@@ -42,9 +45,10 @@ let m2;
 let ch;
 
 // PLAY PROCESSING-------------------------------------------------------------------------
-function Playing() { // Playing routine, run as frequently as possible
-  let timeDelta = audioCtx.currentTime - prevPlayPos;
-  prevPlayPos = audioCtx.currentTime;
+function Playing() {
+  // Playing routine, run as frequently as possible
+  let timeDelta = audioCtx.currentTime - prevPlayTime;
+  prevPlayTime = audioCtx.currentTime;
   let trackLength = (60.0 / tempoInfo.value) * 32;
 
   setPlayPos(playPos + timeDelta / trackLength);
@@ -56,14 +60,28 @@ function Playing() { // Playing routine, run as frequently as possible
   SetHeadPos();
 }
 
-function TogglePlaying(pos, val) {
-  playing = val;
+async function TogglePlaying(pos, play) {
+  if (play !== playing) {
+    getById("playButton").classList.toggle("fa-pause");
+    getById("playButton").classList.toggle("fa-play");
+    playing = play;
+  }
 
-  if (val) {
-    prevPlayPos = audioCtx.currentTime;
+  if (audioCtx) {
+    audioCtx.close();
+    audioCtx = undefined;
+  }
+
+  if (play) {
+    await NewContext();
+    prevPlayTime = audioCtx.currentTime;
     playStart = audioCtx.currentTime;
     clearInterval(playTimerID);
     playTimerID = setInterval(Playing, 2);
+
+    setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
+    setPlayPos(nextChunk);
+    NextChunk();
   } else {
     clearInterval(playTimerID);
     setPlayPos(0);
@@ -83,9 +101,10 @@ function SetHeadPos() {
     relPlayPos * (display.offsetWidth - 1) + display.offsetLeft + "px";
 }
 
+// CHUNK MANAGEMENT-----------------------------------------------------------------
 function NextChunk() {
-  scheduleMets(relNextChunk);
-  scheduleNotes(relNextChunk)
+  scheduleMets();
+  scheduleNotes();
 
   setNextChunk(nextChunk + chunkSize);
 }
@@ -96,24 +115,23 @@ function setNextChunk(chunk) {
 }
 
 // NOTE PLAYING-------------------------------------------------------------------------
-function scheduleNotes(chunkStart) {
-  for(let i = 0; i < chunkSize * 256; i++){
-    const step = (chunkStart * 256) + i;
+function scheduleNotes() {
+  for (let i = 0; i < chunkSize * 256; i++) {
+    const step = relNextChunk * 256 + i;
 
-    if(noteArr[step] > 0){
+    if (noteArr[step] > 0) {
       playSound(ch, step * stepLength);
     }
   }
 }
 
 // METRONOME-----------------------------------------------------------------------------
-function scheduleMets(chunkStart) {
+function scheduleMets() {
+  for (let i = 0; i < chunkSize * 256; i++) {
+    const step = relNextChunk * 256 + i;
 
-  for(let i = 0; i < chunkSize * 256; i++){
-    const step = (chunkStart * 256) + i;
-
-    if((step / (256 * noteLength)) % 1 === 0){
-      if((step / (256 * barLength)) % 1 === 0){
+    if ((step / (256 * noteLength)) % 1 === 0) {
+      if ((step / (256 * barLength)) % 1 === 0) {
         playSound(m1, step * stepLength);
       } else {
         playSound(m2, step * stepLength);
@@ -123,12 +141,17 @@ function scheduleMets(chunkStart) {
 }
 
 // AUDIO PROCESSING------------------------------------------------------------
-let bufferLoader = new BufferLoader(
+async function NewContext() {
+  audioCtx = new AudioContext();
+
+  let bl = new BufferLoader(
     audioCtx,
     ["m1.wav", "m2.wav", "ch.wav"],
     finishedLoading
-);
-bufferLoader.load();
+  );
+
+  await bl.load();
+}
 
 function finishedLoading(bufferList) {
   m1 = bufferList[0];
@@ -142,34 +165,34 @@ function playSound(buffer, pos) {
   source.connect(audioCtx.destination);
 
   let trackLength = (60.0 / tempoInfo.value) * 32;
-  let loopStart = audioCtx.currentTime - (relPlayPos * trackLength);
+  let loopStart = audioCtx.currentTime - relPlayPos * trackLength;
 
-  source.start(loopStart + (pos * trackLength));
+  source.start(loopStart + pos * trackLength);
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
-  display = document.getElementById("display");
+  display = getById("display");
 
   display.addEventListener("click", function (event) {
-    /*TogglePlaying(
+    TogglePlaying(
       (event.pageX - display.offsetLeft) / display.offsetWidth,
       true
-    );*/
+    );
   });
 
-  document.getElementById("playButton").addEventListener("click", function () {
+  getById("playButton").addEventListener("click", function () {
     TogglePlaying(0, !playing);
   });
 
-  playHead = document.getElementById("playHead");
-  complexitySlider = document.getElementById("complexity");
-  ancestralSlider = document.getElementById("ancestral");
-  tempoInfo = document.getElementById("tempoInput");
+  playHead = getById("playHead");
+  complexitySlider = getById("complexity");
+  ancestralSlider = getById("ancestral");
+  tempoInfo = getById("tempoInput");
 
   DisplayDivisions();
 
-  chModel = JSON.parse(document.getElementById("chModel").innerHTML);
+  chModel = JSON.parse(getById("chModel").innerHTML);
 
   notes = InitialiseNotes();
 

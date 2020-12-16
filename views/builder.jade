@@ -3,7 +3,6 @@ extends layout
 block content
     script(src = "/javascripts/bufferLoader.js")
     script(src = "/javascripts/builder.js")
-    script(src="https://kit.fontawesome.com/caf9832e26.js", crossorigin="anonymous")
     #chModel(style="display: none")= chModel
 
     audio#chSound(src="ch.wav")
@@ -15,7 +14,7 @@ block content
     i.fas.fa-play#playButton
 
     .tempoCon
-        input.tempoInfo#tempoInput(type="number", value="120")
+        input.tempoInfo#tempoInput(type="number", value="130")
         .bpmSuff= "bpm"
 
     br
