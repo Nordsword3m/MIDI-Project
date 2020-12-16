@@ -4,6 +4,8 @@ const getById = function (id) {
 
 // Page Elements
 let display = null;
+let divisionDisplay = null;
+let hihatDisplay = null;
 let complexitySlider = null;
 let ancestralSlider = null;
 let playHead = null;
@@ -100,8 +102,7 @@ function setPlayPos(pos) {
 }
 
 function SetHeadPos() {
-  playHead.style.left =
-    relPlayPos * (display.offsetWidth - 1) + display.offsetLeft + "px";
+  playHead.style.left = relPlayPos * (display.offsetWidth - 1) + "px";
 }
 
 // CHUNK MANAGEMENT-----------------------------------------------------------------
@@ -183,6 +184,8 @@ function playSound(buffer, pos) {
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
   display = getById("display");
+  divisionDisplay = getById("divDisp");
+  hihatDisplay = getById("hihatDisp");
 
   display.addEventListener("click", function (event) {
     TogglePlaying(
@@ -283,8 +286,8 @@ function DisplayNotes(notes, noteObjs) {
 
 function PlaceNote(note) {
   note.style.left =
-    (parseInt(note.id.substring(4)) / 256) * (display.offsetWidth - 1) +
-    display.offsetLeft +
+    (parseInt(note.id.substring(4)) / 256) * hihatDisplay.offsetWidth +
+    hihatDisplay.offsetLeft +
     "px";
 }
 
@@ -296,22 +299,22 @@ function CreateNote(i) {
 
   PlaceNote(note);
 
-  display.appendChild(note);
+  hihatDisplay.appendChild(note);
 }
 
 function DisplayDivisions() {
-  function CreateDivision(i) {
-    let div = document.createElement("div");
-
-    div.className = "division";
-    div.id = "div" + i;
-    div.style.opacity = "" + (i % 4 === 0 ? 1 : 0.3);
-    div.style.left = (i / numOfDivs) * 100 + "%";
-
-    display.appendChild(div);
-  }
-
   for (let i = 1; i < numOfDivs; i++) {
     CreateDivision(i);
   }
+}
+
+function CreateDivision(i) {
+  let div = document.createElement("div");
+
+  div.className = "division";
+  div.id = "div" + i;
+  div.style.opacity = "" + (i % 4 === 0 ? 1 : 0.3);
+  div.style.left = (i / numOfDivs) * 100 + "%";
+
+  divisionDisplay.appendChild(div);
 }

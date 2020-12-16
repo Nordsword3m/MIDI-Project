@@ -17,21 +17,38 @@ block content
         input.tempoInfo#tempoInput(type="number", value="130")
         .bpmSuff= "bpm"
 
-    label.checkCon
-        i.fas.fa-clock.check#metronomeButton(onclick="toggleMetronome(this);")
+    i.fas.fa-clock.check#metronomeButton(onclick="toggleMetronome(this);")
 
     br
     br
 
-    .display#display
-        .playHead#playHead
+    .displayCon
+        .labelCon
+            .instrumentLabel= "ch"
+            .instrumentLabel= "snr"
+            .instrumentLabel= "kik"
+            .instrumentLabel= "oh"
+        .display#display
+            .playHead#playHead
+            .divDisp#divDisp
+            .instrumentDisp#hihatDisp
+            .instrumentDisp#snareDisp
 
-    br
-    h2= "Complexity"
-    input#complexity.slider(type="range", min="0.001", max="1", value="0.5", step="0.001")
+    .configPanel
+        .instrumentPanel
+            h2= "Hihat"
 
-    h2= "Ancestral Influence"
-    input#ancestral.slider(type="range", min="0", max="1", value="0.5", step="0.001")
+            h3= "Complexity"
+            input#complexity.slider(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
-    br
-    br
+            h3= "Ancestral Influence"
+            input#ancestral.slider(type="range", min="0", max="1", value="0.5", step="0.001")
+
+        .instrumentPanel
+            h2= "Snare"
+
+            h3= "Patten"
+
+            select#snarePattern
+                option(value="3")= "on 3"
+                option(value="2and4")= "on 2 and 4"
