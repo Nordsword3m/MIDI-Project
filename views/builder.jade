@@ -2,6 +2,9 @@ extends layout
 
 block content
     script(src = "/javascripts/bufferLoader.js")
+    script(src = "/javascripts/audioManager.js")
+    script(src = "/javascripts/noteManager.js")
+    script(src = "/javascripts/displayElementManager.js")
     script(src = "/javascripts/builder.js")
     #chModel(style="display: none")= chModel
 
@@ -40,16 +43,16 @@ block content
             h2= "Hihat"
 
             h3= "Complexity"
-            input#complexity.slider(type="range", min="0.001", max="1", value="0.5", step="0.001")
+            input#complexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
             h3= "Ancestral Influence"
-            input#ancestral.slider(type="range", min="0", max="1", value="0.5", step="0.001")
+            input#ancestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
 
         .instrumentPanel
             h2= "Snare"
 
             h3= "Patten"
 
-            select#snarePatternSelect
+            select#snarePatternSelect.configOption
                 option(value="3")= "on 3"
                 option(value="2and4")= "on 2 and 4"
