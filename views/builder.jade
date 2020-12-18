@@ -20,7 +20,7 @@ block content
         input.tempoInfo#tempoInput(type="number", value="130")
         .bpmSuff= "bpm"
 
-    i.fas.fa-clock.check#metronomeButton(onclick="toggleMetronome(this);")
+    i.fas.fa-clock.iconOff#metronomeButton(onclick="toggleMetronome(this);")
 
     br
     br
@@ -30,16 +30,18 @@ block content
             .instrumentLabel= "ch"
             .instrumentLabel= "snr"
             .instrumentLabel= "kik"
-            .instrumentLabel= "oh"
+            .instrumentLabel= "perc"
         .display#display
             .playHead#playHead
             .divDisp#divDisp
             .instrumentCon
                 .instrumentDisp#hihatDisp
                 .instrumentDisp#snareDisp
+                .instrumentDisp#kickDisp
+                .instrumentDisp#percDisp
 
     .configPanel
-        .instrumentPanel
+        .instrumentPanel.hihatPanel
             h2= "Hihat"
 
             h3= "Complexity"
@@ -48,11 +50,36 @@ block content
             h3= "Ancestral Influence"
             input#ancestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
 
-        .instrumentPanel
+        .instrumentPanel.snarePanel
             h2= "Snare"
 
-            h3= "Patten"
+            h3= "Pattern"
 
             select#snarePatternSelect.configOption
                 option(value="3")= "on 3"
                 option(value="2and4")= "on 2 and 4"
+
+        .instrumentPanel.percPanel
+            h2= "Perc"
+
+            h3= "Option 1"
+
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+            input.perc1Bar.configOption(type="checkbox")
+
+            h3= "Option 2"
+
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")
+            input.perc2Bar.configOption(type="checkbox")

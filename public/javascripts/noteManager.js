@@ -5,8 +5,26 @@ const barLength = 1 / 8;
 const noteLength = 1 / 32;
 const stepLength = 1 / 256;
 
+NoteManager.prototype.CalculatePerc = function (optn1Bars, optn2Bars) {
+  let noteArr = new Array(256).fill(0);
+  for (let i = 0; i < 256; i++) {
+    let notePos = i % (256 * barLength);
+    let curBar = Math.floor(i / (256 * barLength));
+
+    if (optn1Bars[curBar] && notePos === 4) {
+      noteArr[i] = 60;
+    }
+
+    if (optn2Bars[curBar] && notePos === 28) {
+      noteArr[i] = 60;
+    }
+  }
+
+  return noteArr;
+};
+
 NoteManager.prototype.CalculateCh = function () {
-  let noteArr = [];
+  let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {
     let trueValue = chModel.positional[i];

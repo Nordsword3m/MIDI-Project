@@ -2,26 +2,32 @@ function DisplayElementManager() {}
 
 window.addEventListener("resize", function () {
   for (let i = 0; i < 256; i++) {
-    this.PlaceNote(notes[ch][i], hihatDisplay);
-    this.PlaceNote(notes[snr][i], snareDisplay);
+    dem.PlaceNote(notes[ch][i], hihatDisplay);
+    dem.PlaceNote(notes[snr][i], snareDisplay);
+    dem.PlaceNote(notes[perc][i], percDisplay);
   }
 });
 
 DisplayElementManager.prototype.InitialiseNotes = function () {
   let chNotes = new Array(256);
   let snrNotes = new Array(256);
+  let percNotes = new Array(256);
 
   for (let i = 0; i < 256; i++) {
     chNotes[i] = this.CreateNote(i, "ch", hihatDisplay);
 
-    if ((i / (256 * noteLength)) % 1 === 0) {
-      if ((i / (256 * barLength)) % 1 !== 0) {
-        snrNotes[i] = this.CreateNote(i, "snr", snareDisplay);
+    if (i % 2 === 0) {
+      if ((i / (256 * noteLength)) % 1 === 0) {
+        if ((i / (256 * barLength)) % 1 !== 0) {
+          snrNotes[i] = this.CreateNote(i, "snr", snareDisplay);
+        }
       }
+
+      percNotes[i] = this.CreateNote(i, "perc", percDisplay);
     }
   }
 
-  return [chNotes, snrNotes];
+  return [chNotes, snrNotes, [], percNotes];
 };
 
 DisplayElementManager.prototype.PlaceNote = function (note, disp) {

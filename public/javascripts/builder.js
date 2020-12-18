@@ -2,15 +2,24 @@ const getById = function (id) {
   return document.getElementById(id);
 };
 
+const getByClass = function (classname) {
+  return document.getElementsByClassName(classname);
+};
+
 // Page Elements
 let display = null;
 let divisionDisplay = null;
 let hihatDisplay = null;
 let snareDisplay = null;
+let percDisplay = null;
 
 let complexitySlider = null;
 let ancestralSlider = null;
+
 let snarePattern = null;
+
+let percOptn1Bars = null;
+let percOptn2Bars = null;
 
 let playHead = null;
 let tempoInfo = null;
@@ -36,18 +45,20 @@ const chunkSize = barLength;
 // Note calculation processing
 let chNoteArr = null;
 let snrNoteArr = null;
+let percNoteArr = null;
+
 let chModel = null;
 
 // Index ids
 const ch = 0;
 const snr = 1;
 const kik = 2;
-const oh = 3;
+const perc = 3;
 
 //State variables
-let metroActive = true;
+let metroActive = false;
 
-let am = new AudioManager(["m1", "m2", "ch", "snr"]);
+let am = new AudioManager(["m1", "m2", "ch", "snr", "perc"]);
 let nm = new NoteManager();
 let dem = new DisplayElementManager();
 
@@ -81,7 +92,7 @@ async function TogglePlaying(pos, play) {
     prevPlayTime = am.context.currentTime;
     playStart = am.context.currentTime;
     clearInterval(playTimerID);
-    playTimerID = setInterval(Playing, 2);
+    playTimerID = setInterval(Playing, 1);
 
     setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
     setPlayPos(nextChunk);
@@ -134,6 +145,10 @@ function scheduleNotes() {
     if (snrNoteArr[step] > 0) {
       playSound("snr", step * stepLength);
     }
+
+    if (percNoteArr[step] > 0) {
+      playSound("perc", step * stepLength);
+    }
   }
 }
 
@@ -165,12 +180,15 @@ document.addEventListener("DOMContentLoaded", function () {
   divisionDisplay = getById("divDisp");
   hihatDisplay = getById("hihatDisp");
   snareDisplay = getById("snareDisp");
+  percDisplay = getById("percDisp");
 
   playHead = getById("playHead");
 
   complexitySlider = getById("complexity");
   ancestralSlider = getById("ancestral");
   snarePattern = getById("snarePatternSelect");
+  percOptn1Bars = getByClass("perc1Bar");
+  percOptn2Bars = getByClass("perc2Bar");
 
   tempoInfo = getById("tempoInput");
 
@@ -199,8 +217,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function ShowNotes() {
+  let perc1Bars = [];
+  let perc2Bars = [];
+
+  for (let i = 0; i < 8; i++) {
+    perc1Bars.push(percOptn1Bars[i].checked);
+    perc2Bars.push(percOptn2Bars[i].checked);
+  }
+
   chNoteArr = nm.CalculateCh();
   snrNoteArr = nm.CalculateSnare(snarePattern.value);
+  percNoteArr = nm.CalculatePerc(perc1Bars, perc2Bars);
   dem.Display(chNoteArr, notes[ch]);
   dem.Display(snrNoteArr, notes[snr]);
+  dem.Display(percNoteArr, notes[perc]);
 }

@@ -4,15 +4,32 @@ body {
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
+.hihatPanel {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+}
+
+.snarePanel {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.percPanel {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+}
+
 .instrumentPanel {
   background-color: #bcbcbc;
-  margin: 5px;
-  flex-grow: 1;
   padding: 5px;
 }
 
 .configPanel {
-  display: flex;
+  display: grid;
+  gap: 10px 10px;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 25% 25% 50%;
+  margin-top: 10px;
 }
 /* Display Elements----------------------------------------------------------*/
 .displayCon {

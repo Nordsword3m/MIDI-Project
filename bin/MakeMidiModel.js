@@ -3,7 +3,7 @@ const mh = require("./MidiHandling");
 module.exports = { GenerateModel };
 
 class BeatModel {
-  constructor(positional, articulation, ancestralProbability) {
+  constructor(positional, ancestralProbability) {
     this.positional = positional;
     this.ancestralProbability = ancestralProbability;
   }
