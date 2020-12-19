@@ -3,6 +3,7 @@ function DisplayElementManager() {}
 window.addEventListener("resize", function () {
   for (let i = 0; i < 256; i++) {
     dem.PlaceNote(notes[ch][i], hihatDisplay);
+    dem.PlaceNote(notes[kick][i], kickDisplay);
     dem.PlaceNote(notes[snr][i], snareDisplay);
     dem.PlaceNote(notes[perc][i], percDisplay);
   }
@@ -10,11 +11,13 @@ window.addEventListener("resize", function () {
 
 DisplayElementManager.prototype.InitialiseNotes = function () {
   let chNotes = new Array(256);
+  let kickNotes = new Array(256);
   let snrNotes = new Array(256);
   let percNotes = new Array(256);
 
   for (let i = 0; i < 256; i++) {
     chNotes[i] = this.CreateNote(i, "ch", hihatDisplay);
+    kickNotes[i] = this.CreateNote(i, "kick", kickDisplay);
 
     if (i % 2 === 0) {
       if ((i / (256 * noteLength)) % 1 === 0) {
@@ -27,7 +30,7 @@ DisplayElementManager.prototype.InitialiseNotes = function () {
     }
   }
 
-  return [chNotes, snrNotes, [], percNotes];
+  return [chNotes, snrNotes, kickNotes, percNotes];
 };
 
 DisplayElementManager.prototype.PlaceNote = function (note, disp) {

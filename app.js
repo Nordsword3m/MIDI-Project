@@ -42,6 +42,7 @@ app.post("/upload", upload.single("uploadFile"), async (req, res) => {
       res.render("builder", {
         title: "Midi Ting Fi Real",
         chModel: JSON.stringify(chModel),
+        kickModel: JSON.stringify(kickModel),
       });
     }
   } catch (err) {

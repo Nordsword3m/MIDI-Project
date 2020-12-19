@@ -6,8 +6,13 @@ body {
 /* Config panel stuff--------------------------------------------------------------*/
 .hihatPanel {
   grid-column: 1 / 2;
-  grid-row: 1 / 3;
+  grid-row: 1 / 2;
 }
+
+.kickPanel {
+   grid-column: 1 / 2;
+   grid-row: 2 / 3;
+ }
 
 .snarePanel {
   grid-column: 2 / 3;

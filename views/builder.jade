@@ -7,10 +7,7 @@ block content
     script(src = "/javascripts/displayElementManager.js")
     script(src = "/javascripts/builder.js")
     #chModel(style="display: none")= chModel
-
-    audio#chSound(src="ch.wav")
-    audio#m1Sound(src="m1.wav")
-    audio#m2Sound(src="m2.wav")
+    #kickModel(style="display: none")= kickModel
 
     h1(style="float: left")= title
 
@@ -29,7 +26,7 @@ block content
         .labelCon
             .instrumentLabel= "ch"
             .instrumentLabel= "snr"
-            .instrumentLabel= "kik"
+            .instrumentLabel= "kick"
             .instrumentLabel= "perc"
         .display#display
             .playHead#playHead
@@ -45,10 +42,19 @@ block content
             h2= "Hihat"
 
             h3= "Complexity"
-            input#complexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
+            input#chComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
             h3= "Ancestral Influence"
-            input#ancestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
+            input#chAncestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
+
+        .instrumentPanel.kickPanel
+            h2= "Kick"
+
+            h3= "Complexity"
+            input#kickComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
+
+            h3= "Ancestral Influence"
+            input#kickAncestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
 
         .instrumentPanel.snarePanel
             h2= "Snare"

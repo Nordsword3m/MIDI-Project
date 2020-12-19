@@ -23,7 +23,7 @@ NoteManager.prototype.CalculatePerc = function (optn1Bars, optn2Bars) {
   return noteArr;
 };
 
-NoteManager.prototype.CalculateCh = function () {
+NoteManager.prototype.CalculateCh = function (complexity, ancestral) {
   let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {
@@ -47,10 +47,44 @@ NoteManager.prototype.CalculateCh = function () {
       ancestralValue = chModel.positional[i];
     }
 
-    trueValue +=
-      (ancestralValue - chModel.positional[i]) * ancestralSlider.value;
+    trueValue += (ancestralValue - chModel.positional[i]) * ancestral;
 
-    if (trueValue >= 1 - complexitySlider.value) {
+    if (trueValue >= 1 - complexity) {
+      noteArr[i] = 60;
+    } else {
+      noteArr[i] = 0;
+    }
+  }
+  return noteArr;
+};
+
+NoteManager.prototype.CalculateKick = function (complexity, ancestral) {
+  let noteArr = new Array(256).fill(0);
+
+  for (let i = 0; i < 256; i++) {
+    let trueValue = kickModel.positional[i];
+
+    let ancestralValue = 0;
+    let validAncestors = 0;
+
+    for (let div = 0; div < kickModel.ancestralProbability[i].length; div++) {
+      if (noteArr[div] > 0) {
+        ancestralValue += kickModel.ancestralProbability[i][div];
+        validAncestors += 1;
+      }
+    }
+
+    if (validAncestors > 0) {
+      ancestralValue /= validAncestors;
+    }
+
+    if (i === 0) {
+      ancestralValue = kickModel.positional[i];
+    }
+
+    trueValue += (ancestralValue - kickModel.positional[i]) * ancestral;
+
+    if (trueValue >= 1 - complexity) {
       noteArr[i] = 60;
     } else {
       noteArr[i] = 0;

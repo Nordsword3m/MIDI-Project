@@ -10,11 +10,15 @@ const getByClass = function (classname) {
 let display = null;
 let divisionDisplay = null;
 let hihatDisplay = null;
+let kickDisplay = null;
 let snareDisplay = null;
 let percDisplay = null;
 
-let complexitySlider = null;
-let ancestralSlider = null;
+let chComplexitySlider = null;
+let chAncestralSlider = null;
+
+let kickComplexitySlider = null;
+let kickAncestralSlider = null;
 
 let snarePattern = null;
 
@@ -31,6 +35,7 @@ const numOfDivs = 32;
 let prevPlayTime;
 let playPos = 0;
 let relPlayPos = 0;
+let loopStart = 0;
 
 let playTimerID; // Keeps track of the "Playing" routine
 let playStart = 0;
@@ -39,39 +44,42 @@ let playing = false;
 
 let nextChunk = 0;
 let relNextChunk = 0;
+let chunkPreRender = 1 / 2;
 
-const chunkSize = barLength;
+const chunkSize = noteLength;
 
 // Note calculation processing
 let chNoteArr = null;
+let kickNoteArr = null;
 let snrNoteArr = null;
 let percNoteArr = null;
 
 let chModel = null;
+let kickModel = null;
 
 // Index ids
 const ch = 0;
 const snr = 1;
-const kik = 2;
+const kick = 2;
 const perc = 3;
 
 //State variables
 let metroActive = false;
 
-let am = new AudioManager(["m1", "m2", "ch", "snr", "perc"]);
+let am = new AudioManager(["m1", "m2", "ch", "snr", "perc", "kick"]);
 let nm = new NoteManager();
 let dem = new DisplayElementManager();
 
 // PLAY PROCESSING-------------------------------------------------------------------------
 function Playing() {
   // Playing routine, run as frequently as possible
-  let timeDelta = am.context.currentTime - prevPlayTime;
-  prevPlayTime = am.context.currentTime;
+  let timeDelta = am.curTime() - prevPlayTime;
+  prevPlayTime = am.curTime();
   let trackLength = (60.0 / tempoInfo.value) * 32;
 
   setPlayPos(playPos + timeDelta / trackLength);
 
-  if (playPos >= nextChunk) {
+  if (playPos >= nextChunk - chunkSize * chunkPreRender) {
     NextChunk();
   }
 
@@ -89,14 +97,16 @@ async function TogglePlaying(pos, play) {
 
   if (play) {
     await am.NewContext();
-    prevPlayTime = am.context.currentTime;
-    playStart = am.context.currentTime;
-    clearInterval(playTimerID);
-    playTimerID = setInterval(Playing, 1);
+    prevPlayTime = am.curTime();
+    playStart = am.curTime();
 
     setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
     setPlayPos(nextChunk);
+    setLoopStart();
     NextChunk();
+
+    clearInterval(playTimerID);
+    playTimerID = setInterval(Playing, 1);
   } else {
     clearInterval(playTimerID);
     setPlayPos(0);
@@ -106,9 +116,22 @@ async function TogglePlaying(pos, play) {
   SetHeadPos();
 }
 
+function setLoopStart() {
+  let trackLength = (60.0 / tempoInfo.value) * (256 * barLength);
+  loopStart = am.curTime() - relPlayPos * trackLength;
+}
+
 function setPlayPos(pos) {
+  let posDelta = (pos - playPos) % 1;
   playPos = pos;
-  relPlayPos = playPos % 1;
+  relPlayPos += posDelta;
+
+  //console.log(relPlayPos);
+
+  if (relPlayPos >= 1) {
+    relPlayPos = playPos % 1;
+    setLoopStart();
+  }
 }
 
 function SetHeadPos() {
@@ -117,6 +140,11 @@ function SetHeadPos() {
 
 // CHUNK MANAGEMENT-----------------------------------------------------------------
 function NextChunk() {
+  if (relPlayPos + chunkSize * chunkPreRender >= 1) {
+    let trackLength = (60.0 / tempoInfo.value) * (256 * barLength);
+    loopStart = (1 - relPlayPos) * trackLength + am.curTime();
+  }
+
   scheduleMets();
   scheduleNotes();
 
@@ -140,6 +168,10 @@ function scheduleNotes() {
 
     if (chNoteArr[step] > 0) {
       playSound("ch", step * stepLength);
+    }
+
+    if (kickNoteArr[step] > 0) {
+      playSound("kick", step * stepLength);
     }
 
     if (snrNoteArr[step] > 0) {
@@ -179,13 +211,16 @@ document.addEventListener("DOMContentLoaded", function () {
   display = getById("display");
   divisionDisplay = getById("divDisp");
   hihatDisplay = getById("hihatDisp");
+  kickDisplay = getById("kickDisp");
   snareDisplay = getById("snareDisp");
   percDisplay = getById("percDisp");
 
   playHead = getById("playHead");
 
-  complexitySlider = getById("complexity");
-  ancestralSlider = getById("ancestral");
+  chComplexitySlider = getById("chComplexity");
+  chAncestralSlider = getById("chAncestral");
+  kickComplexitySlider = getById("kickComplexity");
+  kickAncestralSlider = getById("kickAncestral");
   snarePattern = getById("snarePatternSelect");
   percOptn1Bars = getByClass("perc1Bar");
   percOptn2Bars = getByClass("perc2Bar");
@@ -204,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   chModel = JSON.parse(getById("chModel").innerHTML);
+  kickModel = JSON.parse(getById("kickModel").innerHTML);
 
   notes = dem.InitialiseNotes();
   dem.CreateDivisions();
@@ -225,10 +261,15 @@ function ShowNotes() {
     perc2Bars.push(percOptn2Bars[i].checked);
   }
 
-  chNoteArr = nm.CalculateCh();
+  chNoteArr = nm.CalculateCh(chComplexitySlider.value, chAncestralSlider.value);
+  kickNoteArr = nm.CalculateKick(
+    kickComplexitySlider.value,
+    kickAncestralSlider.value
+  );
   snrNoteArr = nm.CalculateSnare(snarePattern.value);
   percNoteArr = nm.CalculatePerc(perc1Bars, perc2Bars);
   dem.Display(chNoteArr, notes[ch]);
+  dem.Display(kickNoteArr, notes[kick]);
   dem.Display(snrNoteArr, notes[snr]);
   dem.Display(percNoteArr, notes[perc]);
 }
