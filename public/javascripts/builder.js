@@ -98,11 +98,11 @@ async function TogglePlaying(pos, play) {
   if (play) {
     await am.NewContext();
     prevPlayTime = am.curTime();
-    playStart = am.curTime();
 
     setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
     setPlayPos(nextChunk);
     setLoopStart();
+
     NextChunk();
 
     clearInterval(playTimerID);
@@ -122,15 +122,21 @@ function setLoopStart() {
 }
 
 function setPlayPos(pos) {
-  let posDelta = (pos - playPos) % 1;
+  let posDelta = pos - playPos;
   playPos = pos;
   relPlayPos += posDelta;
 
   //console.log(relPlayPos);
 
   if (relPlayPos >= 1) {
-    relPlayPos = playPos % 1;
+    while (relPlayPos >= 1) {
+      relPlayPos--;
+    }
     setLoopStart();
+  } else if (relPlayPos < 0) {
+    while (relPlayPos < 0) {
+      relPlayPos++;
+    }
   }
 }
 
