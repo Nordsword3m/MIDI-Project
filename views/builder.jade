@@ -9,18 +9,16 @@ block content
     #chModel(style="display: none")= chModel
     #kickModel(style="display: none")= kickModel
 
-    h1(style="float: left")= title
+    .topBar
+        h1= title
 
-    i.fas.fa-play#playButton
+        .tempoCon
+            input.tempoInfo#tempoInput(type="number", value="130", min="1", max="300")
+            .bpmSuffix= "bpm"
 
-    .tempoCon
-        input.tempoInfo#tempoInput(type="number", value="130")
-        .bpmSuff= "bpm"
+        i.fas.fa-clock.iconOff#metronomeButton(onclick="toggleMetronome(this);")
 
-    i.fas.fa-clock.iconOff#metronomeButton(onclick="toggleMetronome(this);")
-
-    br
-    br
+        i.fas.fa-play#playButton
 
     .displayCon
         .labelCon

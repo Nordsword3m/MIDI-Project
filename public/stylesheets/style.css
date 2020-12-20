@@ -1,6 +1,20 @@
+:root {
+  --panelColor: #222222;
+  --dispColor: #131313;
+  --purple: #c47ede;
+  --blue: #71bfe3;
+}
+
 body {
-  padding: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  color: white;
+  background-color: black;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-weight: 100;
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
@@ -25,21 +39,24 @@ body {
 }
 
 .instrumentPanel {
-  background-color: #bcbcbc;
-  padding: 5px;
+  background-color: var(--panelColor);
+  padding: 20px;
 }
 
 .configPanel {
   display: grid;
   gap: 10px 10px;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: 25% 25% 50%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   margin-top: 10px;
+  width: 100%;
 }
 /* Display Elements----------------------------------------------------------*/
 .displayCon {
   width: 100%;
+  height: 150px;
   display: flex;
+  margin-top: 10px;
 }
 
 .labelCon {
@@ -57,6 +74,7 @@ body {
 
 .instrumentDisp {
   height: 25%;
+  position: relative;
 }
 
 .divDisp{
@@ -68,64 +86,85 @@ body {
 
 .display{
   width: 100%;
-  height: 100px;
-  background-color: #4c5358;
+  height: 100%;
+  background-color: var(--dispColor);
+  box-shadow: 0 0 10px var(--dispColor);
   display:flex;
   position: relative;
 }
 
 .playHead{
-  background-color: #f5f5f5;
-  opacity: 0.9;
+  background-color: white;
+  opacity: 0.5;
   width: 2px;
-  height: 100px;
+  height: 100%;
   margin: -0.5px;
   position: absolute;
   box-sizing: border-box;
   z-index: 10;
+  box-shadow: 0 0 2px white;
 }
 
 .note{
-  background-color: #83d982;
+  background-color: var(--blue);
   width: calc(60% / 256);
-  height: 25px;
+  height: 100%;
   position: absolute;
-  border-radius: 1px;
-
+  box-shadow: 0 0 5px var(--blue);
   box-sizing: border-box;
 }
 
 .division{
-  background-color: #838383;
+  background-color: white;
+  box-shadow: 0 0 2px white;
   width: 1px;
   height: 100%;
   margin: -0.5px;
   position: absolute;
 }
 
-/* Status bar things-----------------------------------------------------------------*/
+/* Top bar things-----------------------------------------------------------------*/
+.topBar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--panelColor);
+  padding: 0 10px 0 10px;
+}
+
+.fas.fa-play, .fas.fa-pause {
+  float: right;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .tempoCon{
   display: flex;
-  height: 40px;
-  width: 150px;
-  float: right;
-  margin-left: 20px;
-  margin-right: 20px;
+  width: fit-content;
+  align-items: center;
+  padding: 5px;
 }
 
-.tempoInfo, .bpmSuff{
+.tempoInfo {
+  box-shadow: 0 0 4px 1px var(--purple);
+}
+
+.tempoInfo, .bpmSuffix{
+  background-color: transparent;
   border: 0;
-  background-color: #e5e5e5;
+  color: white;
   font-size: 30px;
-  width: 50%;
-}
-
-.tempoInfo{
-  padding-right: 10px;
-}
-
-.bpmSuff{
-  text-align: left;
+  width: 3ch;
+  padding: 0 0.5ch 0 0.5ch;
+  font-weight: 100;
 }
 
 .fas.fa-play, .fas.fa-pause, .fas.fa-clock{
@@ -142,17 +181,19 @@ body {
 .slider {
   appearance: none;
   width: 100%;
-  height: 25px;
-  background: #4c5358;
-  margin: 0;
-  border-radius: 6px;
+  height: 2px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background: var(--purple);
+  box-shadow: 0 0 5px 1px var(--purple);
 }
 
 .slider::-moz-range-thumb {
-  width: 15px;
-  height: 25px;
-  background: #83d982;
+  width: 7px;
+  height: 20px;
+  background: white;
   cursor: pointer;
   border: 0;
-  border-radius: 5px;
+  border-radius: 0;
+  box-shadow: 0 0 2px white;
 }
