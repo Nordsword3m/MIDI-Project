@@ -65,9 +65,9 @@ DisplayElementManager.prototype.Display = function (noteData, noteObjs) {
   for (let i = 0; i < 256; i++) {
     if (noteObjs[i]) {
       if (noteData[i] === 0) {
-        noteObjs[i].style.visibility = "hidden";
+        noteObjs[i].style.opacity = "0";
       } else {
-        noteObjs[i].style.visibility = "visible";
+        noteObjs[i].style.opacity = "1";
       }
     }
   }

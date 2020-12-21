@@ -20,7 +20,7 @@ let chAncestralSlider = null;
 let kickComplexitySlider = null;
 let kickAncestralSlider = null;
 
-let snarePattern = null;
+let snarePattern = "3";
 
 let percOptn1Bars = null;
 let percOptn2Bars = null;
@@ -208,11 +208,23 @@ function scheduleMets() {
 }
 
 function toggleMetronome(elem) {
-  elem.classList.toggle("iconOff");
+  elem.classList.toggle("metOn");
   metroActive = !metroActive;
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
+function toggleSnarePatter(elem) {
+  [].slice.call(elem.children).forEach((e) => e.classList.toggle("selected"));
+
+  if (snarePattern === "3") {
+    snarePattern = "2and4";
+  } else {
+    snarePattern = "3";
+  }
+
+  ShowNotes();
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   display = getById("display");
   divisionDisplay = getById("divDisp");
@@ -227,7 +239,6 @@ document.addEventListener("DOMContentLoaded", function () {
   chAncestralSlider = getById("chAncestral");
   kickComplexitySlider = getById("kickComplexity");
   kickAncestralSlider = getById("kickAncestral");
-  snarePattern = getById("snarePatternSelect");
   percOptn1Bars = getByClass("perc1Bar");
   percOptn2Bars = getByClass("perc2Bar");
 
@@ -272,7 +283,7 @@ function ShowNotes() {
     kickComplexitySlider.value,
     kickAncestralSlider.value
   );
-  snrNoteArr = nm.CalculateSnare(snarePattern.value);
+  snrNoteArr = nm.CalculateSnare(snarePattern);
   percNoteArr = nm.CalculatePerc(perc1Bars, perc2Bars);
   dem.Display(chNoteArr, notes[ch]);
   dem.Display(kickNoteArr, notes[kick]);

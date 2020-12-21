@@ -10,15 +10,15 @@ block content
     #kickModel(style="display: none")= kickModel
 
     .topBar
-        h1= title
+        h1.title= title
 
         .tempoCon
             input.tempoInfo#tempoInput(type="number", value="130", min="1", max="300")
             .bpmSuffix= "bpm"
 
-        i.fas.fa-clock.iconOff#metronomeButton(onclick="toggleMetronome(this);")
+        p.metIcon#metronomeButton(onclick="toggleMetronome(this);")= "1234"
 
-        i.fas.fa-play#playButton
+        i.fas.fa-play.icon#playButton
 
     .displayCon
         .labelCon
@@ -43,7 +43,7 @@ block content
             input#chComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
             h3= "Ancestral Influence"
-            input#chAncestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
+            input#chAncestral.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
         .instrumentPanel.kickPanel
             h2= "Kick"
@@ -52,16 +52,16 @@ block content
             input#kickComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
             h3= "Ancestral Influence"
-            input#kickAncestral.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.001")
+            input#kickAncestral.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
         .instrumentPanel.snarePanel
             h2= "Snare"
 
             h3= "Pattern"
 
-            select#snarePatternSelect.configOption
-                option(value="3")= "on 3"
-                option(value="2and4")= "on 2 and 4"
+            .snareSelect(onclick="toggleSnarePatter(this);")
+                .option.selected.left= "3"
+                .option.right= "2 & 4"
 
         .instrumentPanel.percPanel
             h2= "Perc"

@@ -1,6 +1,8 @@
 :root {
   --panelColor: #222222;
   --dispColor: #131313;
+  --iconColor: #d9d9d9;
+  --iconHoverColor: #3e3e3e;
   --purple: #c47ede;
   --blue: #71bfe3;
 }
@@ -52,6 +54,7 @@ h1, h2, h3 {
   width: 100%;
 }
 /* Display Elements----------------------------------------------------------*/
+
 .displayCon {
   width: 100%;
   height: 150px;
@@ -112,6 +115,7 @@ h1, h2, h3 {
   position: absolute;
   box-shadow: 0 0 5px var(--blue);
   box-sizing: border-box;
+  transition: all 200ms;
 }
 
 .division{
@@ -129,7 +133,13 @@ h1, h2, h3 {
   align-items: center;
   justify-content: space-between;
   background-color: var(--panelColor);
-  padding: 0 10px 0 10px;
+  padding: 0 2vw 0 2vw;
+  height: 60px;
+}
+
+.title {
+  font-size: min(4vw, 35px);
+  margin: 0;
 }
 
 .fas.fa-play, .fas.fa-pause {
@@ -155,6 +165,7 @@ input[type=number] {
 
 .tempoInfo {
   box-shadow: 0 0 4px 1px var(--purple);
+  border-radius: 5px;
 }
 
 .tempoInfo, .bpmSuffix{
@@ -167,17 +178,74 @@ input[type=number] {
   font-weight: 100;
 }
 
-.fas.fa-play, .fas.fa-pause, .fas.fa-clock{
+.icon{
   font-size: 35px;
-  color: #737373;
-  float: right;
+  color: var(--iconColor);
+  text-shadow: 0 0 3px var(--iconColor);
+  transition: all 100ms;
 }
 
-.iconOff{
-  color: #d6d6d6 !important;
+.icon:hover{
+  color: var(--iconHoverColor);
+  text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.icon:active{
+  color: var(--iconColor);
+  text-shadow: 0 0 3px var(--iconColor);
+}
+
+.metIcon{
+  font-size: 4vw;
+  font-style: oblique;
+  font-weight: bolder;
+  cursor: pointer;
+  user-select: none;
+  transition: all 100ms;
+  color: var(--dispColor);
+  text-shadow: 0 0 0 transparent;
+  margin: 0;
+}
+
+.metIcon:hover:not(.metOn){
+  color: var(--iconHoverColor);
+  text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.metOn{
+  color: white;
+  text-shadow: 0 0 3px white;
 }
 
 /* UI Controls-------------------------------------------------------------------- */
+.snareSelect {
+  display: flex;
+  font-size: 6vw;
+  width: 60%;
+  margin: 30px auto 0 auto;
+  box-shadow: 0 0 4px 1px var(--purple);
+  border-radius: 5px;
+}
+
+.option{
+  flex-grow: 1;
+  text-align: center;
+  user-select: none;
+  transition: all 500ms;
+}
+
+.option.left {
+  border-radius: 5px 0 0 5px;
+}
+
+.option.right {
+  border-radius: 0 5px 5px 0;
+}
+
+.option.selected {
+  background-color: var(--purple);
+}
+
 .slider {
   appearance: none;
   width: 100%;
