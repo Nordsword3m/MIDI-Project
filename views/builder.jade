@@ -22,17 +22,17 @@ block content
 
     .displayCon
         .labelCon
-            .instrumentLabel= "ch"
-            .instrumentLabel= "snr"
             .instrumentLabel= "kick"
+            .instrumentLabel= "snr"
+            .instrumentLabel= "ch"
             .instrumentLabel= "perc"
         .display#display
             .playHead#playHead
             .divDisp#divDisp
             .instrumentCon
-                .instrumentDisp#hihatDisp
-                .instrumentDisp#snareDisp
                 .instrumentDisp#kickDisp
+                .instrumentDisp#snareDisp
+                .instrumentDisp#hihatDisp
                 .instrumentDisp#percDisp
 
     .configPanel
@@ -59,31 +59,33 @@ block content
 
             h3= "Pattern"
 
-            .snareSelect(onclick="toggleSnarePatter(this);")
-                .option.selected.left= "3"
-                .option.right= "2 & 4"
+            .snareSelect(onclick="toggleSnarePattern(this);")
+                .option.selected= "3"
+                .option= "2 & 4"
 
         .instrumentPanel.percPanel
             h2= "Perc"
 
-            h3= "Option 1"
+            h3= "Position 1"
 
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
-            input.perc1Bar.configOption(type="checkbox")
+            .barSelectCon
+                .barOption(onclick="barSelect(0, 1, this);")= "1"
+                .barOption(onclick="barSelect(1, 1, this);")= "2"
+                .barOption(onclick="barSelect(2, 1, this);")= "3"
+                .barOption(onclick="barSelect(3, 1, this);")= "4"
+                .barOption(onclick="barSelect(4, 1, this);")= "5"
+                .barOption(onclick="barSelect(5, 1, this);")= "6"
+                .barOption(onclick="barSelect(6, 1, this);")= "7"
+                .barOption(onclick="barSelect(7, 1, this);")= "8"
 
-            h3= "Option 2"
+            h3= "Position 2"
 
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
-            input.perc2Bar.configOption(type="checkbox")
+            .barSelectCon
+                .barOption(onclick="barSelect(0, 2, this);")= "1"
+                .barOption(onclick="barSelect(1, 2, this);")= "2"
+                .barOption(onclick="barSelect(2, 2, this);")= "3"
+                .barOption(onclick="barSelect(3, 2, this);")= "4"
+                .barOption(onclick="barSelect(4, 2, this);")= "5"
+                .barOption(onclick="barSelect(5, 2, this);")= "6"
+                .barOption(onclick="barSelect(6, 2, this);")= "7"
+                .barOption(onclick="barSelect(7, 2, this);")= "8"

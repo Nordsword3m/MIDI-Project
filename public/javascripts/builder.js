@@ -22,8 +22,7 @@ let kickAncestralSlider = null;
 
 let snarePattern = "3";
 
-let percOptn1Bars = null;
-let percOptn2Bars = null;
+let percBars = new Array(2).fill(0).map((i) => new Array(8).fill(false));
 
 let playHead = null;
 let tempoInfo = null;
@@ -38,7 +37,6 @@ let relPlayPos = 0;
 let loopStart = 0;
 
 let playTimerID; // Keeps track of the "Playing" routine
-let playStart = 0;
 
 let playing = false;
 
@@ -213,7 +211,15 @@ function toggleMetronome(elem) {
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
-function toggleSnarePatter(elem) {
+function barSelect(bar, perc, elem) {
+  elem.classList.toggle("selected");
+
+  percBars[perc - 1][bar] = !percBars[perc - 1][bar];
+
+  ShowNotes();
+}
+
+function toggleSnarePattern(elem) {
   [].slice.call(elem.children).forEach((e) => e.classList.toggle("selected"));
 
   if (snarePattern === "3") {
@@ -239,8 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
   chAncestralSlider = getById("chAncestral");
   kickComplexitySlider = getById("kickComplexity");
   kickAncestralSlider = getById("kickAncestral");
-  percOptn1Bars = getByClass("perc1Bar");
-  percOptn2Bars = getByClass("perc2Bar");
 
   tempoInfo = getById("tempoInput");
 
@@ -270,21 +274,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function ShowNotes() {
-  let perc1Bars = [];
-  let perc2Bars = [];
-
-  for (let i = 0; i < 8; i++) {
-    perc1Bars.push(percOptn1Bars[i].checked);
-    perc2Bars.push(percOptn2Bars[i].checked);
-  }
-
   chNoteArr = nm.CalculateCh(chComplexitySlider.value, chAncestralSlider.value);
   kickNoteArr = nm.CalculateKick(
     kickComplexitySlider.value,
     kickAncestralSlider.value
   );
   snrNoteArr = nm.CalculateSnare(snarePattern);
-  percNoteArr = nm.CalculatePerc(perc1Bars, perc2Bars);
+  percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
   dem.Display(chNoteArr, notes[ch]);
   dem.Display(kickNoteArr, notes[kick]);
   dem.Display(snrNoteArr, notes[snr]);

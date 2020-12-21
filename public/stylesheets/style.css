@@ -5,6 +5,7 @@
   --iconHoverColor: #3e3e3e;
   --purple: #c47ede;
   --blue: #71bfe3;
+  --orange: #d98931;
 }
 
 body {
@@ -21,18 +22,18 @@ h1, h2, h3 {
 
 /* Config panel stuff--------------------------------------------------------------*/
 .hihatPanel {
-  grid-column: 1 / 2;
+  grid-column: 2 / 3;
   grid-row: 1 / 2;
 }
 
 .kickPanel {
    grid-column: 1 / 2;
-   grid-row: 2 / 3;
+   grid-row: 1 / 2;
  }
 
 .snarePanel {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
 }
 
 .percPanel {
@@ -49,7 +50,7 @@ h1, h2, h3 {
   display: grid;
   gap: 10px 10px;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto auto;
   margin-top: 10px;
   width: 100%;
 }
@@ -218,10 +219,45 @@ input[type=number] {
 }
 
 /* UI Controls-------------------------------------------------------------------- */
+.barSelectCon {
+  display: flex;
+  box-shadow: 0 0 4px 1px var(--orange);
+  border-radius: 5px;
+  justify-content: space-around;
+  height: 2em;
+}
+
+.barOption {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 2vw;
+  transition: all 500ms;
+  padding: 5px;
+  user-select: none;
+  cursor: pointer;
+  box-shadow: 0 0 4px 1px var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.barOption.selected {
+  background-color: var(--orange);
+}
+
+.barOption:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.barOption:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
 .snareSelect {
   display: flex;
-  font-size: 6vw;
-  width: 60%;
+  font-size: 4vw;
+  width: 80%;
+  height: 3ch;
   margin: 30px auto 0 auto;
   box-shadow: 0 0 4px 1px var(--purple);
   border-radius: 5px;
@@ -232,13 +268,18 @@ input[type=number] {
   text-align: center;
   user-select: none;
   transition: all 500ms;
+  cursor: pointer;
+  box-shadow: 0 0 4px 1px var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.option.left {
+.option:first-child {
   border-radius: 5px 0 0 5px;
 }
 
-.option.right {
+.option:last-child {
   border-radius: 0 5px 5px 0;
 }
 
