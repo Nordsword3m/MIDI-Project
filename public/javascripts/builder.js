@@ -68,6 +68,34 @@ let am = new AudioManager(["m1", "m2", "ch", "snr", "perc", "kick"]);
 let nm = new NoteManager();
 let dem = new DisplayElementManager();
 
+//Mute/Solo variables
+let mutes = new Array(4).fill(false);
+let solos = new Array(4).fill(false);
+
+// MUTE / SOLO OPERATIONS-------------------------------------------------------------------------------------------------------
+function toggleMute(inst, elem) {
+  elem.classList.toggle("selected");
+  mutes[inst] = !mutes[inst];
+
+  let soloButton = elem.parentElement.getElementsByClassName("soloButton")[0];
+  soloButton.classList.remove("selected");
+}
+
+function toggleSolo(inst, elem) {
+  elem.classList.toggle("selected");
+  solos[inst] = !solos[inst];
+
+  let muteButton = elem.parentElement.getElementsByClassName("muteButton")[0];
+  muteButton.classList.remove("selected");
+}
+
+function soloPresent() {
+  let res = false;
+
+  solos.forEach((x) => (res ||= x));
+
+  return res;
+}
 // PLAY PROCESSING-------------------------------------------------------------------------
 function Playing() {
   // Playing routine, run as frequently as possible
@@ -124,8 +152,6 @@ function setPlayPos(pos) {
   playPos = pos;
   relPlayPos += posDelta;
 
-  //console.log(relPlayPos);
-
   if (relPlayPos >= 1) {
     while (relPlayPos >= 1) {
       relPlayPos--;
@@ -171,19 +197,27 @@ function scheduleNotes() {
     const step = relNextChunk * 256 + i;
 
     if (chNoteArr[step] > 0) {
-      playSound("ch", step * stepLength);
+      if (!mutes[ch] && (!soloPresent() || solos[ch])) {
+        playSound("ch", step * stepLength);
+      }
     }
 
     if (kickNoteArr[step] > 0) {
-      playSound("kick", step * stepLength);
+      if (!mutes[kick] && (!soloPresent() || solos[kick])) {
+        playSound("kick", step * stepLength);
+      }
     }
 
     if (snrNoteArr[step] > 0) {
-      playSound("snr", step * stepLength);
+      if (!mutes[snr] && (!soloPresent() || solos[snr])) {
+        playSound("snr", step * stepLength);
+      }
     }
 
     if (percNoteArr[step] > 0) {
-      playSound("perc", step * stepLength);
+      if (!mutes[perc] && (!soloPresent() || solos[perc])) {
+        playSound("perc", step * stepLength);
+      }
     }
   }
 }

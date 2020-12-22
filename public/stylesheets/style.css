@@ -5,7 +5,9 @@
   --iconHoverColor: #3e3e3e;
   --purple: #c47ede;
   --blue: #71bfe3;
-  --orange: #d98931;
+  --darkblue: #409ddb;
+  --orange: #e38929;
+  --red: #e23f3f;
 }
 
 body {
@@ -21,6 +23,54 @@ h1, h2, h3 {
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
+.muteSoloSwitch {
+  display: flex;
+  width: 10vw;
+  position: absolute;
+  top: 25px;
+  right: 5%;
+  border-radius: 5px;
+  box-shadow: 0 0 4px 1px white;
+}
+
+.muteSoloSwitch > * {
+  font-size: 2vw;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 5px 0 5px 0;
+  user-select: none;
+  cursor: pointer;
+}
+
+.muteButton {
+  border-radius: 5px 0 0 5px;
+}
+
+.muteButton.selected {
+  background-color: var(--red);
+  box-shadow: 0 0 4px 1px var(--red);
+}
+
+.muteButton:hover:not(.selected){
+  box-shadow: 0 0 4px 1px var(--red);
+}
+
+.soloButton {
+  border-radius: 0 5px 5px 0;
+}
+
+.soloButton.selected {
+  background-color: var(--darkblue);
+  box-shadow: 0 0 4px 1px var(--darkblue);
+}
+
+.soloButton:hover:not(.selected){
+  box-shadow: 0 0 4px 1px var(--darkblue);
+}
+
 .hihatPanel {
   grid-column: 2 / 3;
   grid-row: 1 / 2;
@@ -44,6 +94,7 @@ h1, h2, h3 {
 .instrumentPanel {
   background-color: var(--panelColor);
   padding: 20px;
+  position: relative;
 }
 
 .configPanel {
@@ -235,7 +286,6 @@ input[type=number] {
   padding: 5px;
   user-select: none;
   cursor: pointer;
-  box-shadow: 0 0 4px 1px var(--orange);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,6 +293,11 @@ input[type=number] {
 
 .barOption.selected {
   background-color: var(--orange);
+  box-shadow: 0 0 4px 1px var(--orange);
+}
+
+.barOption:hover:not(.selected) {
+  box-shadow: 0 0 4px 1px var(--orange);
 }
 
 .barOption:first-child {
