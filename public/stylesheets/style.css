@@ -160,7 +160,7 @@ h1, h2, h3 {
   box-shadow: 0 0 2px white;
 }
 
-.note{
+.note {
   background-color: var(--blue);
   width: calc(60% / 256);
   height: 100%;
@@ -168,6 +168,16 @@ h1, h2, h3 {
   box-shadow: 0 0 5px var(--blue);
   box-sizing: border-box;
   transition: all 200ms;
+  opacity: 0;
+}
+
+.note.visible {
+  opacity: 1;
+}
+
+.note.ghost {
+  background-color: var(--orange);
+  box-shadow: 0 0 5px var(--orange);
 }
 
 .division{
@@ -275,7 +285,7 @@ input[type=number] {
   box-shadow: 0 0 4px 1px var(--orange);
   border-radius: 5px;
   justify-content: space-around;
-  height: 2em;
+  height: auto;
 }
 
 .barOption {
@@ -283,12 +293,12 @@ input[type=number] {
   text-align: center;
   font-size: 2vw;
   transition: all 500ms;
-  padding: 5px;
   user-select: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 5px;
 }
 
 .barOption.selected {

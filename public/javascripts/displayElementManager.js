@@ -63,11 +63,11 @@ DisplayElementManager.prototype.CreateNote = function (id, type, disp) {
 
 DisplayElementManager.prototype.Display = function (noteData, noteObjs) {
   for (let i = 0; i < 256; i++) {
-    if (noteObjs[i]) {
+    if (noteObjs[i] && !noteObjs[i].classList.contains("ghost")) {
       if (noteData[i] === 0) {
-        noteObjs[i].style.opacity = "0";
+        noteObjs[i].classList.remove("visible");
       } else {
-        noteObjs[i].style.opacity = "1";
+        noteObjs[i].classList.add("visible");
       }
     }
   }

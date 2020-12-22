@@ -76,6 +76,7 @@ let solos = new Array(4).fill(false);
 function toggleMute(inst, elem) {
   elem.classList.toggle("selected");
   mutes[inst] = !mutes[inst];
+  solos[inst] = false;
 
   let soloButton = elem.parentElement.getElementsByClassName("soloButton")[0];
   soloButton.classList.remove("selected");
@@ -84,6 +85,7 @@ function toggleMute(inst, elem) {
 function toggleSolo(inst, elem) {
   elem.classList.toggle("selected");
   solos[inst] = !solos[inst];
+  mutes[inst] = false;
 
   let muteButton = elem.parentElement.getElementsByClassName("muteButton")[0];
   muteButton.classList.remove("selected");
@@ -97,6 +99,12 @@ function soloPresent() {
   return res;
 }
 // PLAY PROCESSING-------------------------------------------------------------------------
+document.onkeyup = function (e) {
+  if (e.key === " ") {
+    TogglePlaying(0, !playing).then();
+  }
+};
+
 function Playing() {
   // Playing routine, run as frequently as possible
   let timeDelta = am.curTime() - prevPlayTime;
@@ -245,10 +253,32 @@ function toggleMetronome(elem) {
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
-function barSelect(bar, perc, elem) {
+function showPercGhostNote(elem, show) {
+  let offset = elem.dataset.perc === "1" ? 4 : 28;
+  let id = elem.dataset.bar * 256 * barLength + offset;
+  let note = getById("percNote" + id);
+
+  if (show) {
+    note.classList.add("ghost");
+  } else {
+    note.classList.remove("ghost");
+  }
+
+  if (percNoteArr[id] === 0) {
+    if (show) {
+      note.classList.add("visible");
+    } else {
+      note.classList.remove("visible");
+    }
+  }
+}
+
+function barSelect(elem) {
   elem.classList.toggle("selected");
 
-  percBars[perc - 1][bar] = !percBars[perc - 1][bar];
+  percBars[elem.dataset.perc - 1][elem.dataset.bar] = !percBars[
+    elem.dataset.perc - 1
+  ][elem.dataset.bar];
 
   ShowNotes();
 }
@@ -304,6 +334,18 @@ document.addEventListener("DOMContentLoaded", function () {
   let optns = document.getElementsByClassName("configOption");
   for (let i = 0; i < optns.length; i++) {
     optns[i].addEventListener("input", () => ShowNotes());
+  }
+
+  let percSelects = getByClass("barOption");
+
+  for (let i = 0; i < percSelects.length; i++) {
+    percSelects[i].addEventListener("click", () => barSelect(percSelects[i]));
+    percSelects[i].addEventListener("mouseover", () =>
+      showPercGhostNote(percSelects[i], true)
+    );
+    percSelects[i].addEventListener("mouseleave", () =>
+      showPercGhostNote(percSelects[i], false)
+    );
   }
 });
 
