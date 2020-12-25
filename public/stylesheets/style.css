@@ -44,6 +44,10 @@ h1, h2, h3 {
   cursor: pointer;
 }
 
+.soundUpload:hover {
+  box-shadow: 0 0 4px 1px var(--orange);
+}
+
 .muteSoloSwitch {
   display: flex;
   width: 10vw;

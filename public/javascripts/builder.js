@@ -76,6 +76,14 @@ let solos = new Array(4).fill(false);
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
 
+async function browseUpload(name, file, elem) {
+  if (file.type.includes("audio")) {
+    elem.parentElement.children[0].textContent =
+      file.name.slice(0, file.name.lastIndexOf(".")).slice(0, 7) + "...";
+    await am.ReplaceBuffer(name, file);
+  }
+}
+
 async function dragUpload(ev, inst) {
   ev.preventDefault();
 
