@@ -5,6 +5,14 @@ function AudioManager(audioList) {
   this.contextCreated = 0;
 }
 
+AudioManager.prototype.ReplaceBuffer = async function (name, file) {
+  await this.timeContext.decodeAudioData(
+    await file.arrayBuffer(),
+    (buffer) => (this.buffers[this.audioList.indexOf(name)] = buffer),
+    () => console.log("failed")
+  );
+};
+
 AudioManager.prototype.curTime = function () {
   return this.timeContext.currentTime;
 };
@@ -16,19 +24,21 @@ AudioManager.prototype.ClearContext = function () {
   }
 };
 
-AudioManager.prototype.NewContext = async function () {
-  this.context = new AudioContext();
-  this.contextCreated = this.timeContext.currentTime;
-
+AudioManager.prototype.SetDefaultBuffers = async function () {
   let audio = this.audioList.map((x) => x + ".wav");
 
   let bl = new BufferLoader(
-    this.context,
+    this.timeContext,
     audio,
     (bufferList) => (this.buffers = bufferList)
   );
 
   await bl.load();
+};
+
+AudioManager.prototype.NewContext = async function () {
+  this.context = new AudioContext();
+  this.contextCreated = this.timeContext.currentTime;
 };
 
 AudioManager.prototype.play = function (name, pos, relPlayPos, tempo) {

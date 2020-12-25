@@ -23,12 +23,30 @@ h1, h2, h3 {
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
+.instrumentInfo {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  justify-content: space-between;
+}
+
+.soundUpload {
+  box-shadow: 0 0 4px 1px white;
+  border-radius: 5px;
+  padding: 5px;
+  width: 25%;
+  font-size: 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+}
+
 .muteSoloSwitch {
   display: flex;
   width: 10vw;
-  position: absolute;
-  top: 25px;
-  right: 5%;
   border-radius: 5px;
   box-shadow: 0 0 4px 1px white;
 }
@@ -39,7 +57,6 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
   padding: 5px 0 5px 0;
   user-select: none;
   cursor: pointer;

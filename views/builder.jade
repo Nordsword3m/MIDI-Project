@@ -37,7 +37,14 @@ block content
 
     .configPanel
         .instrumentPanel.kickPanel
-            h2= "Kick"
+            .instrumentInfo
+                h2= "Kick"
+
+                .soundUpload(ondrop="soundUpload(event, 'kick');", ondragover="dragOverHandler(event);")= "Upload"
+
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(kick, this);")= "M"
+                    .soloButton(onclick="toggleSolo(kick, this);")= "S"
 
             h3= "Complexity"
             input#kickComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
@@ -45,25 +52,31 @@ block content
             h3= "Ancestral Influence"
             input#kickAncestral.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
 
-            .muteSoloSwitch
-                .muteButton(onclick="toggleMute(kick, this);")= "M"
-                .soloButton(onclick="toggleSolo(kick, this);")= "S"
-
         .instrumentPanel.hihatPanel
+            .instrumentInfo
                 h2= "Hihat"
 
-                h3= "Complexity"
-                input#chComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
-
-                h3= "Ancestral Influence"
-                input#chAncestral.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
+                .soundUpload(ondrop="soundUpload(event, 'ch');", ondragover="dragOverHandler(event);")= "Upload"
 
                 .muteSoloSwitch
                     .muteButton(onclick="toggleMute(ch, this);")= "M"
                     .soloButton(onclick="toggleSolo(ch, this);")= "S"
 
+            h3= "Complexity"
+            input#chComplexity.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
+
+            h3= "Ancestral Influence"
+            input#chAncestral.slider.configOption(type="range", min="0.001", max="1", value="0.5", step="0.001")
+
         .instrumentPanel.snarePanel
-            h2= "Snare"
+            .instrumentInfo
+                h2= "Snare"
+
+                .soundUpload(ondrop="soundUpload(event, 'snr');", ondragover="dragOverHandler(event);")= "Upload"
+
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(snr, this);")= "M"
+                    .soloButton(onclick="toggleSolo(snr, this);")= "S"
 
             h3= "Pattern"
 
@@ -71,12 +84,15 @@ block content
                 .option.selected= "3"
                 .option= "2 & 4"
 
-            .muteSoloSwitch
-                .muteButton(onclick="toggleMute(snr, this);")= "M"
-                .soloButton(onclick="toggleSolo(snr, this);")= "S"
-
         .instrumentPanel.percPanel
-            h2= "Perc"
+            .instrumentInfo
+                h2= "Perc"
+
+                .soundUpload(ondrop="soundUpload(event, 'perc');", ondragover="dragOverHandler(event);")= "Upload"
+
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(perc, this);")= "M"
+                    .soloButton(onclick="toggleSolo(perc, this);")= "S"
 
             h3= "Position 1"
 
@@ -101,8 +117,3 @@ block content
                 .barOption(data-bar= 5, data-perc= 2)= "6"
                 .barOption(data-bar= 6, data-perc= 2)= "7"
                 .barOption(data-bar= 7, data-perc= 2)= "8"
-
-
-                .muteSoloSwitch
-                    .muteButton(onclick="toggleMute(perc, this);")= "M"
-                    .soloButton(onclick="toggleSolo(perc, this);")= "S"

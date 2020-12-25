@@ -22,7 +22,7 @@ let kickAncestralSlider = null;
 
 let snarePattern = "3";
 
-let percBars = new Array(2).fill(0).map((i) => new Array(8).fill(false));
+let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
 
 let playHead = null;
 let tempoInfo = null;
@@ -64,13 +64,33 @@ const perc = 3;
 //State variables
 let metroActive = false;
 
-let am = new AudioManager(["m1", "m2", "ch", "snr", "perc", "kick"]);
+let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc"]);
+am.SetDefaultBuffers().then();
+
 let nm = new NoteManager();
 let dem = new DisplayElementManager();
 
 //Mute/Solo variables
 let mutes = new Array(4).fill(false);
 let solos = new Array(4).fill(false);
+
+// SOUND UPLOAD STUFF---------------------------------------------------------------------------
+
+async function soundUpload(ev, inst) {
+  ev.preventDefault();
+
+  let item = ev.dataTransfer.items[0];
+
+  if (item) {
+    if (item.kind === "file" && item.type.includes("audio")) {
+      await am.ReplaceBuffer(inst, item.getAsFile());
+    }
+  }
+}
+
+function dragOverHandler(ev) {
+  ev.preventDefault();
+}
 
 // MUTE / SOLO OPERATIONS-------------------------------------------------------------------------------------------------------
 function toggleMute(inst, elem) {
