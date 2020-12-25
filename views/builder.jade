@@ -40,7 +40,8 @@ block content
             .instrumentInfo
                 h2= "Kick"
 
-                .soundUpload(ondrop="soundUpload(event, 'kick');", ondragover="dragOverHandler(event);")= "Upload"
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="dragUpload(event, 'kick');", ondragover="dragOverHandler(event);")= "Upload"
+                    input.fileUpload(onchange="am.ReplaceBuffer('kick', this.files[0]);", type="file", style="display: none")
 
                 .muteSoloSwitch
                     .muteButton(onclick="toggleMute(kick, this);")= "M"
@@ -56,7 +57,8 @@ block content
             .instrumentInfo
                 h2= "Hihat"
 
-                .soundUpload(ondrop="soundUpload(event, 'ch');", ondragover="dragOverHandler(event);")= "Upload"
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'ch');", ondragover="dragOverHandler(event);")= "Upload"
+                    input.fileUpload(onchange="am.ReplaceBuffer('ch', this.files[0]);", type="file", style="display: none")
 
                 .muteSoloSwitch
                     .muteButton(onclick="toggleMute(ch, this);")= "M"
@@ -72,7 +74,8 @@ block content
             .instrumentInfo
                 h2= "Snare"
 
-                .soundUpload(ondrop="soundUpload(event, 'snr');", ondragover="dragOverHandler(event);")= "Upload"
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'snr');", ondragover="dragOverHandler(event);")= "Upload"
+                  input.fileUpload(onchange="am.ReplaceBuffer('snr', this.files[0]);", type="file", style="display: none")
 
                 .muteSoloSwitch
                     .muteButton(onclick="toggleMute(snr, this);")= "M"
@@ -88,7 +91,8 @@ block content
             .instrumentInfo
                 h2= "Perc"
 
-                .soundUpload(ondrop="soundUpload(event, 'perc');", ondragover="dragOverHandler(event);")= "Upload"
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'perc');", ondragover="dragOverHandler(event);")= "Upload"
+                    input.fileUpload(onchange="am.ReplaceBuffer('perc', this.files[0]);", type="file", style="display: none")
 
                 .muteSoloSwitch
                     .muteButton(onclick="toggleMute(perc, this);")= "M"

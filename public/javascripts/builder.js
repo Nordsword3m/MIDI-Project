@@ -76,7 +76,7 @@ let solos = new Array(4).fill(false);
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
 
-async function soundUpload(ev, inst) {
+async function dragUpload(ev, inst) {
   ev.preventDefault();
 
   let item = ev.dataTransfer.items[0];
