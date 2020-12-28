@@ -74,8 +74,17 @@ let dem = new DisplayElementManager();
 let mutes = new Array(4).fill(false);
 let solos = new Array(4).fill(false);
 
-// SOUND UPLOAD STUFF---------------------------------------------------------------------------
+//Region control variables
+let kickRegionsOn = false;
+let chRegionsOn = false;
 
+// REGION CONTROLS------------------------------------------------------------------------
+function toggleRegionControls(elem, inst) {
+  elem.classList.toggle("selected");
+  getById(inst + "RegionControls").classList.toggle("enabled");
+}
+
+// SOUND UPLOAD STUFF---------------------------------------------------------------------------
 async function browseUpload(name, file, elem) {
   if (file.type.includes("audio")) {
     elem.parentElement.children[0].textContent =
