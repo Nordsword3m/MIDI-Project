@@ -78,10 +78,43 @@ let solos = new Array(4).fill(false);
 let kickRegionsOn = false;
 let chRegionsOn = false;
 
+let curRegion = 0;
+
 // REGION CONTROLS------------------------------------------------------------------------
+function selctRegion(elem) {
+  getByClass("regionSelection")[curRegion].classList.remove("selected");
+
+  if (curRegion === elem.dataset.bar) {
+    getById("regionHighlight").style.opacity = "0";
+  } else {
+    elem.classList.add("selected");
+
+    curRegion = elem.dataset.bar;
+
+    let regHighlight = getById("regionHighlight");
+    regHighlight.style.opacity = "1";
+    regHighlight.style.left = barLength * elem.dataset.bar * 100 + "%";
+  }
+}
+
 function toggleRegionControls(elem, inst) {
   elem.classList.toggle("selected");
-  getById(inst + "RegionControls").classList.toggle("enabled");
+  getById("regionSelect").classList.toggle("enabled");
+
+  if (inst === "kick") {
+    kickRegionsOn = !kickRegionsOn;
+  } else if (inst === "ch") {
+    chRegionsOn = !chRegionsOn;
+  }
+
+  if (kickRegionsOn || chRegionsOn) {
+    getById("regionSelect").classList.add("enabled");
+  } else {
+    getById("regionSelect").classList.remove("enabled");
+
+    getById("regionHighlight").style.opacity = "0";
+    getByClass("regionSelection")[curRegion].classList.remove("selected");
+  }
 }
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
@@ -383,6 +416,12 @@ document.addEventListener("DOMContentLoaded", function () {
     percSelects[i].addEventListener("mouseleave", () =>
       showPercGhostNote(percSelects[i], false)
     );
+  }
+
+  let regSelects = getByClass("regionSelection");
+
+  for (let i = 0; i < regSelects.length; i++) {
+    regSelects[i].addEventListener("click", () => selctRegion(regSelects[i]));
   }
 });
 

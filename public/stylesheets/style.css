@@ -7,6 +7,7 @@
   --blue: #71bfe3;
   --darkblue: #409ddb;
   --orange: #e38929;
+  --green: #7dd06a;
   --red: #e23f3f;
 }
 
@@ -23,6 +24,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100vw;
 }
 
 h1, h2, h3 {
@@ -30,47 +32,12 @@ h1, h2, h3 {
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
-.mainPanel {
-  flex-grow: 1;
-}
-
 .instrumentPanel {
   background-color: var(--panelColor);
   padding: 20px;
   position: relative;
   display: flex;
-  flex-direction: row;
-}
-
-.regionControls {
   flex-direction: column;
-  box-shadow: 0 0 4px 1px var(--orange);
-  border-radius: 5px;
-  display: flex;
-  transition: all 200ms;
-  opacity: 0;
-  width: 10%;
-  margin: -5%;
-}
-
-.regionControls.enabled{
-  opacity: 1;
-  margin: 0 0 0 5%;
-}
-
-.regionOption {
-  width: 100%;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 200ms;
-  cursor: pointer;
-  user-select: none;
-}
-
-.regionOption:hover{
-  box-shadow: 0 0 4px 1px var(--orange);
 }
 
 .regionButton {
@@ -78,7 +45,7 @@ h1, h2, h3 {
   border-radius: 5px;
   padding: 5px;
   width: 5%;
-  font-size: 2vw;
+  font-size: 2vmin;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,7 +76,7 @@ h1, h2, h3 {
   border-radius: 5px;
   padding: 5px;
   width: 25%;
-  font-size: 2vw;
+  font-size: 2vmin;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,7 +97,7 @@ h1, h2, h3 {
 }
 
 .muteSoloSwitch > * {
-  font-size: 2vw;
+  font-size: 2vmin;
   flex-grow: 1;
   display: flex;
   align-items: center;
@@ -189,26 +156,71 @@ h1, h2, h3 {
 
 .configPanel {
   display: grid;
-  gap: 10px 10px;
+  gap: 7px 7px;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 7px;
+  margin-bottom: 7px;
   width: 100%;
   flex-grow: 1;
 }
 /* Display Elements----------------------------------------------------------*/
+.regionSelect {
+  background-color: var(--dispColor);
+  width: 100%;
+  height: 0;
+  margin-top: 0;
+  transition: all 200ms;
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  flex-direction: row;
+}
+
+.regionSelect.enabled{
+  height: 40px;
+  margin-top: 7px;
+}
+
+.regionSelection {
+  width: 12.5%;
+  height: 100%;
+  border-left: 1px solid #a9a9a9;
+  border-right: 1px solid #a9a9a9;
+  transition: all 400ms;
+}
+
+.regionSelection.selected {
+  background-color: var(--orange);
+  box-shadow: 0 0 8px 2px var(--orange);
+}
+
+.regionSelection:hover {
+  background-color: var(--orange);
+  box-shadow: 0 0 8px 2px var(--orange);
+}
+
+.mainDisp {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
 .displayCon {
   width: 100%;
-  height: 150px;
-  display: flex;
-  margin-top: 10px;
+  display: grid;
+  gap: 0 7px;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 150px auto;
+  margin-top: 7px;
 }
 
 .labelCon {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
 }
 
 .instrumentCon {
@@ -216,6 +228,22 @@ h1, h2, h3 {
   height: 100%;
   z-index: 5;
   position: absolute;
+}
+
+.regionHighlight {
+  width: 12.5%;
+  height: 100%;
+  position: absolute;
+  z-index: 20;
+  background-color: transparent;
+  box-shadow: 0 0 8px 2px var(--orange);
+  left: 50%;
+  opacity: 0;
+  transition: all 400ms;
+}
+
+.regionHighlight.enabled {
+  opacity: 1;
 }
 
 .instrumentDisp {
@@ -226,7 +254,7 @@ h1, h2, h3 {
 .divDisp{
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 3;
   position: relative;
 }
 
@@ -234,9 +262,10 @@ h1, h2, h3 {
   width: 100%;
   height: 100%;
   background-color: var(--dispColor);
-  box-shadow: 0 0 10px var(--dispColor);
   display:flex;
   position: relative;
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
 }
 
 .playHead{
@@ -258,7 +287,7 @@ h1, h2, h3 {
   position: absolute;
   box-shadow: 0 0 5px var(--blue);
   box-sizing: border-box;
-  transition: all 200ms;
+  transition: all 400ms;
   opacity: 0;
 }
 
@@ -267,8 +296,8 @@ h1, h2, h3 {
 }
 
 .note.ghost {
-  background-color: var(--orange);
-  box-shadow: 0 0 5px var(--orange);
+  background-color: var(--green);
+  box-shadow: 0 0 5px var(--green);
 }
 
 .division{
@@ -291,7 +320,7 @@ h1, h2, h3 {
 }
 
 .title {
-  font-size: min(4vw, 35px);
+  font-size: min(4vmin, 35px);
   margin: 0;
 }
 
@@ -349,7 +378,7 @@ input[type=number] {
 }
 
 .metIcon{
-  font-size: 4vw;
+  font-size: 4vmin;
   font-style: oblique;
   font-weight: bolder;
   cursor: pointer;
@@ -373,7 +402,7 @@ input[type=number] {
 /* UI Controls-------------------------------------------------------------------- */
 .barSelectCon {
   display: flex;
-  box-shadow: 0 0 4px 1px var(--orange);
+  box-shadow: 0 0 4px 1px var(--green);
   border-radius: 5px;
   justify-content: space-around;
   height: auto;
@@ -382,7 +411,7 @@ input[type=number] {
 .barOption {
   flex-grow: 1;
   text-align: center;
-  font-size: 2vw;
+  font-size: 2vmin;
   transition: all 500ms;
   user-select: none;
   cursor: pointer;
@@ -393,12 +422,12 @@ input[type=number] {
 }
 
 .barOption.selected {
-  background-color: var(--orange);
-  box-shadow: 0 0 4px 1px var(--orange);
+  background-color: var(--green);
+  box-shadow: 0 0 4px 1px var(--green);
 }
 
 .barOption:hover:not(.selected) {
-  box-shadow: 0 0 4px 1px var(--orange);
+  box-shadow: 0 0 4px 1px var(--green);
 }
 
 .barOption:first-child {
@@ -411,7 +440,7 @@ input[type=number] {
 
 .snareSelect {
   display: flex;
-  font-size: 4vw;
+  font-size: 4vmin;
   width: 80%;
   height: 3ch;
   margin: 30px auto 0 auto;
@@ -447,8 +476,8 @@ input[type=number] {
   appearance: none;
   width: 100%;
   height: 2px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 7px;
+  margin-bottom: 7px;
   background: var(--purple);
   box-shadow: 0 0 5px 1px var(--purple);
   transition: all 200ms;
