@@ -32,7 +32,10 @@ function GenerateModel(beats) {
           if (beats[beat][div] > 0) {
             ancestralProbability[div][i]++;
           } else {
-            ancestralProbability[div][i]--;
+            ancestralProbability[div][i] = Math.max(
+              0,
+              ancestralProbability[div][i] - 1
+            );
           }
         }
       }

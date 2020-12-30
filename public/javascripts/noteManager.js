@@ -23,7 +23,11 @@ NoteManager.prototype.CalculatePerc = function (optn1Bars, optn2Bars) {
   return noteArr;
 };
 
-NoteManager.prototype.CalculateCh = function (complexity, ancestral) {
+function toRegion(pos) {
+  return Math.floor(pos / (256 / 8));
+}
+
+NoteManager.prototype.CalculateCh = function (regions) {
   let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {
@@ -47,9 +51,10 @@ NoteManager.prototype.CalculateCh = function (complexity, ancestral) {
       ancestralValue = chModel.positional[i];
     }
 
-    trueValue += (ancestralValue - chModel.positional[i]) * ancestral;
+    trueValue +=
+      (ancestralValue - chModel.positional[i]) * regions[toRegion(i)].ancestral;
 
-    if (trueValue >= 1 - complexity) {
+    if (trueValue >= 1 - regions[toRegion(i)].complexity) {
       noteArr[i] = 60;
     } else {
       noteArr[i] = 0;
@@ -58,7 +63,7 @@ NoteManager.prototype.CalculateCh = function (complexity, ancestral) {
   return noteArr;
 };
 
-NoteManager.prototype.CalculateKick = function (complexity, ancestral) {
+NoteManager.prototype.CalculateKick = function (regions) {
   let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {
@@ -82,9 +87,11 @@ NoteManager.prototype.CalculateKick = function (complexity, ancestral) {
       ancestralValue = kickModel.positional[i];
     }
 
-    trueValue += (ancestralValue - kickModel.positional[i]) * ancestral;
+    trueValue +=
+      (ancestralValue - kickModel.positional[i]) *
+      regions[toRegion(i)].ancestral;
 
-    if (trueValue >= 1 - complexity) {
+    if (trueValue >= 1 - regions[toRegion(i)].complexity) {
       noteArr[i] = 60;
     } else {
       noteArr[i] = 0;

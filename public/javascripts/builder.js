@@ -80,26 +80,67 @@ let chRegionsOn = false;
 
 let curRegion = 0;
 
+class regionInfo {
+  constructor(complexity, ancestral) {
+    this.complexity = complexity;
+    this.ancestral = ancestral;
+  }
+}
+
+let kickRegions = new Array(8);
+let chRegions = new Array(8);
+
+for (let i = 0; i < 8; i++) {
+  kickRegions[i] = new regionInfo(0, 0);
+  chRegions[i] = new regionInfo(0, 0);
+}
+
 // REGION CONTROLS------------------------------------------------------------------------
+function processRegions() {
+  if (chRegionsOn) {
+    chRegions[curRegion].complexity = chComplexitySlider.value;
+    chRegions[curRegion].ancestral = chAncestralSlider.value;
+  } else {
+    chRegions.forEach(function (r) {
+      r.complexity = chComplexitySlider.value;
+      r.ancestral = chAncestralSlider.value;
+    });
+  }
+
+  if (kickRegionsOn) {
+    kickRegions[curRegion].complexity = kickComplexitySlider.value;
+    kickRegions[curRegion].ancestral = kickAncestralSlider.value;
+  } else {
+    kickRegions.forEach(function (r) {
+      r.complexity = kickComplexitySlider.value;
+      r.ancestral = kickAncestralSlider.value;
+    });
+  }
+}
+
 function selctRegion(elem) {
   getByClass("regionSelection")[curRegion].classList.remove("selected");
+  elem.classList.add("selected");
 
-  if (curRegion === elem.dataset.bar) {
-    getById("regionHighlight").style.opacity = "0";
-  } else {
-    elem.classList.add("selected");
+  curRegion = elem.dataset.bar;
 
-    curRegion = elem.dataset.bar;
+  let regHighlight = getById("regionHighlight");
+  regHighlight.style.opacity = "1";
+  regHighlight.style.left = barLength * elem.dataset.bar * 100 + "%";
 
-    let regHighlight = getById("regionHighlight");
-    regHighlight.style.opacity = "1";
-    regHighlight.style.left = barLength * elem.dataset.bar * 100 + "%";
+  if (chRegionsOn) {
+    chComplexitySlider.value = chRegions[curRegion].complexity;
+    chAncestralSlider.value = chRegions[curRegion].ancestral;
+  }
+
+  if (kickRegionsOn) {
+    kickComplexitySlider.value = kickRegions[curRegion].complexity;
+    kickAncestralSlider.value = kickRegions[curRegion].ancestral;
   }
 }
 
 function toggleRegionControls(elem, inst) {
   elem.classList.toggle("selected");
-  getById("regionSelect").classList.toggle("enabled");
 
   if (inst === "kick") {
     kickRegionsOn = !kickRegionsOn;
@@ -107,14 +148,21 @@ function toggleRegionControls(elem, inst) {
     chRegionsOn = !chRegionsOn;
   }
 
+  let regHighlight = getById("regionHighlight");
+
   if (kickRegionsOn || chRegionsOn) {
-    getById("regionSelect").classList.add("enabled");
+    if (!getById("regionSelect").classList.contains("enabled")) {
+      getById("regionSelect").classList.add("enabled");
+      selctRegion(getByClass("regionSelection")[0]);
+    }
   } else {
     getById("regionSelect").classList.remove("enabled");
 
-    getById("regionHighlight").style.opacity = "0";
+    regHighlight.style.opacity = "0";
     getByClass("regionSelection")[curRegion].classList.remove("selected");
   }
+
+  ShowNotes();
 }
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
@@ -426,11 +474,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function ShowNotes() {
-  chNoteArr = nm.CalculateCh(chComplexitySlider.value, chAncestralSlider.value);
-  kickNoteArr = nm.CalculateKick(
-    kickComplexitySlider.value,
-    kickAncestralSlider.value
-  );
+  processRegions();
+
+  chNoteArr = nm.CalculateCh(chRegions);
+  kickNoteArr = nm.CalculateKick(kickRegions);
+
   snrNoteArr = nm.CalculateSnare(snarePattern);
   percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
   dem.Display(chNoteArr, notes[ch]);
