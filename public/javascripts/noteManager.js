@@ -5,6 +5,74 @@ const barLength = 1 / 8;
 const noteLength = 1 / 32;
 const stepLength = 1 / 256;
 
+class BeatModel {
+  constructor(positional, ancestralProbability) {
+    this.positional = positional;
+    this.ancestralProbability = ancestralProbability;
+  }
+}
+
+NoteManager.prototype.GenerateModel = function (beats, seed) {
+  //Seed variables
+  const scanRange =
+    seed.length > 0
+      ? Math.ceil(beats.length * (parseInt(seed.charAt(0)) * 0.2 + 0.1))
+      : beats.length;
+
+  const scanStart =
+    seed.length > 0
+      ? Math.ceil(parseInt(seed.charAt(1)) * 0.1 * beats.length)
+      : 0;
+
+  const scanSkip = seed.length > 2 ? parseInt(seed.charAt(2)) + 1 : 1;
+
+  //Initialise working variables
+  let positional = new Array(256).fill(0);
+  let ancestralProbability = new Array(256).fill([]);
+
+  for (let div = 0; div < ancestralProbability.length; div++) {
+    ancestralProbability[div] = new Array(div).fill(0);
+  }
+
+  //Analyse source beats
+  for (let beatPos = 0; beatPos < scanRange; beatPos++) {
+    let beat = (beatPos * scanSkip + scanStart) % beats.length;
+
+    //Each beat
+    for (let div = 0; div < 256; div++) {
+      //Each div
+      //Ancestral
+      for (let i = 0; i < div; i++) {
+        if (beats[beat][i] > 0) {
+          if (beats[beat][div] > 0) {
+            ancestralProbability[div][i]++;
+          } else {
+            ancestralProbability[div][i] = Math.max(
+              0,
+              ancestralProbability[div][i] - 1
+            );
+          }
+        }
+      }
+
+      if (beats[beat][div] > 0) {
+        positional[div]++;
+      }
+    }
+  }
+
+  //Fix values
+  for (let div = 0; div < positional.length; div++) {
+    positional[div] /= scanRange;
+
+    for (let i = 0; i < div; i++) {
+      ancestralProbability[div][i] /= scanRange;
+    }
+  }
+
+  return new BeatModel(positional, ancestralProbability);
+};
+
 NoteManager.prototype.CalculatePerc = function (optn1Bars, optn2Bars) {
   let noteArr = new Array(256).fill(0);
   for (let i = 0; i < 256; i++) {

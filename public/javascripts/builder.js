@@ -55,10 +55,12 @@ let percNoteArr = null;
 let chModel = null;
 let kickModel = null;
 
+let source;
+
 // Index ids
-const ch = 0;
-const snr = 1;
-const kick = 2;
+const kick = 0;
+const ch = 1;
+const snr = 2;
 const perc = 3;
 
 //State variables
@@ -95,7 +97,44 @@ for (let i = 0; i < 8; i++) {
   chRegions[i] = new regionInfo(0, 0);
 }
 
+//Tap tempo variables
+let tapActive = false;
+
+// TEMPO TAPPING-------------------------------------------------------------------
+function toggleTapPanel() {
+  tapActive = !tapActive;
+
+  if (tapActive) {
+    getById("tapBackground").style.display = "block";
+    setTimeout(() => getById("tapBackground").classList.add("active"), 2);
+
+    //getById("tapBackground").classList.add("active");
+  } else {
+    getById("tapBackground").classList.remove("active");
+    setTimeout(() => (getById("tapBackground").style.display = "none"), 400);
+  }
+}
+
+// SEED CONTROLS------------------------------------------------------------------
+function randomizeSeed() {
+  getById("seedInput").value = Math.floor(Math.random() * 1000);
+  seedModel(getById("seedInput"));
+}
+
+function seedModel(elem) {
+  elem.value = elem.value.slice(0, 3);
+
+  calculateModels();
+
+  ShowNotes();
+}
+
 // REGION CONTROLS------------------------------------------------------------------------
+function calculateModels() {
+  chModel = nm.GenerateModel(source[ch], getById("seedInput").value);
+  kickModel = nm.GenerateModel(source[kick], getById("seedInput").value);
+}
+
 function processRegions() {
   if (chRegionsOn) {
     chRegions[curRegion].complexity = chComplexitySlider.value;
@@ -216,6 +255,7 @@ function soloPresent() {
 
   return res;
 }
+
 // PLAY PROCESSING-------------------------------------------------------------------------
 document.onkeyup = function (e) {
   if (e.key === " ") {
@@ -413,7 +453,7 @@ function toggleSnarePattern(elem) {
   ShowNotes();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   display = getById("display");
   divisionDisplay = getById("divDisp");
   hihatDisplay = getById("hihatDisp");
@@ -430,6 +470,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   tempoInfo = getById("tempoInput");
 
+  getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
+
   display.addEventListener("click", function (event) {
     TogglePlaying(
       (event.pageX - display.offsetLeft) / display.offsetWidth,
@@ -441,8 +483,12 @@ document.addEventListener("DOMContentLoaded", function () {
     TogglePlaying(0, !playing).then();
   });
 
-  chModel = JSON.parse(getById("chModel").innerHTML);
-  kickModel = JSON.parse(getById("kickModel").innerHTML);
+  getById("bpmButton").addEventListener("click", () => toggleTapPanel());
+  getById("tapBackground").addEventListener("click", () => toggleTapPanel());
+
+  await loadSource();
+
+  calculateModels();
 
   notes = dem.InitialiseNotes();
   dem.CreateDivisions();
@@ -476,8 +522,8 @@ document.addEventListener("DOMContentLoaded", function () {
 function ShowNotes() {
   processRegions();
 
-  chNoteArr = nm.CalculateCh(chRegions);
-  kickNoteArr = nm.CalculateKick(kickRegions);
+  chNoteArr = nm.CalculateCh(chRegions, getById("seedInput").value);
+  kickNoteArr = nm.CalculateKick(kickRegions, getById("seedInput").value);
 
   snrNoteArr = nm.CalculateSnare(snarePattern);
   percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
@@ -485,4 +531,26 @@ function ShowNotes() {
   dem.Display(kickNoteArr, notes[kick]);
   dem.Display(snrNoteArr, notes[snr]);
   dem.Display(percNoteArr, notes[perc]);
+}
+
+function loadSource() {
+  // Load buffer asynchronously
+  let request = new XMLHttpRequest();
+
+  return new Promise(function (resolve, reject) {
+    request.open("GET", "sourceData.txt", true);
+    request.responseType = "json";
+
+    request.onload = function () {
+      source = request.response;
+      resolve();
+    };
+
+    request.onerror = function () {
+      alert("Source: XHR error");
+      reject();
+    };
+
+    request.send();
+  });
 }

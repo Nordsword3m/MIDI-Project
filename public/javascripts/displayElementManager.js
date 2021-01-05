@@ -30,7 +30,14 @@ DisplayElementManager.prototype.InitialiseNotes = function () {
     }
   }
 
-  return [chNotes, snrNotes, kickNotes, percNotes];
+  let noteArr = new Array(4);
+
+  noteArr[ch] = chNotes;
+  noteArr[kick] = kickNotes;
+  noteArr[snr] = snrNotes;
+  noteArr[perc] = percNotes;
+
+  return noteArr;
 };
 
 DisplayElementManager.prototype.PlaceNote = function (note, disp) {

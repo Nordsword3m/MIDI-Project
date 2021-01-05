@@ -1,500 +1,586 @@
 :root {
-  --panelColor: #222222;
-  --dispColor: #131313;
-  --iconColor: #d9d9d9;
-  --iconHoverColor: #3e3e3e;
-  --purple: #c47ede;
-  --blue: #71bfe3;
-  --darkblue: #409ddb;
-  --orange: #e38929;
-  --green: #7dd06a;
-  --red: #e23f3f;
+    --panelColor: #222222;
+    --dispColor: #131313;
+    --iconColor: #d9d9d9;
+    --iconHoverColor: #3e3e3e;
+    --purple: #c47ede;
+    --blue: #71bfe3;
+    --darkblue: #409ddb;
+    --orange: #e38929;
+    --green: #7dd06a;
+    --red: #e23f3f;
 }
 
 html {
-  height: 100%;
+    height: 100%;
 }
 
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  color: white;
-  background-color: black;
-  text-transform: uppercase;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100vw;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    background-color: black;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.builderPage {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
 }
 
 h1, h2, h3 {
-  font-weight: 100;
+    font-weight: 100;
+}
+
+/*Tap tempo popup------------------------------------------------------------------------*/
+.tapTitle {
+    font-size: min(4vmin, 35px);
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background-color: var(--panelColor);
+    box-sizing: border-box;
+}
+
+.tapPanel {
+    position: relative;
+    top: 10%;
+    height: 350px;
+    width: 70vw;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--dispColor);
+    box-shadow: 0 0 10px 5px var(--green);
+}
+
+.tapBackground {
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0;
+    z-index: 50;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    transition: all 400ms;
+    display: none;
+}
+
+.tapBackground.visible {
+    display: block;
+}
+
+.tapBackground.active {
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
 .instrumentPanel {
-  background-color: var(--panelColor);
-  padding: 20px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
+    background-color: var(--panelColor);
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .regionButton {
-  box-shadow: 0 0 4px 1px white;
-  border-radius: 5px;
-  padding: 5px;
-  width: 5%;
-  font-size: 2vmin;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  cursor: pointer;
-  transition: all 200ms;
+    box-shadow: 0 0 4px 1px white;
+    border-radius: 5px;
+    padding: 5px;
+    width: 5%;
+    font-size: 2vmin;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: pointer;
+    transition: all 200ms;
 }
 
 .regionButton:hover {
-  box-shadow: 0 0 4px 1px var(--orange);
+    box-shadow: 0 0 4px 1px var(--orange);
 }
 
 .regionButton.selected {
-  background-color: var(--orange);
-  box-shadow: 0 0 4px 1px var(--orange);
+    background-color: var(--orange);
+    box-shadow: 0 0 4px 1px var(--orange);
 }
 
 .instrumentInfo {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 40px;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    justify-content: space-between;
 }
 
 .soundUpload {
-  box-shadow: 0 0 4px 1px white;
-  border-radius: 5px;
-  padding: 5px;
-  width: 25%;
-  font-size: 2vmin;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  cursor: pointer;
-  transition: all 200ms;
+    box-shadow: 0 0 4px 1px white;
+    border-radius: 5px;
+    padding: 5px;
+    width: 25%;
+    font-size: 2vmin;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: pointer;
+    transition: all 200ms;
 }
 
 .soundUpload:hover {
-  box-shadow: 0 0 4px 1px var(--orange);
+    box-shadow: 0 0 4px 1px var(--orange);
 }
 
 .muteSoloSwitch {
-  display: flex;
-  width: 10vw;
-  border-radius: 5px;
-  box-shadow: 0 0 4px 1px white;
+    display: flex;
+    width: 10vw;
+    border-radius: 5px;
+    box-shadow: 0 0 4px 1px white;
 }
 
 .muteSoloSwitch > * {
-  font-size: 2vmin;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 0 5px 0;
-  user-select: none;
-  cursor: pointer;
-  transition: all 200ms;
+    font-size: 2vmin;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 0 5px 0;
+    user-select: none;
+    cursor: pointer;
+    transition: all 200ms;
 }
 
 .muteButton {
-  border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 5px;
 }
 
 .muteButton.selected {
-  background-color: var(--red);
-  box-shadow: 0 0 4px 1px var(--red);
+    background-color: var(--red);
+    box-shadow: 0 0 4px 1px var(--red);
 }
 
-.muteButton:hover:not(.selected){
-  box-shadow: 0 0 4px 1px var(--red);
+.muteButton:hover:not(.selected) {
+    box-shadow: 0 0 4px 1px var(--red);
 }
 
 .soloButton {
-  border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
 }
 
 .soloButton.selected {
-  background-color: var(--darkblue);
-  box-shadow: 0 0 4px 1px var(--darkblue);
+    background-color: var(--darkblue);
+    box-shadow: 0 0 4px 1px var(--darkblue);
 }
 
-.soloButton:hover:not(.selected){
-  box-shadow: 0 0 4px 1px var(--darkblue);
+.soloButton:hover:not(.selected) {
+    box-shadow: 0 0 4px 1px var(--darkblue);
 }
 
 .hihatPanel {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
 }
 
 .kickPanel {
-   grid-column: 1 / 2;
-   grid-row: 1 / 2;
- }
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
 
 .snarePanel {
-  grid-column: 1 / 2;
-  grid-row: 2 / 3;
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
 }
 
 .percPanel {
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
 }
 
 .configPanel {
-  display: grid;
-  gap: 7px 7px;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  margin-top: 7px;
-  margin-bottom: 7px;
-  width: 100%;
-  flex-grow: 1;
-}
-/* Display Elements----------------------------------------------------------*/
-.regionSelect {
-  background-color: var(--dispColor);
-  width: 100%;
-  height: 0;
-  margin-top: 0;
-  transition: all 200ms;
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
-  display: flex;
-  flex-direction: row;
+    display: grid;
+    gap: 7px 7px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    width: 100%;
+    flex-grow: 1;
 }
 
-.regionSelect.enabled{
-  height: 40px;
-  margin-top: 7px;
+/* Display Elements----------------------------------------------------------*/
+.regionSelect {
+    background-color: var(--dispColor);
+    width: 100%;
+    height: 0;
+    margin-top: 0;
+    transition: all 200ms;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    display: flex;
+    flex-direction: row;
+}
+
+.regionSelect.enabled {
+    height: 40px;
+    margin-top: 7px;
 }
 
 .regionSelection {
-  width: 12.5%;
-  height: 100%;
-  border-left: 1px solid #a9a9a9;
-  border-right: 1px solid #a9a9a9;
-  transition: all 400ms;
+    width: 12.5%;
+    height: 100%;
+    border-left: 1px solid #a9a9a9;
+    border-right: 1px solid #a9a9a9;
+    transition: all 400ms;
 }
 
 .regionSelection.selected {
-  background-color: var(--orange);
-  box-shadow: 0 0 8px 2px var(--orange);
+    background-color: var(--orange);
+    box-shadow: 0 0 8px 2px var(--orange);
 }
 
 .regionSelection:hover {
-  background-color: var(--orange);
-  box-shadow: 0 0 8px 2px var(--orange);
+    background-color: var(--orange);
+    box-shadow: 0 0 8px 2px var(--orange);
 }
 
 .mainDisp {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
 }
 
 .displayCon {
-  width: 100%;
-  display: grid;
-  gap: 0 7px;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: 150px auto;
-  margin-top: 7px;
+    width: 100%;
+    display: grid;
+    gap: 0 7px;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 150px auto;
+    margin-top: 7px;
 }
 
 .labelCon {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
 }
 
 .instrumentCon {
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    position: absolute;
 }
 
 .regionHighlight {
-  width: 12.5%;
-  height: 100%;
-  position: absolute;
-  z-index: 20;
-  background-color: transparent;
-  box-shadow: 0 0 8px 2px var(--orange);
-  left: 0%;
-  opacity: 0;
-  transition: all 400ms;
+    width: 12.5%;
+    height: 100%;
+    position: absolute;
+    z-index: 20;
+    background-color: transparent;
+    box-shadow: 0 0 8px 2px var(--orange);
+    left: 0;
+    opacity: 0;
+    transition: all 400ms;
 }
 
 .regionHighlight.enabled {
-  opacity: 1;
+    opacity: 1;
 }
 
 .instrumentDisp {
-  height: 25%;
-  position: relative;
+    height: 25%;
+    position: relative;
 }
 
-.divDisp{
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-  position: relative;
+.divDisp {
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: relative;
 }
 
-.display{
-  width: 100%;
-  height: 100%;
-  background-color: var(--dispColor);
-  display:flex;
-  position: relative;
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
+.display {
+    width: 100%;
+    height: 100%;
+    background-color: var(--dispColor);
+    display: flex;
+    position: relative;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
 }
 
-.playHead{
-  background-color: white;
-  opacity: 0.5;
-  width: 2px;
-  height: 100%;
-  margin: -0.5px;
-  position: absolute;
-  box-sizing: border-box;
-  z-index: 10;
-  box-shadow: 0 0 2px white;
+.playHead {
+    background-color: white;
+    opacity: 0.5;
+    width: 2px;
+    height: 100%;
+    margin: -0.5px;
+    position: absolute;
+    box-sizing: border-box;
+    z-index: 10;
+    box-shadow: 0 0 2px white;
 }
 
 .note {
-  background-color: var(--blue);
-  width: calc(60% / 256);
-  height: 100%;
-  position: absolute;
-  box-shadow: 0 0 5px var(--blue);
-  box-sizing: border-box;
-  transition: all 400ms;
-  opacity: 0;
+    background-color: var(--blue);
+    width: calc(60% / 256);
+    height: 100%;
+    position: absolute;
+    box-shadow: 0 0 5px var(--blue);
+    box-sizing: border-box;
+    transition: all 400ms;
+    opacity: 0;
 }
 
 .note.visible {
-  opacity: 1;
+    opacity: 1;
 }
 
 .note.ghost {
-  background-color: var(--green);
-  box-shadow: 0 0 5px var(--green);
+    background-color: var(--green);
+    box-shadow: 0 0 5px var(--green);
 }
 
-.division{
-  background-color: white;
-  box-shadow: 0 0 2px white;
-  width: 1px;
-  height: 100%;
-  margin: -0.5px;
-  position: absolute;
+.division {
+    background-color: white;
+    box-shadow: 0 0 2px white;
+    width: 1px;
+    height: 100%;
+    margin: -0.5px;
+    position: absolute;
 }
 
 /* Top bar things-----------------------------------------------------------------*/
-.topBar{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: var(--panelColor);
-  padding: 0 2vw 0 2vw;
-  height: 60px;
+.topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--panelColor);
+    padding: 0 2vw 0 2vw;
+    height: 60px;
 }
 
 .title {
-  font-size: min(4vmin, 35px);
-  margin: 0;
+    font-size: min(4vmin, 35px);
+    margin: 0;
 }
 
 .fas.fa-play, .fas.fa-pause {
-  float: right;
+    float: right;
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
-.tempoCon{
-  display: flex;
-  width: fit-content;
-  align-items: center;
-  padding: 5px;
+.tempoCon, .seedCon {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    padding: 5px;
 }
 
-.tempoInfo {
-  box-shadow: 0 0 4px 1px var(--purple);
-  border-radius: 5px;
+.tempoInfo, .seedInfo {
+    box-shadow: 0 0 4px 1px var(--purple);
+    border-radius: 5px;
 }
 
-.tempoInfo, .bpmSuffix{
-  background-color: transparent;
-  border: 0;
-  color: white;
-  font-size: 30px;
-  width: 3ch;
-  padding: 0 0.5ch 0 0.5ch;
-  font-weight: 100;
+.tempoInfo, .bpmSuffix, .seedInfo, .seedPrefix {
+    background-color: transparent;
+    border: 0;
+    color: white;
+    font-size: 3vw;
+    width: 3ch;
+    padding: 0 0.5ch 0 0.5ch;
+    font-weight: 100;
 }
 
-.icon{
-  font-size: 35px;
-  color: var(--iconColor);
-  text-shadow: 0 0 3px var(--iconColor);
-  transition: all 100ms;
+.bpmSuffix {
+    width: 4ch;
+    font-size: 4vmin;
+    font-style: oblique;
+    font-weight: bolder;
+    cursor: pointer;
+    user-select: none;
+    transition: all 100ms;
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+    margin: 0;
 }
 
-.icon:hover{
-  color: var(--iconHoverColor);
-  text-shadow: 0 0 3px var(--iconHoverColor);
+.bpmSuffix:hover {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
 }
 
-.icon:active{
-  color: var(--iconColor);
-  text-shadow: 0 0 3px var(--iconColor);
+.seedPrefix {
+    width: 5ch;
 }
 
-.metIcon{
-  font-size: 4vmin;
-  font-style: oblique;
-  font-weight: bolder;
-  cursor: pointer;
-  user-select: none;
-  transition: all 100ms;
-  color: var(--dispColor);
-  text-shadow: 0 0 0 transparent;
-  margin: 0;
+@media screen and (max-width: 350px) {
+    .tempoInfo, .bpmSuffix, .seedInfo, .seedPrefix {
+        font-size: 15px;
+    }
 }
 
-.metIcon:hover:not(.metOn){
-  color: var(--iconHoverColor);
-  text-shadow: 0 0 3px var(--iconHoverColor);
+@media screen and (min-width: 1000px) {
+    .tempoInfo, .bpmSuffix, .seedInfo, .seedPrefix {
+        font-size: 30px;
+    }
 }
 
-.metOn{
-  color: white;
-  text-shadow: 0 0 3px white;
+.icon {
+    font-size: 35px;
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+    transition: all 100ms;
+    margin: 10px;
+}
+
+.icon:hover {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.icon:active {
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+}
+
+.metIcon {
+    font-size: 4vmin;
+    font-style: oblique;
+    font-weight: bolder;
+    cursor: pointer;
+    user-select: none;
+    transition: all 100ms;
+    color: var(--dispColor);
+    text-shadow: 0 0 0 transparent;
+    margin: 0;
+}
+
+.metIcon:hover:not(.metOn) {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.metOn {
+    color: white;
+    text-shadow: 0 0 3px white;
 }
 
 /* UI Controls-------------------------------------------------------------------- */
 .barSelectCon {
-  display: flex;
-  box-shadow: 0 0 4px 1px var(--green);
-  border-radius: 5px;
-  justify-content: space-around;
-  height: auto;
+    display: flex;
+    box-shadow: 0 0 4px 1px var(--green);
+    border-radius: 5px;
+    justify-content: space-around;
+    height: auto;
 }
 
 .barOption {
-  flex-grow: 1;
-  text-align: center;
-  font-size: 2vmin;
-  transition: all 500ms;
-  user-select: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 2vmin;
+    transition: all 500ms;
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
 }
 
 .barOption.selected {
-  background-color: var(--green);
-  box-shadow: 0 0 4px 1px var(--green);
+    background-color: var(--green);
+    box-shadow: 0 0 4px 1px var(--green);
 }
 
 .barOption:hover:not(.selected) {
-  box-shadow: 0 0 4px 1px var(--green);
+    box-shadow: 0 0 4px 1px var(--green);
 }
 
 .barOption:first-child {
-  border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 5px;
 }
 
 .barOption:last-child {
-  border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
 }
 
 .snareSelect {
-  display: flex;
-  font-size: 4vmin;
-  width: 80%;
-  height: 3ch;
-  margin: 30px auto 0 auto;
-  box-shadow: 0 0 4px 1px var(--purple);
-  border-radius: 5px;
+    display: flex;
+    font-size: 4vmin;
+    width: 80%;
+    height: 3ch;
+    margin: 30px auto 0 auto;
+    box-shadow: 0 0 4px 1px var(--purple);
+    border-radius: 5px;
 }
 
-.option{
-  flex-grow: 1;
-  text-align: center;
-  user-select: none;
-  transition: all 500ms;
-  cursor: pointer;
-  box-shadow: 0 0 4px 1px var(--purple);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.option {
+    flex-grow: 1;
+    text-align: center;
+    user-select: none;
+    transition: all 500ms;
+    cursor: pointer;
+    box-shadow: 0 0 4px 1px var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .option:first-child {
-  border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 5px;
 }
 
 .option:last-child {
-  border-radius: 0 5px 5px 0;
+    border-radius: 0 5px 5px 0;
 }
 
 .option.selected {
-  background-color: var(--purple);
+    background-color: var(--purple);
 }
 
 .slider {
-  appearance: none;
-  width: 100%;
-  height: 2px;
-  margin-top: 7px;
-  margin-bottom: 7px;
-  background: var(--purple);
-  box-shadow: 0 0 5px 1px var(--purple);
-  transition: all 200ms;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    background: var(--purple);
+    box-shadow: 0 0 5px 1px var(--purple);
+    transition: all 200ms;
 }
 
 .slider::-moz-range-thumb {
-  width: 7px;
-  height: 20px;
-  background: white;
-  cursor: pointer;
-  border: 0;
-  border-radius: 0;
-  box-shadow: 0 0 4px white;
-  opacity: 0.5;
-  transition: all 200ms;
+    width: 7px;
+    height: 20px;
+    background: white;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0 0 4px white;
+    opacity: 0.5;
+    transition: all 200ms;
 }
 
 .slider::-moz-range-thumb:hover {
-  opacity: 1;
+    opacity: 1;
 }
