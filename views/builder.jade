@@ -20,7 +20,7 @@ block content
                 i.fas.fa-dice.icon#randomSeedButton
 
             .tempoCon
-                input.tempoInfo#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="this.value = this.value.slice(0, 3);")
+                input.tempoInput#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="setTempo(this.value);")
                 .bpmSuffix#bpmSuffix= "bpm"
 
             p.metIcon#metronomeButton(onclick="toggleMetronome(this);")= "1234"

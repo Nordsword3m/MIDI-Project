@@ -25,7 +25,7 @@ let snarePattern = "3";
 let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
 
 let playHead = null;
-let tempoInfo = null;
+let tempoInput = null;
 let notes = null;
 
 const numOfDivs = 32;
@@ -98,19 +98,26 @@ for (let i = 0; i < 8; i++) {
 }
 
 //Tap tempo variables
+let tempo;
 let curTap = 0;
 let prevTaps = [];
 let tapTimeoutTimer;
 
 // TEMPO TAPPING-------------------------------------------------------------------
+function setTempo(tmp) {
+  tempo = tmp;
+  tempoInput.value = Math.round(tmp);
+}
+
 function tapTempoButton() {
   prevTaps.unshift(am.curTime());
 
   if (prevTaps.length >= 8) {
-    tempoInfo.value =
+    setTempo(
       60 /
-      ((prevTaps[0] - prevTaps[Math.min(16, prevTaps.length - 1)]) /
-        Math.min(16, prevTaps.length - 1));
+        ((prevTaps[0] - prevTaps[Math.min(16, prevTaps.length - 1)]) /
+          Math.min(16, prevTaps.length - 1))
+    );
   }
 
   let bpmSuff = getById("bpmSuffix");
@@ -286,7 +293,7 @@ function Playing() {
   // Playing routine, run as frequently as possible
   let timeDelta = am.curTime() - prevPlayTime;
   prevPlayTime = am.curTime();
-  let trackLength = (60.0 / tempoInfo.value) * 32;
+  let trackLength = (60.0 / tempo) * 32;
 
   setPlayPos(playPos + timeDelta / trackLength);
 
@@ -328,7 +335,7 @@ async function TogglePlaying(pos, play) {
 }
 
 function setLoopStart() {
-  let trackLength = (60.0 / tempoInfo.value) * (256 * barLength);
+  let trackLength = (60.0 / tempo) * (256 * barLength);
   loopStart = am.curTime() - relPlayPos * trackLength;
 }
 
@@ -356,7 +363,7 @@ function SetHeadPos() {
 // CHUNK MANAGEMENT-----------------------------------------------------------------
 function NextChunk() {
   if (relPlayPos + chunkSize * chunkPreRender >= 1) {
-    let trackLength = (60.0 / tempoInfo.value) * (256 * barLength);
+    let trackLength = (60.0 / tempo) * (256 * barLength);
     loopStart = (1 - relPlayPos) * trackLength + am.curTime();
   }
 
@@ -373,7 +380,7 @@ function setNextChunk(chunk) {
 
 // AUDIO PROCESSING------------------------------------------------------------
 function playSound(name, pos) {
-  am.play(name, pos, tempoInfo.value);
+  am.play(name, pos, tempo);
 }
 
 // NOTE PLAYING-------------------------------------------------------------------------
@@ -495,7 +502,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   kickComplexitySlider = getById("kickComplexity");
   kickAncestralSlider = getById("kickAncestral");
 
-  tempoInfo = getById("tempoInput");
+  tempoInput = getById("tempoInput");
+  tempo = tempoInput.value;
 
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
 

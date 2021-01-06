@@ -350,12 +350,12 @@ input[type=number] {
     padding: 5px;
 }
 
-.tempoInfo, .seedInfo {
+.tempoInput, .seedInfo {
     box-shadow: 0 0 4px 1px var(--purple);
     border-radius: 5px;
 }
 
-.tempoInfo, .bpmSuffix, .seedInfo, .seedPrefix {
+.tempoInput, .bpmSuffix, .seedInfo, .seedPrefix {
     background-color: transparent;
     border: 0;
     color: white;
