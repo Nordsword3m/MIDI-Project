@@ -1,12 +1,12 @@
 function AudioManager(audioList) {
   this.audioList = audioList;
   this.context = undefined;
-  this.timeContext = new AudioContext();
+  this.mainContext = new AudioContext();
   this.contextCreated = 0;
 }
 
 AudioManager.prototype.ReplaceBuffer = async function (name, file) {
-  await this.timeContext.decodeAudioData(
+  await this.mainContext.decodeAudioData(
     await file.arrayBuffer(),
     (buffer) => (this.buffers[this.audioList.indexOf(name)] = buffer),
     () => console.log("failed")
@@ -14,7 +14,7 @@ AudioManager.prototype.ReplaceBuffer = async function (name, file) {
 };
 
 AudioManager.prototype.curTime = function () {
-  return this.timeContext.currentTime;
+  return this.mainContext.currentTime;
 };
 
 AudioManager.prototype.ClearContext = function () {
@@ -28,7 +28,7 @@ AudioManager.prototype.SetDefaultBuffers = async function () {
   let audio = this.audioList.map((x) => x + ".wav");
 
   let bl = new BufferLoader(
-    this.timeContext,
+    this.mainContext,
     audio,
     (bufferList) => (this.buffers = bufferList)
   );
@@ -38,10 +38,18 @@ AudioManager.prototype.SetDefaultBuffers = async function () {
 
 AudioManager.prototype.NewContext = async function () {
   this.context = new AudioContext();
-  this.contextCreated = this.timeContext.currentTime;
+  this.contextCreated = this.mainContext.currentTime;
 };
 
-AudioManager.prototype.play = function (name, pos, relPlayPos, tempo) {
+AudioManager.prototype.playNow = function (name) {
+  let source = this.mainContext.createBufferSource();
+  source.buffer = this.buffers[this.audioList.indexOf(name)];
+  source.connect(this.mainContext.destination);
+
+  source.start(0);
+};
+
+AudioManager.prototype.play = function (name, pos, tempo) {
   let source = this.context.createBufferSource();
   source.buffer = this.buffers[this.audioList.indexOf(name)];
   source.connect(this.context.destination);

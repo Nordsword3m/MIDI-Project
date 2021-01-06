@@ -16,12 +16,12 @@ block content
 
             .seedCon
                 .seedPrefix= "Seed"
-                input.seedInfo#seedInput(type="number", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
+                input.seedInfo#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
                 i.fas.fa-dice.icon#randomSeedButton
 
             .tempoCon
-                input.tempoInfo#tempoInput(type="number", value="130", min="1", max="300", maxlength="3" oninput="this.value = this.value.slice(0, 3);")
-                .bpmSuffix#bpmButton= "bpm"
+                input.tempoInfo#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="this.value = this.value.slice(0, 3);")
+                .bpmSuffix#bpmSuffix= "bpm"
 
             p.metIcon#metronomeButton(onclick="toggleMetronome(this);")= "1234"
 
@@ -153,6 +153,3 @@ block content
                         .barOption(data-bar= 6, data-perc= 2)= "7"
                         .barOption(data-bar= 7, data-perc= 2)= "8"
 
-    .tapBackground#tapBackground
-        .tapPanel
-            .tapTitle= "Tempo Tapper"

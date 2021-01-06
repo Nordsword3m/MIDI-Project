@@ -13,6 +13,7 @@
 
 html {
     height: 100%;
+    user-select: none;
 }
 
 body {
@@ -34,53 +35,6 @@ h1, h2, h3 {
     font-weight: 100;
 }
 
-/*Tap tempo popup------------------------------------------------------------------------*/
-.tapTitle {
-    font-size: min(4vmin, 35px);
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    position: relative;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background-color: var(--panelColor);
-    box-sizing: border-box;
-}
-
-.tapPanel {
-    position: relative;
-    top: 10%;
-    height: 350px;
-    width: 70vw;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: var(--dispColor);
-    box-shadow: 0 0 10px 5px var(--green);
-}
-
-.tapBackground {
-    background-color: rgba(0, 0, 0, 0);
-    opacity: 0;
-    z-index: 50;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    transition: all 400ms;
-    display: none;
-}
-
-.tapBackground.visible {
-    display: block;
-}
-
-.tapBackground.active {
-    background-color: rgba(0, 0, 0, 0.6);
-    opacity: 1;
-}
-
 /* Config panel stuff--------------------------------------------------------------*/
 .instrumentPanel {
     background-color: var(--panelColor);
@@ -99,7 +53,7 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    user-select: none;
+
     cursor: pointer;
     transition: all 200ms;
 }
@@ -130,7 +84,7 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    user-select: none;
+
     cursor: pointer;
     transition: all 200ms;
 }
@@ -153,7 +107,7 @@ h1, h2, h3 {
     align-items: center;
     justify-content: center;
     padding: 5px 0 5px 0;
-    user-select: none;
+
     cursor: pointer;
     transition: all 200ms;
 }
@@ -417,7 +371,7 @@ input[type=number] {
     font-style: oblique;
     font-weight: bolder;
     cursor: pointer;
-    user-select: none;
+
     transition: all 100ms;
     color: var(--iconColor);
     text-shadow: 0 0 3px var(--iconColor);
@@ -427,6 +381,16 @@ input[type=number] {
 .bpmSuffix:hover {
     color: var(--iconHoverColor);
     text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.bpmSuffix.barTap {
+    color: var(--red);
+    text-shadow: 0 0 3px var(--red);
+}
+
+.bpmSuffix.noteTap {
+    color: var(--blue);
+    text-shadow: 0 0 3px var(--blue);
 }
 
 .seedPrefix {
@@ -468,7 +432,7 @@ input[type=number] {
     font-style: oblique;
     font-weight: bolder;
     cursor: pointer;
-    user-select: none;
+
     transition: all 100ms;
     color: var(--dispColor);
     text-shadow: 0 0 0 transparent;
@@ -499,7 +463,7 @@ input[type=number] {
     text-align: center;
     font-size: 2vmin;
     transition: all 500ms;
-    user-select: none;
+
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -537,7 +501,7 @@ input[type=number] {
 .option {
     flex-grow: 1;
     text-align: center;
-    user-select: none;
+
     transition: all 500ms;
     cursor: pointer;
     box-shadow: 0 0 4px 1px var(--purple);

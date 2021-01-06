@@ -44,7 +44,7 @@ let nextChunk = 0;
 let relNextChunk = 0;
 let chunkPreRender = 1 / 2;
 
-const chunkSize = noteLength;
+const chunkSize = noteLength / 2;
 
 // Note calculation processing
 let chNoteArr = null;
@@ -98,20 +98,45 @@ for (let i = 0; i < 8; i++) {
 }
 
 //Tap tempo variables
-let tapActive = false;
+let curTap = 0;
+let prevTaps = [];
+let tapTimeoutTimer;
 
 // TEMPO TAPPING-------------------------------------------------------------------
-function toggleTapPanel() {
-  tapActive = !tapActive;
+function tapTempoButton() {
+  prevTaps.unshift(am.curTime());
 
-  if (tapActive) {
-    getById("tapBackground").style.display = "block";
-    setTimeout(() => getById("tapBackground").classList.add("active"), 2);
+  if (prevTaps.length >= 8) {
+    tempoInfo.value =
+      60 /
+      ((prevTaps[0] - prevTaps[Math.min(16, prevTaps.length - 1)]) /
+        Math.min(16, prevTaps.length - 1));
+  }
 
-    //getById("tapBackground").classList.add("active");
+  let bpmSuff = getById("bpmSuffix");
+
+  if (curTap % 4 === 0) {
+    am.playNow("m1");
+    bpmSuff.classList.add("barTap");
+    setTimeout(() => bpmSuff.classList.remove("barTap"), 200);
   } else {
-    getById("tapBackground").classList.remove("active");
-    setTimeout(() => (getById("tapBackground").style.display = "none"), 400);
+    am.playNow("m2");
+    bpmSuff.classList.add("noteTap");
+    setTimeout(() => bpmSuff.classList.remove("noteTap"), 200);
+  }
+  curTap++;
+
+  if (!tapTimeoutTimer) {
+    tapTimeoutTimer = setTimeout(() => {
+      prevTaps = [];
+      curTap = 0;
+    }, 2500);
+  } else {
+    clearTimeout(tapTimeoutTimer);
+    tapTimeoutTimer = setTimeout(() => {
+      prevTaps = [];
+      curTap = 0;
+    }, 2500);
   }
 }
 
@@ -257,12 +282,6 @@ function soloPresent() {
 }
 
 // PLAY PROCESSING-------------------------------------------------------------------------
-document.onkeyup = function (e) {
-  if (e.key === " ") {
-    TogglePlaying(0, !playing).then();
-  }
-};
-
 function Playing() {
   // Playing routine, run as frequently as possible
   let timeDelta = am.curTime() - prevPlayTime;
@@ -354,7 +373,7 @@ function setNextChunk(chunk) {
 
 // AUDIO PROCESSING------------------------------------------------------------
 function playSound(name, pos) {
-  am.play(name, pos, relPlayPos, tempoInfo.value);
+  am.play(name, pos, tempoInfo.value);
 }
 
 // NOTE PLAYING-------------------------------------------------------------------------
@@ -411,6 +430,14 @@ function toggleMetronome(elem) {
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
+document.onkeydown = function (e) {
+  if (e.key === " ") {
+    TogglePlaying(0, !playing).then();
+  } else if (e.key === ".") {
+    tapTempoButton(getById("tapButton"));
+  }
+};
+
 function showPercGhostNote(elem, show) {
   let offset = elem.dataset.perc === "1" ? 4 : 28;
   let id = elem.dataset.bar * 256 * barLength + offset;
@@ -472,6 +499,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
 
+  getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
+
   display.addEventListener("click", function (event) {
     TogglePlaying(
       (event.pageX - display.offsetLeft) / display.offsetWidth,
@@ -482,9 +511,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   getById("playButton").addEventListener("click", function () {
     TogglePlaying(0, !playing).then();
   });
-
-  getById("bpmButton").addEventListener("click", () => toggleTapPanel());
-  getById("tapBackground").addEventListener("click", () => toggleTapPanel());
 
   await loadSource();
 
