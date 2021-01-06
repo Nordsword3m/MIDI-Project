@@ -170,7 +170,7 @@ h1, h2, h3 {
 }
 
 /* Display Elements----------------------------------------------------------*/
-.regionSelect {
+#regionSelect {
     background-color: var(--dispColor);
     width: 100%;
     height: 0;
@@ -182,12 +182,12 @@ h1, h2, h3 {
     flex-direction: row;
 }
 
-.regionSelect.enabled {
+#regionSelect.enabled {
     height: 40px;
     margin-top: 7px;
 }
 
-.regionSelection {
+#regionSelection {
     width: 12.5%;
     height: 100%;
     border-left: 1px solid #a9a9a9;
@@ -195,12 +195,12 @@ h1, h2, h3 {
     transition: all 400ms;
 }
 
-.regionSelection.selected {
+#regionSelection.selected {
     background-color: var(--orange);
     box-shadow: 0 0 8px 2px var(--orange);
 }
 
-.regionSelection:hover {
+#regionSelection:hover {
     background-color: var(--orange);
     box-shadow: 0 0 8px 2px var(--orange);
 }
@@ -235,7 +235,7 @@ h1, h2, h3 {
     position: absolute;
 }
 
-.regionHighlight {
+#regionHighlight {
     width: 12.5%;
     height: 100%;
     position: absolute;
@@ -247,7 +247,7 @@ h1, h2, h3 {
     transition: all 400ms;
 }
 
-.regionHighlight.enabled {
+#regionHighlight.enabled {
     opacity: 1;
 }
 
@@ -256,14 +256,14 @@ h1, h2, h3 {
     position: relative;
 }
 
-.divDisp {
+#divDisp {
     width: 100%;
     height: 100%;
     z-index: 3;
     position: relative;
 }
 
-.display {
+#display {
     width: 100%;
     height: 100%;
     background-color: var(--dispColor);
@@ -273,7 +273,7 @@ h1, h2, h3 {
     grid-row: 1 / 2;
 }
 
-.playHead {
+#playHead {
     background-color: white;
     opacity: 0.5;
     width: 2px;
@@ -350,12 +350,12 @@ input[type=number] {
     padding: 5px;
 }
 
-.tempoInput, .seedInfo {
+#tempoInput, #seedInput {
     box-shadow: 0 0 4px 1px var(--purple);
     border-radius: 5px;
 }
 
-.tempoInput, .bpmSuffix, .seedInfo, .seedPrefix {
+#tempoInput, #bpmSuffix, #seedInput, .seedPrefix {
     background-color: transparent;
     border: 0;
     color: white;
@@ -365,7 +365,7 @@ input[type=number] {
     font-weight: 100;
 }
 
-.bpmSuffix {
+#bpmSuffix {
     width: 4ch;
     font-size: 4vmin;
     font-style: oblique;
@@ -378,17 +378,17 @@ input[type=number] {
     margin: 0;
 }
 
-.bpmSuffix:hover {
+#bpmSuffix:hover {
     color: var(--iconHoverColor);
     text-shadow: 0 0 3px var(--iconHoverColor);
 }
 
-.bpmSuffix.barTap {
+#bpmSuffix.barTap {
     color: var(--red);
     text-shadow: 0 0 3px var(--red);
 }
 
-.bpmSuffix.noteTap {
+#bpmSuffix.noteTap {
     color: var(--blue);
     text-shadow: 0 0 3px var(--blue);
 }
@@ -398,13 +398,13 @@ input[type=number] {
 }
 
 @media screen and (max-width: 350px) {
-    .tempoInfo, .bpmSuffix, .seedInfo, .seedPrefix {
+    .tempoInfo, #bpmSuffix, #seedInput, .seedPrefix {
         font-size: 15px;
     }
 }
 
 @media screen and (min-width: 1000px) {
-    .tempoInfo, .bpmSuffix, .seedInfo, .seedPrefix {
+    .tempoInfo, #bpmSuffix, #seedInput, .seedPrefix {
         font-size: 30px;
     }
 }
@@ -427,7 +427,7 @@ input[type=number] {
     text-shadow: 0 0 3px var(--iconColor);
 }
 
-.metIcon {
+#metronomeButton {
     font-size: 4vmin;
     font-style: oblique;
     font-weight: bolder;
@@ -439,7 +439,7 @@ input[type=number] {
     margin: 0;
 }
 
-.metIcon:hover:not(.metOn) {
+#metronomeButton:hover:not(.metOn) {
     color: var(--iconHoverColor);
     text-shadow: 0 0 3px var(--iconHoverColor);
 }

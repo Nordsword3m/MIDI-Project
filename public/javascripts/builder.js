@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   ShowNotes();
 
-  let optns = document.getElementsByClassName("configOption");
+  let optns = getByClass("configOption");
   for (let i = 0; i < optns.length; i++) {
     optns[i].addEventListener("input", () => ShowNotes());
   }

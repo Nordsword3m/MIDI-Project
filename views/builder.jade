@@ -16,14 +16,14 @@ block content
 
             .seedCon
                 .seedPrefix= "Seed"
-                input.seedInfo#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
+                input#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
                 i.fas.fa-dice.icon#randomSeedButton
 
             .tempoCon
-                input.tempoInput#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="setTempo(this.value);")
-                .bpmSuffix#bpmSuffix= "bpm"
+                input#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="setTempo(this.value);")
+                #bpmSuffix= "bpm"
 
-            p.metIcon#metronomeButton(onclick="toggleMetronome(this);")= "1234"
+            p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
 
             i.fas.fa-play.icon#playButton
 
@@ -33,17 +33,17 @@ block content
                 .instrumentLabel= "ch"
                 .instrumentLabel= "snr"
                 .instrumentLabel= "perc"
-            .display#display
-                .playHead#playHead
-                .divDisp#divDisp
+            #display
+                #playHead
+                #divDisp
                 .instrumentCon
                     .instrumentDisp#kickDisp
                     .instrumentDisp#hihatDisp
                     .instrumentDisp#snareDisp
                     .instrumentDisp#percDisp
-                .regionHighlight#regionHighlight
+                #regionHighlight
 
-            .regionSelect#regionSelect
+            #regionSelect
                 .regionSelection(data-bar=0)
                 .regionSelection(data-bar=1)
                 .regionSelection(data-bar=2)
