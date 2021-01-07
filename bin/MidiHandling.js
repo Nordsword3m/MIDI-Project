@@ -56,7 +56,7 @@ function ParseMidiBytes(bytes = [], id) {
       metaTrack = false;
       cumTicks += bytes[msgStart];
       far = cumTicks / ticksPerNote / divs;
-      trackData[cumTicks / ticksPerNote / divs] = bytes[msgStart + 2];
+      trackData[cumTicks / ticksPerNote / divs] = /*bytes[msgStart + 2]*/ 1;
       msgStart += 4;
     } else if (bytes[msgStart + 1] === 128) {
       //Note off
@@ -67,7 +67,7 @@ function ParseMidiBytes(bytes = [], id) {
       //Note on and velocity greater than zero vlv
       metaTrack = false;
       cumTicks += 128 * (bytes[msgStart] - 128) + bytes[msgStart + 1];
-      trackData[cumTicks / ticksPerNote / divs] = bytes[msgStart + 3];
+      trackData[cumTicks / ticksPerNote / divs] = /*bytes[msgStart + 3]*/ 1;
       msgStart += 5;
     } else if (bytes[msgStart + 2] === 128) {
       //Note off vlv

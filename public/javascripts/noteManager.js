@@ -5,6 +5,11 @@ const barLength = 1 / 8;
 const noteLength = 1 / 32;
 const stepLength = 1 / 256;
 
+const maxPatternSize = 64;
+const minPatternSize = 8;
+const minPatternRelFrequency = 0.1;
+const maxPatternRelFrequency = 0.3;
+
 class BeatModel {
   constructor(positional, ancestralProbability) {
     this.positional = positional;
@@ -20,11 +25,18 @@ NoteManager.prototype.GenerateModel = function (beats, seed) {
       : beats.length;
 
   const scanStart =
-    seed.length > 0
+    seed.length > 1
       ? Math.ceil(parseInt(seed.charAt(1)) * 0.1 * beats.length)
       : 0;
 
   const scanSkip = seed.length > 2 ? parseInt(seed.charAt(2)) + 1 : 1;
+
+  //Pattern variables
+  let patterns = new Map();
+
+  for (let i = 0; i < 256; i += minPatternSize) {
+    patterns.set(i, new Map());
+  }
 
   //Initialise working variables
   let positional = new Array(256).fill(0);
@@ -36,12 +48,34 @@ NoteManager.prototype.GenerateModel = function (beats, seed) {
 
   //Analyse source beats
   for (let beatPos = 0; beatPos < scanRange; beatPos++) {
-    let beat = (beatPos * scanSkip + scanStart) % beats.length;
+    let beat = (beatPos * scanSkip + scanStart) % beats.length; //Complex beat picking for seeds
 
     //Each beat
     for (let div = 0; div < 256; div++) {
       //Each div
-      //Ancestral
+      //Pattern search
+      if (div % minPatternSize === 0 && beats[beat][div] > 0) {
+        if (div + minPatternSize <= 256) {
+          let patt = "";
+          for (
+            let i = div;
+            i < Math.min(div + maxPatternSize, 256);
+            i += minPatternSize
+          ) {
+            patt +=
+              (patt.length === 0 ? "" : ",") +
+              beats[beat].slice(i, i + minPatternSize).join();
+            if (!patt.endsWith("0,".repeat(minPatternSize - 1) + "0")) {
+              if (!patterns.get(div).get(patt)) {
+                patterns.get(div).set(patt, 1);
+              } else {
+                patterns.get(div).set(patt, patterns.get(div).get(patt) + 1);
+              }
+            }
+          }
+        }
+      }
+      //Ancestral search
       for (let i = 0; i < div; i++) {
         if (beats[beat][i] > 0) {
           if (beats[beat][div] > 0) {
@@ -60,6 +94,25 @@ NoteManager.prototype.GenerateModel = function (beats, seed) {
       }
     }
   }
+
+  let patternDivs = [...patterns.entries()];
+
+  for (let i = 0; i < 256 / minPatternSize; i += minPatternSize) {
+    patterns.set(
+      i,
+      new Map(
+        [...patterns.get(i).entries()]
+          .filter(
+            (a) =>
+              a[1] >= scanRange * minPatternRelFrequency &&
+              a[1] <= scanRange * maxPatternRelFrequency
+          )
+          .sort((a, b) => b[1] - a[1])
+      )
+    );
+  }
+
+  console.log(patterns);
 
   //Fix values
   for (let div = 0; div < positional.length; div++) {

@@ -154,8 +154,10 @@ function randomizeSeed() {
 }
 
 function seedModel(elem) {
-  elem.value = elem.value.slice(0, 3);
-
+  elem.value =
+    elem.value.length === 0
+      ? "000"
+      : parseInt(elem.value).toString().padStart(3, "0").slice(0, 3);
   calculateModels();
 
   ShowNotes();
