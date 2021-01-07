@@ -14,11 +14,13 @@ let kickDisplay = null;
 let snareDisplay = null;
 let percDisplay = null;
 
-let chComplexitySlider = null;
-let chAncestralSlider = null;
+let chCohesionSlider = null;
+let chSpontaneitySlider = null;
+let chQuirkSlider = null;
 
-let kickComplexitySlider = null;
-let kickAncestralSlider = null;
+let kickCohesionSlider = null;
+let kickSpontaneitySlider = null;
+let kickQuirkSlider = null;
 
 let snarePattern = "3";
 
@@ -83,9 +85,9 @@ let chRegionsOn = false;
 let curRegion = 0;
 
 class regionInfo {
-  constructor(complexity, ancestral) {
-    this.complexity = complexity;
-    this.ancestral = ancestral;
+  constructor(cohesion, spontaneity) {
+    this.cohesion = cohesion;
+    this.spontaneity = spontaneity;
   }
 }
 
@@ -167,37 +169,43 @@ function calculatePatterns() {
   chPatterns = nm.GeneratePatterns(
     source[ch],
     getById("seedInput").value,
-    32,
-    2,
-    0.3
+    Math.pow(2, chCohesionSlider.value),
+    Math.pow(
+      2,
+      Math.round((1 - chSpontaneitySlider.value) * chCohesionSlider.value)
+    ),
+    1 - chQuirkSlider.value
   );
   kickPatterns = nm.GeneratePatterns(
     source[kick],
     getById("seedInput").value,
-    32,
-    16,
-    0.3
+    Math.pow(2, kickCohesionSlider.value),
+    Math.pow(
+      2,
+      Math.round((1 - kickSpontaneitySlider.value) * kickCohesionSlider.value)
+    ),
+    1 - kickQuirkSlider.value
   );
 }
 
 function processRegions() {
   if (chRegionsOn) {
-    chRegions[curRegion].complexity = chComplexitySlider.value;
-    chRegions[curRegion].ancestral = chAncestralSlider.value;
+    chRegions[curRegion].cohesion = chCohesionSlider.value;
+    chRegions[curRegion].spontaneity = chSpontaneitySlider.value;
   } else {
     chRegions.forEach(function (r) {
-      r.complexity = chComplexitySlider.value;
-      r.ancestral = chAncestralSlider.value;
+      r.cohesion = chCohesionSlider.value;
+      r.spontaneity = chSpontaneitySlider.value;
     });
   }
 
   if (kickRegionsOn) {
-    kickRegions[curRegion].complexity = kickComplexitySlider.value;
-    kickRegions[curRegion].ancestral = kickAncestralSlider.value;
+    kickRegions[curRegion].cohesion = kickCohesionSlider.value;
+    kickRegions[curRegion].spontaneity = kickSpontaneitySlider.value;
   } else {
     kickRegions.forEach(function (r) {
-      r.complexity = kickComplexitySlider.value;
-      r.ancestral = kickAncestralSlider.value;
+      r.cohesion = kickCohesionSlider.value;
+      r.spontaneity = kickSpontaneitySlider.value;
     });
   }
 }
@@ -213,13 +221,13 @@ function selctRegion(elem) {
   regHighlight.style.left = barLength * elem.dataset.bar * 100 + "%";
 
   if (chRegionsOn) {
-    chComplexitySlider.value = chRegions[curRegion].complexity;
-    chAncestralSlider.value = chRegions[curRegion].ancestral;
+    chCohesionSlider.value = chRegions[curRegion].cohesion;
+    chSpontaneitySlider.value = chRegions[curRegion].spontaneity;
   }
 
   if (kickRegionsOn) {
-    kickComplexitySlider.value = kickRegions[curRegion].complexity;
-    kickAncestralSlider.value = kickRegions[curRegion].ancestral;
+    kickCohesionSlider.value = kickRegions[curRegion].cohesion;
+    kickSpontaneitySlider.value = kickRegions[curRegion].spontaneity;
   }
 }
 
@@ -510,10 +518,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   playHead = getById("playHead");
 
-  chComplexitySlider = getById("chComplexity");
-  chAncestralSlider = getById("chAncestral");
-  kickComplexitySlider = getById("kickComplexity");
-  kickAncestralSlider = getById("kickAncestral");
+  chCohesionSlider = getById("chCohesion");
+  chSpontaneitySlider = getById("chSpontaneity");
+  chQuirkSlider = getById("chQuirk");
+  kickCohesionSlider = getById("kickCohesion");
+  kickSpontaneitySlider = getById("kickSpontaneity");
+  kickQuirkSlider = getById("kickQuirk");
 
   tempoInput = getById("tempoInput");
   tempo = tempoInput.value;
@@ -534,8 +544,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   await loadSource();
-
-  calculatePatterns();
 
   notes = dem.InitialiseNotes();
   dem.CreateDivisions();

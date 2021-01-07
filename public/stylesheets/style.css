@@ -33,12 +33,15 @@ body {
 
 h1, h2, h3 {
     font-weight: 100;
+    margin-top: 15px;
+    margin-bottom: 10px;
+
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
 .instrumentPanel {
     background-color: var(--panelColor);
-    padding: 20px;
+    padding: 20px 20px 10px 20px;
     position: relative;
     display: flex;
     flex-direction: column;

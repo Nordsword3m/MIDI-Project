@@ -69,11 +69,14 @@ block content
                         .soloButton(onclick="toggleSolo(kick, this);")= "S"
 
                 .instrumentControls
-                    h3= "Complexity"
-                    input#kickComplexity.slider.configOption(type="range", min="0.001", max="0.999", value="0.5", step="0.001")
+                    h3= "Cohesion"
+                    input#kickCohesion.slider.configOption(type="range", min="3", max="8", value="2", step="1")
 
-                    h3= "Ancestral Influence"
-                    input#kickAncestral.slider.configOption(type="range", min="0.001", max="0.999", value="0.5", step="0.001")
+                    h3= "Spontaneity"
+                    input#kickSpontaneity.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.01")
+
+                    h3= "Quirk"
+                    input#kickQuirk.slider.configOption(type="range", min="0.05", max="1", value="0.5", step="0.01")
 
             .instrumentPanel.hihatPanel
                 .instrumentInfo
@@ -90,11 +93,14 @@ block content
                         .soloButton(onclick="toggleSolo(ch, this);")= "S"
 
                 .instrumentControls
-                    h3= "Complexity"
-                    input#chComplexity.slider.configOption(type="range", min="0.001", max="0.999", value="0.5", step="0.001")
+                    h3= "Cohesion"
+                    input#chCohesion.slider.configOption(type="range", min="0", max="8", value="2", step="1")
 
-                    h3= "Ancestral Influence"
-                    input#chAncestral.slider.configOption(type="range", min="0.001", max="0.999", value="0.5", step="0.001")
+                    h3= "Spontaneity"
+                    input#chSpontaneity.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.01")
+
+                    h3= "Quirk"
+                    input#chQuirk.slider.configOption(type="range", min="0.05", max="1", value="0.5", step="0.01")
 
             .instrumentPanel.snarePanel
                 .instrumentInfo
