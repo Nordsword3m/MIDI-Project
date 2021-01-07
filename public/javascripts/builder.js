@@ -52,8 +52,8 @@ let kickNoteArr = null;
 let snrNoteArr = null;
 let percNoteArr = null;
 
-let chModel = null;
-let kickModel = null;
+let chPatterns = null;
+let kickPatterns = null;
 
 let source;
 
@@ -158,15 +158,26 @@ function seedModel(elem) {
     elem.value.length === 0
       ? "000"
       : parseInt(elem.value).toString().padStart(3, "0").slice(0, 3);
-  calculateModels();
 
   ShowNotes();
 }
 
 // REGION CONTROLS------------------------------------------------------------------------
-function calculateModels() {
-  chModel = nm.GenerateModel(source[ch], getById("seedInput").value);
-  kickModel = nm.GenerateModel(source[kick], getById("seedInput").value);
+function calculatePatterns() {
+  chPatterns = nm.GeneratePatterns(
+    source[ch],
+    getById("seedInput").value,
+    32,
+    2,
+    0.3
+  );
+  kickPatterns = nm.GeneratePatterns(
+    source[kick],
+    getById("seedInput").value,
+    32,
+    16,
+    0.3
+  );
 }
 
 function processRegions() {
@@ -524,7 +535,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   await loadSource();
 
-  calculateModels();
+  calculatePatterns();
 
   notes = dem.InitialiseNotes();
   dem.CreateDivisions();
@@ -556,10 +567,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 function ShowNotes() {
+  calculatePatterns();
   processRegions();
 
-  chNoteArr = nm.CalculateCh(chRegions, getById("seedInput").value);
-  kickNoteArr = nm.CalculateKick(kickRegions, getById("seedInput").value);
+  chNoteArr = nm.CalculateNotes(chPatterns);
+  kickNoteArr = nm.CalculateNotes(kickPatterns);
 
   snrNoteArr = nm.CalculateSnare(snarePattern);
   percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
