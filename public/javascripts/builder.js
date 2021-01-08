@@ -151,7 +151,7 @@ function tapTempoButton() {
 
 // SEED CONTROLS------------------------------------------------------------------
 function randomizeSeed() {
-  getById("seedInput").value = Math.floor(Math.random() * 1000);
+  getById("seedInput").value = 999; //Math.floor(Math.random() * 1000);
   seedModel(getById("seedInput"));
 }
 
@@ -166,6 +166,7 @@ function seedModel(elem) {
 
 // REGION CONTROLS------------------------------------------------------------------------
 function calculatePatterns() {
+  let start = window.performance.now();
   chPatterns = nm.GeneratePatterns(
     source[ch],
     getById("seedInput").value,
@@ -176,16 +177,40 @@ function calculatePatterns() {
     ),
     1 - chQuirkSlider.value
   );
+  console.log("Ch time: " + (window.performance.now() - start) + "ms");
+  let kickStart = window.performance.now();
+
+  /*console.log(
+    lerp(
+      kickCohesionSlider.min,
+      kickCohesionSlider.value,
+      1 - kickSpontaneitySlider.value
+    )
+  );*/
   kickPatterns = nm.GeneratePatterns(
     source[kick],
     getById("seedInput").value,
     Math.pow(2, kickCohesionSlider.value),
-    Math.pow(
+    16,
+    /*Math.pow(
       2,
-      Math.round((1 - kickSpontaneitySlider.value) * kickCohesionSlider.value)
-    ),
-    1 - kickQuirkSlider.value
+      Math.round(
+        lerp(
+          kickCohesionSlider.min,
+          kickCohesionSlider.value,
+          1 - kickSpontaneitySlider.value
+        )
+      )
+  )*/ 1 -
+      kickQuirkSlider.value
   );
+
+  console.log("Kick time: " + (window.performance.now() - kickStart) + "ms");
+  console.log("Operation time: " + (window.performance.now() - start) + "ms");
+}
+
+function lerp(a, b, t) {
+  return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
 }
 
 function processRegions() {
