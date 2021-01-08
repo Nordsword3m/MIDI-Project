@@ -7,48 +7,7 @@ const stepLength = 1 / 256;
 
 //const maxPatternSize = 256;
 //const minPatternSize = 64;
-const absoluteMaxPatternRelFrequency = 0.6;
-
-class PatternData {
-  constructor(pattern, frequency) {
-    this.pattern = pattern;
-    this.frequency = frequency;
-  }
-}
-
-class PatternMap {
-  constructor() {
-    this.map = [];
-    this.pattHash = new Map();
-  }
-
-  rehash() {
-    this.pattHash = new Map();
-    for (let i = 0; i < this.map.length; i++) {
-      this.pattHash.set(this.map[i].pattern, i);
-    }
-  }
-
-  filterFreq(max) {
-    this.map = this.map.filter((a) => a.frequency <= max);
-    this.rehash();
-  }
-
-  sortByFreq() {
-    this.map = this.map.sort((a, b) => b.frequency - a.frequency);
-    this.rehash();
-  }
-
-  new(patt) {
-    let existing = this.pattHash.get(patt);
-    if (existing === undefined) {
-      this.map.push(new PatternData(patt, 1));
-      this.pattHash.set(patt, this.map.length - 1);
-    } else {
-      this.map[existing].frequency++;
-    }
-  }
-}
+//const maxPatternRelFrequency = 0.1;
 
 NoteManager.prototype.GeneratePatterns = function (
   beats,
@@ -71,49 +30,48 @@ NoteManager.prototype.GeneratePatterns = function (
   const scanSkip = seed.length > 2 ? parseInt(seed.charAt(2)) + 1 : 1;
 
   //Pattern variables
-  let patterns = new Array(256);
+  let patterns = new Map();
   let emptySect = "0,".repeat(minPatternSize - 1) + "0";
-  let calcMaxFreq =
-    scanRange * maxPatternRelFrequency * absoluteMaxPatternRelFrequency;
 
-  for (let i = 0; i < 256; i++) {
-    patterns[i] = new PatternMap();
+  for (let i = 0; i < 256; i += minPatternSize) {
+    patterns.set(i, new Map());
   }
-
-  let cntr = 0;
 
   //Analyse source beats
   for (let beatPos = 0; beatPos < scanRange; beatPos++) {
     let beat = (beatPos * scanSkip + scanStart) % beats.length; //Complex beat picking for seeds
 
-    for (let div = 0; div < 256 - minPatternSize; div += minPatternSize) {
+    //Each beat
+    for (let div = 0; div <= 256 - minPatternSize; div += minPatternSize) {
       //Each div
       //Pattern search
       if (beats[beat][div] > 0) {
         let patt = "";
         for (
-          let k = div, len = Math.min(div + maxPatternSize, 256);
-          k < len;
-          k += minPatternSize
+          let i = div;
+          i < Math.min(div + maxPatternSize, 256);
+          i += minPatternSize
         ) {
-          cntr++;
-          patt =
+          patt +=
             (patt.length === 0 ? "" : ",") +
-            beats[beat].slice(k, k + minPatternSize).join();
+            beats[beat].slice(i, i + minPatternSize).join();
           if (!patt.endsWith(emptySect)) {
-            patterns[div].new(patt);
+            let freq = patterns.get(div).get(patt);
+            patterns.get(div).set(patt, freq === undefined ? 1 : freq + 1);
           }
         }
       }
     }
   }
-  console.log(cntr + " itterations");
+
   //Fix values
-  for (let i = 0; i < 256; i++) {
-    if (i % minPatternSize === 0) {
-      patterns[i].sortByFreq();
-      patterns[i].filterFreq(calcMaxFreq);
-    }
+  for (let i = 0; i < 256; i += minPatternSize) {
+    patterns.set(
+      i,
+      [...patterns.get(i).entries()]
+        .filter((a) => a[1] <= scanRange * maxPatternRelFrequency)
+        .sort((a, b) => b[1] - a[1])
+    );
   }
 
   return patterns;
@@ -123,10 +81,11 @@ NoteManager.prototype.CalculateNotes = function (patterns) {
   let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {
-    if (patterns[i].map.length > 0) {
-      let patt = patterns[i].map[0].pattern.split(",");
-      for (let k = 0; k < patt.length; k++) {
-        noteArr[i + k] = parseInt(patt[k]);
+    let divPatts = patterns.get(i);
+    if (divPatts && divPatts[0]) {
+      let patt = divPatts[0][0].split(",");
+      for (let p = 0; p < patt.length; p++) {
+        noteArr[i + p] = parseInt(patt[p]);
       }
       i += patt.length - 1;
     }

@@ -173,26 +173,24 @@ function calculatePatterns() {
     Math.pow(2, chCohesionSlider.value),
     Math.pow(
       2,
-      Math.round((1 - chSpontaneitySlider.value) * chCohesionSlider.value)
+      Math.round(
+        lerp(
+          chCohesionSlider.min,
+          chCohesionSlider.value,
+          1 - chSpontaneitySlider.value
+        )
+      )
     ),
     1 - chQuirkSlider.value
   );
   console.log("Ch time: " + (window.performance.now() - start) + "ms");
   let kickStart = window.performance.now();
 
-  /*console.log(
-    lerp(
-      kickCohesionSlider.min,
-      kickCohesionSlider.value,
-      1 - kickSpontaneitySlider.value
-    )
-  );*/
   kickPatterns = nm.GeneratePatterns(
     source[kick],
     getById("seedInput").value,
     Math.pow(2, kickCohesionSlider.value),
-    16,
-    /*Math.pow(
+    Math.pow(
       2,
       Math.round(
         lerp(
@@ -201,8 +199,8 @@ function calculatePatterns() {
           1 - kickSpontaneitySlider.value
         )
       )
-  )*/ 1 -
-      kickQuirkSlider.value
+    ),
+    1 - kickQuirkSlider.value
   );
 
   console.log("Kick time: " + (window.performance.now() - kickStart) + "ms");
