@@ -70,13 +70,13 @@ block content
 
                 .instrumentControls
                     h3= "Cohesion"
-                    input#kickCohesion.slider.configOption(type="range", min="4", max="7", value="2", step="1")
+                    input#kickCohesion.slider(type="range", min="4", max="7", value="2", step="1", oninput="ShowNotes(kick);")
 
                     h3= "Spontaneity"
-                    input#kickSpontaneity.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.01")
+                    input#kickSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
 
                     h3= "Quirk"
-                    input#kickQuirk.slider.configOption(type="range", min="0.05", max="1", value="0.5", step="0.01")
+                    input#kickQuirk.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(kick);")
 
             .instrumentPanel.hihatPanel
                 .instrumentInfo
@@ -94,13 +94,13 @@ block content
 
                 .instrumentControls
                     h3= "Cohesion"
-                    input#chCohesion.slider.configOption(type="range", min="3", max="7", value="2", step="1")
+                    input#chCohesion.slider(type="range", min="3", max="7", value="2", step="1", oninput="ShowNotes(ch);")
 
                     h3= "Spontaneity"
-                    input#chSpontaneity.slider.configOption(type="range", min="0", max="1", value="0.5", step="0.01")
+                    input#chSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(ch);")
 
                     h3= "Quirk"
-                    input#chQuirk.slider.configOption(type="range", min="0.05", max="1", value="0.5", step="0.01")
+                    input#chQuirk.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
 
             .instrumentPanel.snarePanel
                 .instrumentInfo

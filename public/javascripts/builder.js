@@ -60,10 +60,12 @@ let kickPatterns = null;
 let source;
 
 // Index ids
+const all = -1;
 const kick = 0;
 const ch = 1;
 const snr = 2;
 const perc = 3;
+const calc = 10;
 
 //State variables
 let metroActive = false;
@@ -83,6 +85,8 @@ let kickRegionsOn = false;
 let chRegionsOn = false;
 
 let curRegion = 0;
+
+//Performance enhancing
 
 class regionInfo {
   constructor(cohesion, spontaneity) {
@@ -117,8 +121,8 @@ function tapTempoButton() {
   if (prevTaps.length >= 8) {
     setTempo(
       60 /
-        ((prevTaps[0] - prevTaps[Math.min(16, prevTaps.length - 1)]) /
-          Math.min(16, prevTaps.length - 1))
+      ((prevTaps[0] - prevTaps[Math.min(16, prevTaps.length - 1)]) /
+        Math.min(16, prevTaps.length - 1))
     );
   }
 
@@ -161,47 +165,47 @@ function seedModel(elem) {
       ? "000"
       : parseInt(elem.value).toString().padStart(3, "0").slice(0, 3);
 
-  ShowNotes();
+  ShowNotes(calc);
 }
 
 // REGION CONTROLS------------------------------------------------------------------------
-function calculatePatterns() {
+function calculatePatterns(changeInst) {
   let start = window.performance.now();
-  chPatterns = nm.GeneratePatterns(
-    source[ch],
-    getById("seedInput").value,
-    Math.pow(2, chCohesionSlider.value),
-    Math.pow(
-      2,
+
+  if (changeInst === ch || changeInst === all) {
+    chPatterns = nm.GeneratePatterns(ch,
+      source[ch],
+      getById("seedInput").value,
+      chCohesionSlider.value,
       Math.round(
         lerp(
           chCohesionSlider.min,
           chCohesionSlider.value,
           1 - chSpontaneitySlider.value
         )
-      )
-    ),
-    1 - chQuirkSlider.value
-  );
+      ),
+      1 - chQuirkSlider.value
+    )
+    ;
+  }
   console.log("Ch time: " + (window.performance.now() - start) + "ms");
   let kickStart = window.performance.now();
 
-  kickPatterns = nm.GeneratePatterns(
-    source[kick],
-    getById("seedInput").value,
-    Math.pow(2, kickCohesionSlider.value),
-    Math.pow(
-      2,
+  if (changeInst === kick || changeInst === all) {
+    kickPatterns = nm.GeneratePatterns(kick,
+      source[kick],
+      getById("seedInput").value,
+      kickCohesionSlider.value,
       Math.round(
         lerp(
           kickCohesionSlider.min,
           kickCohesionSlider.value,
           1 - kickSpontaneitySlider.value
         )
-      )
-    ),
-    1 - kickQuirkSlider.value
-  );
+      ),
+      1 - kickQuirkSlider.value
+    );
+  }
 
   console.log("Kick time: " + (window.performance.now() - kickStart) + "ms");
   console.log("Operation time: " + (window.performance.now() - start) + "ms");
@@ -277,7 +281,7 @@ function toggleRegionControls(elem, inst) {
     getByClass("regionSelection")[curRegion].classList.remove("selected");
   }
 
-  ShowNotes();
+  ShowNotes(inst === "kick" ? kick : inst === "ch" ? ch : -10);
 }
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
@@ -513,10 +517,10 @@ function barSelect(elem) {
   elem.classList.toggle("selected");
 
   percBars[elem.dataset.perc - 1][elem.dataset.bar] = !percBars[
-    elem.dataset.perc - 1
-  ][elem.dataset.bar];
+  elem.dataset.perc - 1
+    ][elem.dataset.bar];
 
-  ShowNotes();
+  ShowNotes(perc);
 }
 
 function toggleSnarePattern(elem) {
@@ -528,7 +532,7 @@ function toggleSnarePattern(elem) {
     snarePattern = "3";
   }
 
-  ShowNotes();
+  ShowNotes(snr);
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -567,16 +571,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   await loadSource();
+  nm.CacheBeatPatterns(ch, source[ch], new NumRange(chCohesionSlider.min, chCohesionSlider.max));
+  nm.CacheBeatPatterns(kick, source[kick], new NumRange(kickCohesionSlider.min, kickCohesionSlider.max));
 
   notes = dem.InitialiseNotes();
   dem.CreateDivisions();
 
-  ShowNotes();
-
-  let optns = getByClass("configOption");
-  for (let i = 0; i < optns.length; i++) {
-    optns[i].addEventListener("input", () => ShowNotes());
-  }
+  ShowNotes(all);
 
   let percSelects = getByClass("barOption");
 
@@ -597,19 +598,26 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
-function ShowNotes() {
-  calculatePatterns();
-  processRegions();
+function ShowNotes(changeInst) {
+  calculatePatterns(changeInst);
+  //processRegions();
 
-  chNoteArr = nm.CalculateNotes(chPatterns);
-  kickNoteArr = nm.CalculateNotes(kickPatterns);
-
-  snrNoteArr = nm.CalculateSnare(snarePattern);
-  percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
-  dem.Display(chNoteArr, notes[ch]);
-  dem.Display(kickNoteArr, notes[kick]);
-  dem.Display(snrNoteArr, notes[snr]);
-  dem.Display(percNoteArr, notes[perc]);
+  if (changeInst === ch || changeInst === all || changeInst === calc) {
+    chNoteArr = nm.CalculateNotes(chPatterns);
+    dem.Display(chNoteArr, notes[ch]);
+  }
+  if (changeInst === kick || changeInst === all || changeInst === calc) {
+    kickNoteArr = nm.CalculateNotes(kickPatterns);
+    dem.Display(kickNoteArr, notes[kick]);
+  }
+  if (changeInst === snr || changeInst === all) {
+    snrNoteArr = nm.CalculateSnare(snarePattern);
+    dem.Display(snrNoteArr, notes[snr]);
+  }
+  if (changeInst === perc || changeInst === all) {
+    percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
+    dem.Display(percNoteArr, notes[perc]);
+  }
 }
 
 function loadSource() {
