@@ -80,13 +80,17 @@ let dem = new DisplayElementManager();
 let mutes = new Array(4).fill(false);
 let solos = new Array(4).fill(false);
 
+//Performance enhancing
+let updateDelay = 150;
+let lastUpdateTime = 0;
+let nextUpdate;
+let updateQueued = false;
+
 //Region control variables
 let kickRegionsOn = false;
 let chRegionsOn = false;
 
 let curRegion = 0;
-
-//Performance enhancing
 
 class regionInfo {
   constructor(cohesion, spontaneity) {
@@ -155,7 +159,7 @@ function tapTempoButton() {
 
 // SEED CONTROLS------------------------------------------------------------------
 function randomizeSeed() {
-  getById("seedInput").value = 999; //Math.floor(Math.random() * 1000);
+  getById("seedInput").value = Math.floor(Math.random() * 1000);
   seedModel(getById("seedInput"));
 }
 
@@ -188,7 +192,7 @@ function calculatePatterns(changeInst) {
     )
     ;
   }
-  console.log("Ch time: " + (window.performance.now() - start) + "ms");
+  //console.log("Ch time: " + (window.performance.now() - start) + "ms");
   let kickStart = window.performance.now();
 
   if (changeInst === kick || changeInst === all) {
@@ -207,8 +211,9 @@ function calculatePatterns(changeInst) {
     );
   }
 
-  console.log("Kick time: " + (window.performance.now() - kickStart) + "ms");
-  console.log("Operation time: " + (window.performance.now() - start) + "ms");
+  //console.log("Kick time: " + (window.performance.now() - kickStart) + "ms");
+  //console.log("Operation time: " + (window.performance.now() - start) + "ms");
+  updateDelay = (window.performance.now() - start) * 5;
 }
 
 function lerp(a, b, t) {
@@ -599,24 +604,36 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 function ShowNotes(changeInst) {
-  calculatePatterns(changeInst);
-  //processRegions();
+  if (lastUpdateTime + updateDelay > window.performance.now()) {
+    nextUpdate = changeInst;
+    if (!updateQueued) {
+      updateQueued = true;
+      setTimeout(() => {
+        ShowNotes(nextUpdate);
+        updateQueued = false;
+      }, (lastUpdateTime + updateDelay) - window.performance.now())
+    }
+  } else {
+    lastUpdateTime = window.performance.now();
+    calculatePatterns(changeInst);
+    //processRegions();
 
-  if (changeInst === ch || changeInst === all || changeInst === calc) {
-    chNoteArr = nm.CalculateNotes(chPatterns);
-    dem.Display(chNoteArr, notes[ch]);
-  }
-  if (changeInst === kick || changeInst === all || changeInst === calc) {
-    kickNoteArr = nm.CalculateNotes(kickPatterns);
-    dem.Display(kickNoteArr, notes[kick]);
-  }
-  if (changeInst === snr || changeInst === all) {
-    snrNoteArr = nm.CalculateSnare(snarePattern);
-    dem.Display(snrNoteArr, notes[snr]);
-  }
-  if (changeInst === perc || changeInst === all) {
-    percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
-    dem.Display(percNoteArr, notes[perc]);
+    if (changeInst === ch || changeInst === all || changeInst === calc) {
+      chNoteArr = nm.CalculateNotes(chPatterns);
+      dem.Display(chNoteArr, notes[ch]);
+    }
+    if (changeInst === kick || changeInst === all || changeInst === calc) {
+      kickNoteArr = nm.CalculateNotes(kickPatterns);
+      dem.Display(kickNoteArr, notes[kick]);
+    }
+    if (changeInst === snr || changeInst === all) {
+      snrNoteArr = nm.CalculateSnare(snarePattern);
+      dem.Display(snrNoteArr, notes[snr]);
+    }
+    if (changeInst === perc || changeInst === all) {
+      percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
+      dem.Display(percNoteArr, notes[perc]);
+    }
   }
 }
 
