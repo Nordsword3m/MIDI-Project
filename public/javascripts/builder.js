@@ -115,6 +115,7 @@ let tapTimeoutTimer;
 
 // TEMPO TAPPING-------------------------------------------------------------------
 function setTempo(tmp) {
+  tmp = Math.max(tmp, 1);
   tempo = tmp;
   tempoInput.value = Math.round(tmp);
 }
@@ -176,7 +177,7 @@ function seedModel(elem) {
 function calculatePatterns(changeInst) {
   let start = window.performance.now();
 
-  if (changeInst === ch || changeInst === all) {
+  if (changeInst === ch || changeInst === all || changeInst === calc) {
     chPatterns = nm.GeneratePatterns(ch,
       source[ch],
       getById("seedInput").value,
@@ -195,7 +196,7 @@ function calculatePatterns(changeInst) {
   //console.log("Ch time: " + (window.performance.now() - start) + "ms");
   let kickStart = window.performance.now();
 
-  if (changeInst === kick || changeInst === all) {
+  if (changeInst === kick || changeInst === all || changeInst === calc) {
     kickPatterns = nm.GeneratePatterns(kick,
       source[kick],
       getById("seedInput").value,
@@ -492,6 +493,9 @@ function toggleMetronome(elem) {
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
 document.onkeydown = function (e) {
   if (e.key === " ") {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     TogglePlaying(0, !playing).then();
   } else if (e.key === ".") {
     tapTempoButton(getById("tapButton"));

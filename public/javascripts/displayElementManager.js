@@ -1,4 +1,5 @@
-function DisplayElementManager() {}
+function DisplayElementManager() {
+}
 
 window.addEventListener("resize", function () {
   for (let i = 0; i < 256; i++) {
@@ -42,11 +43,9 @@ DisplayElementManager.prototype.InitialiseNotes = function () {
 
 DisplayElementManager.prototype.PlaceNote = function (note, disp) {
   if (note) {
+    console.log(disp.offsetLeft);
     note.style.left =
-      (parseInt(note.id.substring(note.id.search("Note") + 4)) / 256) *
-        disp.offsetWidth +
-      disp.offsetLeft +
-      "px";
+      (100 * parseInt(note.id.substring(note.id.search("Note") + 4)) / 256) + "%";
   }
 };
 

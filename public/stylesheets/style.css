@@ -22,20 +22,29 @@ body {
     background-color: black;
     text-transform: uppercase;
     margin: 0;
+    width: 100%;
+    max-width: 100vw;
 }
 
 .builderPage {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw;
+    width: 100%;
 }
 
 h1, h2, h3 {
     font-weight: 100;
-    margin-top: 15px;
+    margin-top: 10px;
     margin-bottom: 10px;
+}
 
+h2 {
+    font-size: min(3.1vw, 25px);
+}
+
+h3 {
+    font-size: min(2vw, 16px);
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
@@ -50,7 +59,7 @@ h1, h2, h3 {
 .regionButton {
     box-shadow: 0 0 4px 1px white;
     border-radius: 5px;
-    padding: 5px;
+    padding: 0.5vw;
     width: 5%;
     font-size: 2vmin;
     display: flex;
@@ -73,15 +82,25 @@ h1, h2, h3 {
 .instrumentInfo {
     display: flex;
     align-items: center;
-    width: 100%;
     height: 40px;
     justify-content: space-between;
+}
+
+.configPanel {
+    display: grid;
+    gap: 7px 7px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    flex-grow: 1;
+    width: 100%;
 }
 
 .soundUpload {
     box-shadow: 0 0 4px 1px white;
     border-radius: 5px;
-    padding: 5px;
+    padding: 0.5vw;
     width: 25%;
     font-size: 2vmin;
     display: flex;
@@ -109,7 +128,7 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 5px 0 5px 0;
+    padding: 0.5vw;
 
     cursor: pointer;
     transition: all 200ms;
@@ -161,17 +180,6 @@ h1, h2, h3 {
     grid-row: 2 / 3;
 }
 
-.configPanel {
-    display: grid;
-    gap: 7px 7px;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    margin-top: 7px;
-    margin-bottom: 7px;
-    width: 100%;
-    flex-grow: 1;
-}
-
 /* Display Elements----------------------------------------------------------*/
 #regionSelect {
     background-color: var(--dispColor);
@@ -190,7 +198,7 @@ h1, h2, h3 {
     margin-top: 7px;
 }
 
-#regionSelection {
+.regionSelection {
     width: 12.5%;
     height: 100%;
     border-left: 1px solid #a9a9a9;
@@ -198,12 +206,12 @@ h1, h2, h3 {
     transition: all 400ms;
 }
 
-#regionSelection.selected {
+.regionSelection.selected {
     background-color: var(--orange);
     box-shadow: 0 0 8px 2px var(--orange);
 }
 
-#regionSelection:hover {
+.regionSelection:hover {
     background-color: var(--orange);
     box-shadow: 0 0 8px 2px var(--orange);
 }
@@ -325,6 +333,8 @@ h1, h2, h3 {
     background-color: var(--panelColor);
     padding: 0 2vw 0 2vw;
     height: 60px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .title {
@@ -459,6 +469,7 @@ input[type=number] {
     border-radius: 5px;
     justify-content: space-around;
     height: auto;
+    margin: 10px 0 10px 0;
 }
 
 .barOption {
@@ -537,7 +548,7 @@ input[type=number] {
 }
 
 .slider::-moz-range-thumb {
-    width: 7px;
+    width: 1vw;
     height: 20px;
     background: white;
     cursor: pointer;
