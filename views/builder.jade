@@ -41,17 +41,6 @@ block content
                     .instrumentDisp#hihatDisp
                     .instrumentDisp#snareDisp
                     .instrumentDisp#percDisp
-                #regionHighlight
-
-            #regionSelect
-                .regionSelection(data-bar=0)
-                .regionSelection(data-bar=1)
-                .regionSelection(data-bar=2)
-                .regionSelection(data-bar=3)
-                .regionSelection(data-bar=4)
-                .regionSelection(data-bar=5)
-                .regionSelection(data-bar=6)
-                .regionSelection(data-bar=7)
 
         .configPanel
             .instrumentPanel.kickPanel
@@ -61,8 +50,6 @@ block content
                     .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="dragUpload(event, 'kick');", ondragover="dragOverHandler(event);")
                         .uploadText= "Upload"
                         input.fileUpload(onchange="browseUpload('kick', this.files[0], this);", type="file", style="display: none")
-
-                    .regionButton(onclick="toggleRegionControls(this, 'kick');")= "R"
 
                     .muteSoloSwitch
                         .muteButton(onclick="toggleMute(kick, this);")= "M"
@@ -88,8 +75,6 @@ block content
                     .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'ch');", ondragover="dragOverHandler(event);")
                         .uploadText= "Upload"
                         input.fileUpload(onchange="browseUpload('ch', this.files[0], this);", type="file", style="display: none")
-
-                    .regionButton(onclick="toggleRegionControls(this, 'ch');")= "R"
 
                     .muteSoloSwitch
                         .muteButton(onclick="toggleMute(ch, this);")= "M"

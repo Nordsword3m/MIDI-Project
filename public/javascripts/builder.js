@@ -86,27 +86,6 @@ let lastUpdateTime = 0;
 let nextUpdate;
 let updateQueued = false;
 
-//Region control variables
-let kickRegionsOn = false;
-let chRegionsOn = false;
-
-let curRegion = 0;
-
-class regionInfo {
-  constructor(cohesion, spontaneity) {
-    this.cohesion = cohesion;
-    this.spontaneity = spontaneity;
-  }
-}
-
-let kickRegions = new Array(8);
-let chRegions = new Array(8);
-
-for (let i = 0; i < 8; i++) {
-  kickRegions[i] = new regionInfo(0, 0);
-  chRegions[i] = new regionInfo(0, 0);
-}
-
 //Tap tempo variables
 let tempo;
 let curTap = 0;
@@ -173,7 +152,7 @@ function seedModel(elem) {
   ShowNotes(calc);
 }
 
-// REGION CONTROLS------------------------------------------------------------------------
+// CALCULATE PATTERNS---------------------------------------------------------------------------------------
 function calculatePatterns(changeInst) {
   let start = window.performance.now();
 
@@ -219,75 +198,6 @@ function calculatePatterns(changeInst) {
 
 function lerp(a, b, t) {
   return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
-}
-
-function processRegions() {
-  if (chRegionsOn) {
-    chRegions[curRegion].cohesion = chCohesionSlider.value;
-    chRegions[curRegion].spontaneity = chSpontaneitySlider.value;
-  } else {
-    chRegions.forEach(function (r) {
-      r.cohesion = chCohesionSlider.value;
-      r.spontaneity = chSpontaneitySlider.value;
-    });
-  }
-
-  if (kickRegionsOn) {
-    kickRegions[curRegion].cohesion = kickCohesionSlider.value;
-    kickRegions[curRegion].spontaneity = kickSpontaneitySlider.value;
-  } else {
-    kickRegions.forEach(function (r) {
-      r.cohesion = kickCohesionSlider.value;
-      r.spontaneity = kickSpontaneitySlider.value;
-    });
-  }
-}
-
-function selctRegion(elem) {
-  getByClass("regionSelection")[curRegion].classList.remove("selected");
-  elem.classList.add("selected");
-
-  curRegion = elem.dataset.bar;
-
-  let regHighlight = getById("regionHighlight");
-  regHighlight.style.opacity = "1";
-  regHighlight.style.left = barLength * elem.dataset.bar * 100 + "%";
-
-  if (chRegionsOn) {
-    chCohesionSlider.value = chRegions[curRegion].cohesion;
-    chSpontaneitySlider.value = chRegions[curRegion].spontaneity;
-  }
-
-  if (kickRegionsOn) {
-    kickCohesionSlider.value = kickRegions[curRegion].cohesion;
-    kickSpontaneitySlider.value = kickRegions[curRegion].spontaneity;
-  }
-}
-
-function toggleRegionControls(elem, inst) {
-  elem.classList.toggle("selected");
-
-  if (inst === "kick") {
-    kickRegionsOn = !kickRegionsOn;
-  } else if (inst === "ch") {
-    chRegionsOn = !chRegionsOn;
-  }
-
-  let regHighlight = getById("regionHighlight");
-
-  if (kickRegionsOn || chRegionsOn) {
-    if (!getById("regionSelect").classList.contains("enabled")) {
-      getById("regionSelect").classList.add("enabled");
-      selctRegion(getByClass("regionSelection")[0]);
-    }
-  } else {
-    getById("regionSelect").classList.remove("enabled");
-
-    regHighlight.style.opacity = "0";
-    getByClass("regionSelection")[curRegion].classList.remove("selected");
-  }
-
-  ShowNotes(inst === "kick" ? kick : inst === "ch" ? ch : -10);
 }
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
@@ -599,12 +509,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       showPercGhostNote(percSelects[i], false)
     );
   }
-
-  let regSelects = getByClass("regionSelection");
-
-  for (let i = 0; i < regSelects.length; i++) {
-    regSelects[i].addEventListener("click", () => selctRegion(regSelects[i]));
-  }
 });
 
 function ShowNotes(changeInst) {
@@ -620,7 +524,6 @@ function ShowNotes(changeInst) {
   } else {
     lastUpdateTime = window.performance.now();
     calculatePatterns(changeInst);
-    //processRegions();
 
     if (changeInst === ch || changeInst === all || changeInst === calc) {
       chNoteArr = nm.CalculateNotes(chPatterns, getById("chComplexity").value);
