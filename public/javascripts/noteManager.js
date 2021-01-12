@@ -51,8 +51,14 @@ class Cache {
   }
 }
 
+class PatternInfo {
+  constructor(frequency, complexity) {
+    this.frequency = frequency;
+    this.complexity = complexity;
+  }
+}
+
 let cachedPatterns = new Cache();
-let cachedSeeds = new Map();
 
 NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange) {
   //Analyse source beats
@@ -63,7 +69,7 @@ NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange)
 
       for (let beat = 0; beat < beats.length; beat++) {
 
-        let emptySect = "0,".repeat(min - 1) + "0";
+        let emptySect = "0".repeat(min);
         let beatPatts = new Map();
 
         for (let i = 0; i < 256; i += min) {
@@ -81,12 +87,10 @@ NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange)
               i < len;
               i += min
             ) {
-              patt +=
-                (patt.length === 0 ? "" : ",") +
-                beats[beat].slice(i, i + min).join();
+              patt += beats[beat].slice(i, i + min).join('');
               if (patt.endsWith(emptySect) === false) {
-                let freq = beatPatts.get(div).get(patt);
-                beatPatts.get(div).set(patt, freq === undefined ? 1 : freq + 1);
+                let pattInfo = beatPatts.get(div).get(patt);
+                beatPatts.get(div).set(patt, new PatternInfo(1, (patt.match(/1/g) || []).length / patt.length));
               }
             }
           }
@@ -96,6 +100,24 @@ NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange)
     }
   }
 };
+
+class PatternContainer {
+  constructor(minPatternSize) {
+    this.divs = new Map();
+
+    for (let i = 0; i < 256; i += minPatternSize) {
+      this.divs.set(i, new Map());
+    }
+  }
+
+  getDiv(d) {
+    return this.divs.get(d);
+  };
+
+  setDiv(d, data) {
+    return this.divs.set(d, data);
+  };
+}
 
 NoteManager.prototype.GeneratePatterns = function (
   id,
@@ -110,7 +132,7 @@ NoteManager.prototype.GeneratePatterns = function (
   //Seed variables
   const scanRange =
     seed.length > 0
-      ? Math.ceil(beats.length * (parseInt(seed.charAt(0)) * 0.2 + 0.1))
+      ? Math.ceil(beats.length * (parseInt(seed.charAt(0)) * 0.2 + 0.3))
       : beats.length;
 
   const scanStart =
@@ -121,11 +143,7 @@ NoteManager.prototype.GeneratePatterns = function (
   const scanSkip = seed.length > 2 ? parseInt(seed.charAt(2)) + 1 : 1;
 
   //Pattern variables
-  let patterns = new Map();
-
-  for (let i = 0; i < 256; i += minPatternSize) {
-    patterns.set(i, new Map());
-  }
+  let patterns = new PatternContainer(minPatternSize);
 
   let endCap = 256 - minPatternSize;
 
@@ -135,37 +153,56 @@ NoteManager.prototype.GeneratePatterns = function (
     let beatPatts = cachedPatterns.get(id, minPatternSize, maxPatternSize, beat);
     for (let div = 0; div <= endCap; div += minPatternSize) {
       let patts = [...beatPatts.get(div).entries()];
-
       for (let p = 0; p < patts.length; p++) {
-        let freq = patterns.get(div).get(patts[p][0]);
-        patterns.get(div).set(patts[p][0], freq === undefined ? patts[p][1] : freq + patts[p][1]);
+        let pattInfo = patterns.getDiv(div).get(patts[p][0]);
+        patterns.getDiv(div).set(patts[p][0], new PatternInfo(!pattInfo ? 1 : pattInfo.frequency + 1, patts[p][1].complexity));
       }
     }
   }
 
-  let calcMaxFreq = scanRange * maxPatternRelFrequency;
-
 //Fix values
   for (let i = 0; i <= endCap; i += minPatternSize) {
-    patterns.set(
-      i,
-      [...patterns.get(i).entries()]
-      .filter((a) => a[1] <= calcMaxFreq)
-      .sort((a, b) => b[1] - a[1])
-    );
+    let pArr = [...patterns.getDiv(i).entries()].sort((a, b) => a[1].frequency - b[1].frequency);
+    pArr = pArr.filter((a) => a[1].frequency >= maxPatternRelFrequency * pArr[pArr.length - 1][1].frequency);
+    let min = 1, max = 0;
+
+    pArr.forEach((x) => {
+      min = Math.min(x[1].complexity, min);
+      max = Math.max(x[1].complexity, max);
+    });
+
+    patterns.setDiv(i, new PatternListInfo(pArr, new NumRange(min, max)));
   }
+
+  //console.log(patterns);
   return patterns;
 };
 
-NoteManager.prototype.CalculateNotes = function (patterns) {
+class PatternListInfo {
+  constructor(patterns, complexityRange) {
+    this.patterns = patterns;
+    this.complexityRange = complexityRange;
+  }
+}
+
+NoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
   let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {
-    let divPatts = patterns.get(i);
-    if (divPatts && divPatts[0]) {
-      let patt = divPatts[0][0].split(",");
-      for (let p = 0; p < patt.length; p++) {
-        noteArr[i + p] = parseInt(patt[p]);
+    let divPatts = patterns.getDiv(i);
+    if (divPatts) {
+      let maxComplexity = lerp(divPatts.complexityRange.min, divPatts.complexityRange.max, relMaxComplexity);
+
+      let patt = "";
+      for (let p = 0; p < divPatts.patterns.length; p++) {
+        patt = divPatts.patterns[p][0];
+
+        if (divPatts.patterns[p][1].complexity <= maxComplexity) {
+          for (let n = 0; n < patt.length; n++) {
+            noteArr[i + n] = parseInt(patt.charAt(n));
+          }
+          break;
+        }
       }
       i += patt.length - 1;
     }

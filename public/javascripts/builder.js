@@ -126,8 +126,8 @@ function tapTempoButton() {
   if (prevTaps.length >= 8) {
     setTempo(
       60 /
-      ((prevTaps[0] - prevTaps[Math.min(16, prevTaps.length - 1)]) /
-        Math.min(16, prevTaps.length - 1))
+      ((prevTaps[0] - prevTaps[Math.min(32, prevTaps.length - 1)]) /
+        Math.min(32, prevTaps.length - 1))
     );
   }
 
@@ -623,11 +623,11 @@ function ShowNotes(changeInst) {
     //processRegions();
 
     if (changeInst === ch || changeInst === all || changeInst === calc) {
-      chNoteArr = nm.CalculateNotes(chPatterns);
+      chNoteArr = nm.CalculateNotes(chPatterns, getById("chComplexity").value);
       dem.Display(chNoteArr, notes[ch]);
     }
     if (changeInst === kick || changeInst === all || changeInst === calc) {
-      kickNoteArr = nm.CalculateNotes(kickPatterns);
+      kickNoteArr = nm.CalculateNotes(kickPatterns, getById("kickComplexity").value);
       dem.Display(kickNoteArr, notes[kick]);
     }
     if (changeInst === snr || changeInst === all) {

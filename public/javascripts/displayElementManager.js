@@ -43,7 +43,6 @@ DisplayElementManager.prototype.InitialiseNotes = function () {
 
 DisplayElementManager.prototype.PlaceNote = function (note, disp) {
   if (note) {
-    console.log(disp.offsetLeft);
     note.style.left =
       (100 * parseInt(note.id.substring(note.id.search("Note") + 4)) / 256) + "%";
   }
