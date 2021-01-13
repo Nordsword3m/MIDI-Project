@@ -128,8 +128,10 @@ block content
                 .instrumentControls
                     h3= "Position 1"
 
+                .percOptions
+                    input.slider#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes(perc);")
                     .barSelectCon
-                        .barOption(data-bar= 0, data-perc= 1)= "1"
+                        .barOption(data-bar= 0, data-perc = 1)= "1"
                         .barOption(data-bar= 1, data-perc= 1)= "2"
                         .barOption(data-bar= 2, data-perc= 1)= "3"
                         .barOption(data-bar= 3, data-perc= 1)= "4"
@@ -140,6 +142,8 @@ block content
 
                     h3= "Position 2"
 
+                .percOptions
+                    input.slider#per2pos(type="range", min="0", max="30", value="14", step="2", oninput="ShowNotes(perc);")
                     .barSelectCon
                         .barOption(data-bar= 0, data-perc= 2)= "1"
                         .barOption(data-bar= 1, data-perc= 2)= "2"

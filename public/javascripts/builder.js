@@ -25,6 +25,8 @@ let kickQuirkSlider = null;
 let snarePattern = "3";
 
 let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
+let perc1Pos;
+let perc2Pos;
 
 let playHead = null;
 let tempoInput = null;
@@ -413,7 +415,7 @@ document.onkeydown = function (e) {
 };
 
 function showPercGhostNote(elem, show) {
-  let offset = elem.dataset.perc === "1" ? 4 : 28;
+  let offset = elem.dataset.perc === "1" ? parseInt(perc1Pos.value) : parseInt(perc2Pos.value);
   let id = elem.dataset.bar * 256 * barLength + offset;
   let note = getById("percNote" + id);
 
@@ -470,6 +472,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   kickCohesionSlider = getById("kickCohesion");
   kickSpontaneitySlider = getById("kickSpontaneity");
   kickQuirkSlider = getById("kickQuirk");
+
+  perc1Pos = getById("per1pos");
+  perc2Pos = getById("per2pos");
 
   tempoInput = getById("tempoInput");
   tempo = tempoInput.value;
@@ -538,7 +543,7 @@ function ShowNotes(changeInst) {
       dem.Display(snrNoteArr, notes[snr]);
     }
     if (changeInst === perc || changeInst === all) {
-      percNoteArr = nm.CalculatePerc(percBars[0], percBars[1]);
+      percNoteArr = nm.CalculatePerc(percBars[0], parseInt(perc1Pos.value), percBars[1], parseInt(perc2Pos.value));
       dem.Display(percNoteArr, notes[perc]);
     }
   }

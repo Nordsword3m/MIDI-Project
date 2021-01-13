@@ -26,7 +26,6 @@ DisplayElementManager.prototype.InitialiseNotes = function () {
           snrNotes[i] = this.CreateNote(i, "snr", snareDisplay);
         }
       }
-
       percNotes[i] = this.CreateNote(i, "perc", percDisplay);
     }
   }

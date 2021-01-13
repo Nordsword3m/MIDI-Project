@@ -163,7 +163,8 @@ NoteManager.prototype.GeneratePatterns = function (
 //Fix values
   for (let i = 0; i <= endCap; i += minPatternSize) {
     let pArr = [...patterns.getDiv(i).entries()].sort((a, b) => a[1].frequency - b[1].frequency);
-    pArr = pArr.filter((a) => a[1].frequency >= maxPatternRelFrequency * pArr[pArr.length - 1][1].frequency);
+    let maxCalcFreq = maxPatternRelFrequency * Math.sqrt(pArr[pArr.length - 1][1].frequency);
+    pArr = pArr.filter((a) => Math.sqrt(a[1].frequency) >= maxCalcFreq);
     let min = 1, max = 0;
 
     pArr.forEach((x) => {
@@ -210,17 +211,17 @@ NoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
   return noteArr;
 };
 
-NoteManager.prototype.CalculatePerc = function (optn1Bars, optn2Bars) {
+NoteManager.prototype.CalculatePerc = function (optn1Bars, optn1Pos, optn2Bars, optn2Pos) {
   let noteArr = new Array(256).fill(0);
   for (let i = 0; i < 256; i++) {
     let notePos = i % (256 * barLength);
     let curBar = Math.floor(i / (256 * barLength));
 
-    if (optn1Bars[curBar] && notePos === 4) {
+    if (optn1Bars[curBar] && notePos === optn1Pos) {
       noteArr[i] = 60;
     }
 
-    if (optn2Bars[curBar] && notePos === 28) {
+    if (optn2Bars[curBar] && notePos === optn2Pos) {
       noteArr[i] = 60;
     }
   }
