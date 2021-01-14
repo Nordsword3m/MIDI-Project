@@ -125,32 +125,36 @@ block content
                         .muteButton(onclick="toggleMute(perc, this);")= "M"
                         .soloButton(onclick="toggleSolo(perc, this);")= "S"
 
-                .instrumentControls
-                    h3= "Position 1"
+                .instrumentControls.perc
 
-                .percOptions
-                    input.slider#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes(perc);")
-                    .barSelectCon
-                        .barOption(data-bar= 0, data-perc = 1)= "1"
-                        .barOption(data-bar= 1, data-perc= 1)= "2"
-                        .barOption(data-bar= 2, data-perc= 1)= "3"
-                        .barOption(data-bar= 3, data-perc= 1)= "4"
-                        .barOption(data-bar= 4, data-perc= 1)= "5"
-                        .barOption(data-bar= 5, data-perc= 1)= "6"
-                        .barOption(data-bar= 6, data-perc= 1)= "7"
-                        .barOption(data-bar= 7, data-perc= 1)= "8"
+                    .percOptions
+                        .vertHeadWrapper
+                            h3.vert= "Position 1"
+                        .vertSliderWrapper
+                            input.slider.vert#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes(perc);")
+                        .barSelectCon
+                            .barOption(data-bar= 0, data-perc = 1)= "1"
+                            .barOption(data-bar= 1, data-perc= 1)= "2"
+                            .barOption(data-bar= 2, data-perc= 1)= "3"
+                            .barOption(data-bar= 3, data-perc= 1)= "4"
+                            .barOption(data-bar= 4, data-perc= 1)= "5"
+                            .barOption(data-bar= 5, data-perc= 1)= "6"
+                            .barOption(data-bar= 6, data-perc= 1)= "7"
+                            .barOption(data-bar= 7, data-perc= 1)= "8"
 
-                    h3= "Position 2"
 
-                .percOptions
-                    input.slider#per2pos(type="range", min="0", max="30", value="14", step="2", oninput="ShowNotes(perc);")
-                    .barSelectCon
-                        .barOption(data-bar= 0, data-perc= 2)= "1"
-                        .barOption(data-bar= 1, data-perc= 2)= "2"
-                        .barOption(data-bar= 2, data-perc= 2)= "3"
-                        .barOption(data-bar= 3, data-perc= 2)= "4"
-                        .barOption(data-bar= 4, data-perc= 2)= "5"
-                        .barOption(data-bar= 5, data-perc= 2)= "6"
-                        .barOption(data-bar= 6, data-perc= 2)= "7"
-                        .barOption(data-bar= 7, data-perc= 2)= "8"
+                    .percOptions
+                        .vertHeadWrapper
+                            h3.vert= "Position 2"
+                        .vertSliderWrapper
+                            input.slider.vert#per2pos(type="range", min="0", max="30", value="14", step="2", oninput="ShowNotes(perc);")
+                        .barSelectCon
+                            .barOption(data-bar= 0, data-perc= 2)= "1"
+                            .barOption(data-bar= 1, data-perc= 2)= "2"
+                            .barOption(data-bar= 2, data-perc= 2)= "3"
+                            .barOption(data-bar= 3, data-perc= 2)= "4"
+                            .barOption(data-bar= 4, data-perc= 2)= "5"
+                            .barOption(data-bar= 5, data-perc= 2)= "6"
+                            .barOption(data-bar= 6, data-perc= 2)= "7"
+                            .barOption(data-bar= 7, data-perc= 2)= "8"
 

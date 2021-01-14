@@ -35,8 +35,12 @@ body {
 
 h1, h2, h3 {
     font-weight: 100;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 0;
+}
+
+h1 {
+    white-space: nowrap;
+    font-size: min(3vw, 35px);
 }
 
 h2 {
@@ -45,12 +49,42 @@ h2 {
 
 h3 {
     font-size: min(2vw, 16px);
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+h3.vert {
+    transform: rotate(-90deg);
+    width: 100px;
+    height: 20px;
+    margin-top: 5px;
+    transform-origin: 50px 50px;
+    text-align: right;
+    font-size: min(3vw, 16px);
+}
+
+.vertHeadWrapper {
+    display: inline-block;
+    width: 20px;
+    height: 100px;
+    margin-right: 15px;
 }
 
 /* Config panel stuff--------------------------------------------------------------*/
+.instrumentControls.perc {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.percOptions {
+    display: flex;
+    flex-direction: row;
+}
+
 .instrumentPanel {
     background-color: var(--panelColor);
-    padding: 20px 20px 10px 20px;
+    padding: 15px 15px 10px 15px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -166,19 +200,17 @@ h3 {
 
 .displayCon {
     width: 100%;
-    display: grid;
-    gap: 0 7px;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: 150px auto;
+    height: 175px;
     margin-top: 7px;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
 }
 
 .labelCon {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
 }
 
 .instrumentCon {
@@ -206,8 +238,6 @@ h3 {
     background-color: var(--dispColor);
     display: flex;
     position: relative;
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
 }
 
 #playHead {
@@ -261,11 +291,6 @@ h3 {
     height: 60px;
     width: 100%;
     box-sizing: border-box;
-}
-
-.title {
-    font-size: min(4vmin, 35px);
-    margin: 0;
 }
 
 .fas.fa-play, .fas.fa-pause {
@@ -390,25 +415,49 @@ input[type=number] {
 
 /* UI Controls-------------------------------------------------------------------- */
 .barSelectCon {
-    display: flex;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     box-shadow: 0 0 4px 1px var(--green);
     border-radius: 5px;
-    justify-content: space-around;
-    height: auto;
+    height: 100%;
+    width: 10vw;
     margin: 10px 0 10px 0;
 }
 
 .barOption {
     flex-grow: 1;
     text-align: center;
-    font-size: 2vmin;
     transition: all 500ms;
+    font-size: min(3vw, 20px);
 
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 5px;
+    padding: 1px;
+    border: 1px solid var(--green);
+    box-sizing: border-box;
+}
+
+.barOption:hover {
+    box-shadow: 0 0 5px 2px var(--green);
+}
+
+.barOption:first-child {
+    border-radius: 5px 0 0 0;
+}
+
+.barOption:nth-child(2) {
+    border-radius: 0 5px 0 0;
+}
+
+.barOption:nth-child(7) {
+    border-radius: 0 0 0 5px;
+}
+
+.barOption:last-child {
+    border-radius: 0 0 5px 0;
 }
 
 .barOption.selected {
@@ -417,15 +466,6 @@ input[type=number] {
 }
 
 .barOption:hover:not(.selected) {
-    box-shadow: 0 0 4px 1px var(--green);
-}
-
-.barOption:first-child {
-    border-radius: 5px 0 0 5px;
-}
-
-.barOption:last-child {
-    border-radius: 0 5px 5px 0;
 }
 
 .snareSelect {
@@ -462,6 +502,25 @@ input[type=number] {
     background-color: var(--purple);
 }
 
+.vertSliderWrapper {
+    display: inline-flex;
+    width: 2px;
+    height: 120px;
+    padding: 0;
+    font-size: 0;
+    margin-right: 30px;
+}
+
+.slider.vert {
+    width: 120px;
+    height: 2px;
+    left: -60px;
+    position: relative;
+    top: 50%;
+    margin-right: -50%;
+    transform: rotate(-90deg);
+}
+
 .slider {
     appearance: none;
     width: 100%;
@@ -481,7 +540,7 @@ input[type=number] {
     border: 0;
     border-radius: 0;
     box-shadow: 0 0 4px white;
-    opacity: 0.5;
+    opacity: 0.7;
     transition: all 200ms;
 }
 
