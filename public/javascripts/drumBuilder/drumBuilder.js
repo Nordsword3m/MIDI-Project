@@ -1,36 +1,30 @@
-const getById = function (id) {
-  return document.getElementById(id);
-};
-
-const getByClass = function (classname) {
-  return document.getElementsByClassName(classname);
-};
-
 // Page Elements
-let display = null;
-let divisionDisplay = null;
-let hihatDisplay = null;
-let kickDisplay = null;
-let snareDisplay = null;
-let percDisplay = null;
+let display;
+let divisionDisplay;
+let hihatDisplay;
+let kickDisplay;
+let snareDisplay;
+let percDisplay;
 
-let chCohesionSlider = null;
-let chSpontaneitySlider = null;
-let chQuirkSlider = null;
+let chCohesionSlider;
+let chSpontaneitySlider;
+let chQuirkSlider;
+let chComplexitySlider;
 
-let kickCohesionSlider = null;
-let kickSpontaneitySlider = null;
-let kickQuirkSlider = null;
+let kickCohesionSlider;
+let kickSpontaneitySlider;
+let kickQuirkSlider;
+let kickComplexitySlider;
 
 let snarePattern = "3";
 
 let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
+
 let perc1Pos;
 let perc2Pos;
 
-let playHead = null;
-let tempoInput = null;
-let notes = null;
+let playHead;
+let notes;
 
 const numOfDivs = 32;
 
@@ -38,7 +32,6 @@ const numOfDivs = 32;
 let prevPlayTime;
 let playPos = 0;
 let relPlayPos = 0;
-let loopStart = 0;
 
 let playTimerID; // Keeps track of the "Playing" routine
 
@@ -51,13 +44,13 @@ let chunkPreRender = 1 / 2;
 const chunkSize = noteLength / 2;
 
 // Note calculation processing
-let chNoteArr = null;
-let kickNoteArr = null;
-let snrNoteArr = null;
-let percNoteArr = null;
+let chNoteArr;
+let kickNoteArr;
+let snrNoteArr;
+let percNoteArr;
 
-let chPatterns = null;
-let kickPatterns = null;
+let chPatterns;
+let kickPatterns;
 
 let source;
 
@@ -68,12 +61,10 @@ const ch = 1;
 const snr = 2;
 const perc = 3;
 const calc = 10;
+const noncalc = 12;
 
 //State variables
 let metroActive = false;
-
-let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc"]);
-am.SetDefaultBuffers().then();
 
 let nm = new NoteManager();
 let dem = new DisplayElementManager();
@@ -88,55 +79,67 @@ let lastUpdateTime = 0;
 let nextUpdate;
 let updateQueued = false;
 
-//Tap tempo variables
-let tempo;
-let curTap = 0;
-let prevTaps = [];
-let tapTimeoutTimer;
+// SAVE AND LOAD STUFF--------------------------------------------------------------------
+function loadData() {
+  let data = JSON.parse(sessionStorage.getItem("drumData"));
 
-// TEMPO TAPPING-------------------------------------------------------------------
-function setTempo(tmp) {
-  tmp = Math.max(tmp, 1);
-  tempo = tmp;
-  tempoInput.value = Math.round(tmp);
+  if (data) {
+    getById("seedInput").value = data.seed;
+    setTempo(data.tempo);
+
+    kickCohesionSlider.value = data.kickCohesion
+    kickSpontaneitySlider.value = data.kickSpontaneity
+    kickQuirkSlider.value = data.kickQuirk
+    kickComplexitySlider.value = data.kickComplexity
+
+    chCohesionSlider.value = data.chCohesion
+    chSpontaneitySlider.value = data.chSpontaneity
+    chQuirkSlider.value = data.chQuirk
+    chComplexitySlider.value = data.chComplexity
+
+    snarePattern = data.snrPattern
+
+    perc1Pos.value = data.perc1Pos
+    percBars[0] = data.perc1Bars
+
+    perc1Pos.value = data.perc2Pos
+    percBars[1] = data.perc2Bars
+  } else {
+    getById("seedInput").value = Math.floor(Math.random() * 1000);
+    setTempo(130);
+  }
+
+  setPercBars();
+  setSnarePattern();
 }
 
-function tapTempoButton() {
-  prevTaps.unshift(am.curTime());
+function saveData() {
+  let data = {
+    seed: getById("seedInput").value,
+    tempo: tempo,
 
-  if (prevTaps.length >= 8) {
-    setTempo(
-      60 /
-      ((prevTaps[0] - prevTaps[Math.min(32, prevTaps.length - 1)]) /
-        Math.min(32, prevTaps.length - 1))
-    );
-  }
+    kickCohesion: kickCohesionSlider.value,
+    kickCohesionMin: kickCohesionSlider.min,
+    kickSpontaneity: kickSpontaneitySlider.value,
+    kickQuirk: kickQuirkSlider.value,
+    kickComplexity: kickComplexitySlider.value,
 
-  let bpmSuff = getById("bpmSuffix");
+    chCohesion: chCohesionSlider.value,
+    chCohesionMin: chCohesionSlider.min,
+    chSpontaneity: chSpontaneitySlider.value,
+    chQuirk: chQuirkSlider.value,
+    chComplexity: chComplexitySlider.value,
 
-  if (curTap % 4 === 0) {
-    am.playNow("m1");
-    bpmSuff.classList.add("barTap");
-    setTimeout(() => bpmSuff.classList.remove("barTap"), 200);
-  } else {
-    am.playNow("m2");
-    bpmSuff.classList.add("noteTap");
-    setTimeout(() => bpmSuff.classList.remove("noteTap"), 200);
-  }
-  curTap++;
+    snrPattern: snarePattern,
 
-  if (!tapTimeoutTimer) {
-    tapTimeoutTimer = setTimeout(() => {
-      prevTaps = [];
-      curTap = 0;
-    }, 2500);
-  } else {
-    clearTimeout(tapTimeoutTimer);
-    tapTimeoutTimer = setTimeout(() => {
-      prevTaps = [];
-      curTap = 0;
-    }, 2500);
-  }
+    perc1Pos: perc1Pos.value,
+    perc1Bars: percBars[0],
+
+    perc2Pos: perc1Pos.value,
+    perc2Bars: percBars[1]
+  };
+
+  sessionStorage.setItem("drumData", JSON.stringify(data));
 }
 
 // SEED CONTROLS------------------------------------------------------------------
@@ -145,11 +148,13 @@ function randomizeSeed() {
   seedModel(getById("seedInput"));
 }
 
-function seedModel(elem) {
-  elem.value =
-    elem.value.length === 0
+function seedModel() {
+  let seedInput = getById("seedInput");
+
+  seedInput.value =
+    seedInput.value.length === 0
       ? "000"
-      : parseInt(elem.value).toString().padStart(3, "0").slice(0, 3);
+      : parseInt(seedInput.value).toString().padStart(3, "0").slice(0, 3);
 
   ShowNotes(calc);
 }
@@ -285,7 +290,7 @@ async function TogglePlaying(pos, play) {
 
     setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
     setPlayPos(nextChunk);
-    setLoopStart();
+    am.SetLoopStart(relPlayPos);
 
     NextChunk();
 
@@ -300,10 +305,6 @@ async function TogglePlaying(pos, play) {
   SetHeadPos();
 }
 
-function setLoopStart() {
-  let trackLength = (60.0 / tempo) * (256 * barLength);
-  loopStart = am.curTime() - relPlayPos * trackLength;
-}
 
 function setPlayPos(pos) {
   let posDelta = pos - playPos;
@@ -314,7 +315,7 @@ function setPlayPos(pos) {
     while (relPlayPos >= 1) {
       relPlayPos--;
     }
-    setLoopStart();
+    am.SetLoopStart(relPlayPos);
   } else if (relPlayPos < 0) {
     while (relPlayPos < 0) {
       relPlayPos++;
@@ -330,7 +331,7 @@ function SetHeadPos() {
 function NextChunk() {
   if (relPlayPos + chunkSize * chunkPreRender >= 1) {
     let trackLength = (60.0 / tempo) * (256 * barLength);
-    loopStart = (1 - relPlayPos) * trackLength + am.curTime();
+    am.SetLoopStart(relPlayPos - 1);
   }
 
   scheduleMets();
@@ -403,16 +404,6 @@ function toggleMetronome(elem) {
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
-document.onkeydown = function (e) {
-  if (e.key === " ") {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-    TogglePlaying(0, !playing).then();
-  } else if (e.key === ".") {
-    tapTempoButton(getById("tapButton"));
-  }
-};
 
 function showPercGhostNote(elem, show) {
   let offset = elem.dataset.perc === "1" ? parseInt(perc1Pos.value) : parseInt(perc2Pos.value);
@@ -444,8 +435,30 @@ function barSelect(elem) {
   ShowNotes(perc);
 }
 
+function setPercBars() {
+  for (let p = 0; p <= 1; p++) {
+    for (let b = 0; b < 8; b++) {
+      if (percBars[p][b]) {
+        getByClass("barOption")[p * 8 + b].classList.add("selected");
+      }
+    }
+  }
+}
+
+function setSnarePattern() {
+  let snrOpts = getByClass("snrOption");
+
+  if (snarePattern === "3") {
+    snrOpts[0].classList.add("selected");
+    snrOpts[1].classList.remove("selected");
+  } else if (snarePattern === "2and4") {
+    snrOpts[0].classList.remove("selected");
+    snrOpts[1].classList.add("selected");
+  }
+}
+
 function toggleSnarePattern(elem) {
-  [].slice.call(elem.children).forEach((e) => e.classList.toggle("selected"));
+  let snrOpts = getByClass("snrOption");
 
   if (snarePattern === "3") {
     snarePattern = "2and4";
@@ -453,10 +466,22 @@ function toggleSnarePattern(elem) {
     snarePattern = "3";
   }
 
+  setSnarePattern();
+
   ShowNotes(snr);
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
+  keydownfuncs.push((e) => {
+      if (e.key === " ") {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        TogglePlaying(0, !playing).then();
+      }
+    }
+  );
+
   display = getById("display");
   divisionDisplay = getById("divDisp");
   hihatDisplay = getById("hihatDisp");
@@ -469,19 +494,16 @@ document.addEventListener("DOMContentLoaded", async function () {
   chCohesionSlider = getById("chCohesion");
   chSpontaneitySlider = getById("chSpontaneity");
   chQuirkSlider = getById("chQuirk");
+  chComplexitySlider = getById("chComplexity");
   kickCohesionSlider = getById("kickCohesion");
   kickSpontaneitySlider = getById("kickSpontaneity");
   kickQuirkSlider = getById("kickQuirk");
+  kickComplexitySlider = getById("kickComplexity");
 
   perc1Pos = getById("per1pos");
   perc2Pos = getById("per2pos");
 
-  tempoInput = getById("tempoInput");
-  tempo = tempoInput.value;
-
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
-
-  getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
 
   display.addEventListener("click", function (event) {
     TogglePlaying(
@@ -494,15 +516,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     TogglePlaying(0, !playing).then();
   });
 
-  await loadSource();
-  nm.CacheBeatPatterns(ch, source[ch], new NumRange(chCohesionSlider.min, chCohesionSlider.max));
-  nm.CacheBeatPatterns(kick, source[kick], new NumRange(kickCohesionSlider.min, kickCohesionSlider.max));
-
-  notes = dem.InitialiseNotes();
-  dem.CreateDivisions();
-
-  ShowNotes(all);
-
   let percSelects = getByClass("barOption");
 
   for (let i = 0; i < percSelects.length; i++) {
@@ -514,6 +527,23 @@ document.addEventListener("DOMContentLoaded", async function () {
       showPercGhostNote(percSelects[i], false)
     );
   }
+
+  getById("tempoInput").addEventListener("input", () => {
+    saveData();
+  });
+
+  loadData();
+
+  await loadSource();
+  nm.CacheBeatPatterns(ch, source[ch], new NumRange(chCohesionSlider.min, chCohesionSlider.max));
+  nm.CacheBeatPatterns(kick, source[kick], new NumRange(kickCohesionSlider.min, kickCohesionSlider.max));
+
+  notes = dem.InitialiseNotes();
+  dem.CreateDivisions();
+
+
+  seedModel();
+  ShowNotes(noncalc);
 });
 
 function ShowNotes(changeInst) {
@@ -529,20 +559,21 @@ function ShowNotes(changeInst) {
   } else {
     lastUpdateTime = window.performance.now();
     calculatePatterns(changeInst);
+    saveData();
 
     if (changeInst === ch || changeInst === all || changeInst === calc) {
-      chNoteArr = nm.CalculateNotes(chPatterns, getById("chComplexity").value);
+      chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value);
       dem.Display(chNoteArr, notes[ch]);
     }
     if (changeInst === kick || changeInst === all || changeInst === calc) {
-      kickNoteArr = nm.CalculateNotes(kickPatterns, getById("kickComplexity").value);
+      kickNoteArr = nm.CalculateNotes(kickPatterns, kickComplexitySlider.value);
       dem.Display(kickNoteArr, notes[kick]);
     }
-    if (changeInst === snr || changeInst === all) {
+    if (changeInst === snr || changeInst === all || changeInst === noncalc) {
       snrNoteArr = nm.CalculateSnare(snarePattern);
       dem.Display(snrNoteArr, notes[snr]);
     }
-    if (changeInst === perc || changeInst === all) {
+    if (changeInst === perc || changeInst === all || changeInst === noncalc) {
       percNoteArr = nm.CalculatePerc(percBars[0], parseInt(perc1Pos.value), percBars[1], parseInt(perc2Pos.value));
       dem.Display(percNoteArr, notes[perc]);
     }
@@ -554,7 +585,7 @@ function loadSource() {
   let request = new XMLHttpRequest();
 
   return new Promise(function (resolve, reject) {
-    request.open("GET", "sourceData.txt", true);
+    request.open("GET", "../sourceData.txt", true);
     request.responseType = "json";
 
     request.onload = function () {

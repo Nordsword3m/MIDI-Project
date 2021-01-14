@@ -1,16 +1,20 @@
 mixin header(page)
+    script(src = "/javascripts/constructor/bufferLoader.js")
+    script(src = "/javascripts/constructor/audioManager.js")
     script(src = "/javascripts/header.js")
 
+
     .topBar
-        h1.title= title
+        h1.title= "Midi Ting Fi Real"
 
         #toolBar
-            i.fas.fa-drum.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
-
             if page === "drumBuilder"
+                a(href="/constructor")
+                    i.fas.fa-drum.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+
                 #seedCon
                     #seedPrefix= "Seed"
-                    input#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
+                    input#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel();")
                     i.fas.fa-dice.icon#randomSeedButton
 
             #tempoCon

@@ -162,17 +162,19 @@ NoteManager.prototype.GeneratePatterns = function (
 
 //Fix values
   for (let i = 0; i <= endCap; i += minPatternSize) {
-    let pArr = [...patterns.getDiv(i).entries()].sort((a, b) => a[1].frequency - b[1].frequency);
-    let maxCalcFreq = maxPatternRelFrequency * Math.sqrt(pArr[pArr.length - 1][1].frequency);
-    pArr = pArr.filter((a) => Math.sqrt(a[1].frequency) >= maxCalcFreq);
-    let min = 1, max = 0;
+    if (patterns.getDiv(i).size > 0) {
+      let pArr = [...patterns.getDiv(i).entries()].sort((a, b) => a[1].frequency - b[1].frequency);
+      let maxCalcFreq = maxPatternRelFrequency * Math.sqrt(pArr[pArr.length - 1][1].frequency);
+      pArr = pArr.filter((a) => Math.sqrt(a[1].frequency) >= maxCalcFreq);
+      let min = 1, max = 0;
 
-    pArr.forEach((x) => {
-      min = Math.min(x[1].complexity, min);
-      max = Math.max(x[1].complexity, max);
-    });
+      pArr.forEach((x) => {
+        min = Math.min(x[1].complexity, min);
+        max = Math.max(x[1].complexity, max);
+      });
 
-    patterns.setDiv(i, new PatternListInfo(pArr, new NumRange(min, max)));
+      patterns.setDiv(i, new PatternListInfo(pArr, new NumRange(min, max)));
+    }
   }
 
   //console.log(patterns);
@@ -191,7 +193,7 @@ NoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
 
   for (let i = 0; i < 256; i++) {
     let divPatts = patterns.getDiv(i);
-    if (divPatts) {
+    if (divPatts && divPatts.patterns) {
       let maxComplexity = lerp(divPatts.complexityRange.min, divPatts.complexityRange.max, relMaxComplexity);
 
       let patt = "";

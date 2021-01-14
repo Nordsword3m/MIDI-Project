@@ -3,6 +3,13 @@ function AudioManager(audioList) {
   this.context = undefined;
   this.mainContext = new AudioContext();
   this.contextCreated = 0;
+
+  this.loopStart = 0;
+}
+
+AudioManager.prototype.SetLoopStart = function (relPos) {
+  let trackLength = (60.0 / tempo) * (256 * barLength);
+  this.loopStart = am.curTime() - relPos * trackLength;
 }
 
 AudioManager.prototype.ReplaceBuffer = async function (name, file) {
@@ -56,5 +63,5 @@ AudioManager.prototype.play = function (name, pos, tempo) {
 
   let trackLength = (60.0 / tempo) * (256 * barLength);
 
-  source.start(loopStart + pos * trackLength - this.contextCreated);
+  source.start(this.loopStart + pos * trackLength - this.contextCreated);
 };

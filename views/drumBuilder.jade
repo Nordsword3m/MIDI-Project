@@ -2,146 +2,141 @@ extends layout
 
 block content
     div(style = "display: none;")
-        script(src = "/javascripts/drumBuilder/bufferLoader.js")
-        script(src = "/javascripts/drumBuilder/audioManager.js")
         script(src = "/javascripts/drumBuilder/noteManager.js")
         script(src = "/javascripts/drumBuilder/displayElementManager.js")
         script(src = "/javascripts/drumBuilder/drumBuilder.js")
-        #chModel(style="display: none")= chModel
-        #kickModel(style="display: none")= kickModel
 
 
     +header("drumBuilder")
 
-    .builderPage
-        .displayCon
-            .labelCon
-                .instrumentLabel= "kick"
-                .instrumentLabel= "ch"
-                .instrumentLabel= "snr"
-                .instrumentLabel= "perc"
-            #display
-                #playHead
-                #divDisp
-                .instrumentCon
-                    .instrumentDisp#kickDisp
-                    .instrumentDisp#hihatDisp
-                    .instrumentDisp#snareDisp
-                    .instrumentDisp#percDisp
+    .displayCon
+        .labelCon
+            .instrumentLabel= "kick"
+            .instrumentLabel= "ch"
+            .instrumentLabel= "snr"
+            .instrumentLabel= "perc"
+        #display
+            #playHead
+            #divDisp
+            .instrumentCon
+                .instrumentDisp#kickDisp
+                .instrumentDisp#hihatDisp
+                .instrumentDisp#snareDisp
+                .instrumentDisp#percDisp
 
-        .configPanel
-            .instrumentPanel.kickPanel
-                .instrumentInfo
-                    h2= "Kick"
+    .configPanel
+        .instrumentPanel.kickPanel
+            .instrumentInfo
+                h2= "Kick"
 
-                    .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="dragUpload(event, 'kick');", ondragover="dragOverHandler(event);")
-                        .uploadText= "Upload"
-                        input.fileUpload(onchange="browseUpload('kick', this.files[0], this);", type="file", style="display: none")
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="dragUpload(event, 'kick');", ondragover="dragOverHandler(event);")
+                    .uploadText= "Upload"
+                    input.fileUpload(onchange="browseUpload('kick', this.files[0], this);", type="file", style="display: none")
 
-                    .muteSoloSwitch
-                        .muteButton(onclick="toggleMute(kick, this);")= "M"
-                        .soloButton(onclick="toggleSolo(kick, this);")= "S"
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(kick, this);")= "M"
+                    .soloButton(onclick="toggleSolo(kick, this);")= "S"
 
-                .instrumentControls
-                    h3= "Cohesion"
-                    input#kickCohesion.slider(type="range", min="4", max="7", value="2", step="1", oninput="ShowNotes(kick);")
+            .instrumentControls
+                h3= "Cohesion"
+                input#kickCohesion.slider(type="range", min="4", max="7", value="2", step="1", oninput="ShowNotes(kick);")
 
-                    h3= "Spontaneity"
-                    input#kickSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
+                h3= "Spontaneity"
+                input#kickSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
 
-                    h3= "Quirk"
-                    input#kickQuirk.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
+                h3= "Quirk"
+                input#kickQuirk.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
 
-                    h3= "Complexity"
-                    input#kickComplexity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
+                h3= "Complexity"
+                input#kickComplexity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
 
-            .instrumentPanel.hihatPanel
-                .instrumentInfo
-                    h2= "Hihat"
+        .instrumentPanel.hihatPanel
+            .instrumentInfo
+                h2= "Hihat"
 
-                    .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'ch');", ondragover="dragOverHandler(event);")
-                        .uploadText= "Upload"
-                        input.fileUpload(onchange="browseUpload('ch', this.files[0], this);", type="file", style="display: none")
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'ch');", ondragover="dragOverHandler(event);")
+                    .uploadText= "Upload"
+                    input.fileUpload(onchange="browseUpload('ch', this.files[0], this);", type="file", style="display: none")
 
-                    .muteSoloSwitch
-                        .muteButton(onclick="toggleMute(ch, this);")= "M"
-                        .soloButton(onclick="toggleSolo(ch, this);")= "S"
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(ch, this);")= "M"
+                    .soloButton(onclick="toggleSolo(ch, this);")= "S"
 
-                .instrumentControls
-                    h3= "Cohesion"
-                    input#chCohesion.slider(type="range", min="3", max="6", value="2", step="1", oninput="ShowNotes(ch);")
+            .instrumentControls
+                h3= "Cohesion"
+                input#chCohesion.slider(type="range", min="3", max="6", value="2", step="1", oninput="ShowNotes(ch);")
 
-                    h3= "Spontaneity"
-                    input#chSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(ch);")
+                h3= "Spontaneity"
+                input#chSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(ch);")
 
-                    h3= "Quirk"
-                    input#chQuirk.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
+                h3= "Quirk"
+                input#chQuirk.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
 
-                    h3= "Complexity"
-                    input#chComplexity.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
+                h3= "Complexity"
+                input#chComplexity.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
 
-            .instrumentPanel.snarePanel
-                .instrumentInfo
-                    h2= "Snare"
+        .instrumentPanel.snarePanel
+            .instrumentInfo
+                h2= "Snare"
 
-                    .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'snr');", ondragover="dragOverHandler(event);")
-                        .uploadText= "Upload"
-                        input.fileUpload(onchange="browseUpload('snr', this.files[0], this);", type="file", style="display: none")
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'snr');", ondragover="dragOverHandler(event);")
+                    .uploadText= "Upload"
+                    input.fileUpload(onchange="browseUpload('snr', this.files[0], this);", type="file", style="display: none")
 
-                    .muteSoloSwitch
-                        .muteButton(onclick="toggleMute(snr, this);")= "M"
-                        .soloButton(onclick="toggleSolo(snr, this);")= "S"
-
-
-                .instrumentControls
-                    h3= "Pattern"
-
-                    .snareSelect(onclick="toggleSnarePattern(this);")
-                        .option.selected= "3"
-                        .option= "2 & 4"
-
-            .instrumentPanel.percPanel
-                .instrumentInfo
-                    h2= "Perc"
-
-                    .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'perc');", ondragover="dragOverHandler(event);")
-                        .uploadText= "Upload"
-                        input.fileUpload(onchange="browseUpload('perc', this.files[0], this);", type="file", style="display: none")
-
-                    .muteSoloSwitch
-                        .muteButton(onclick="toggleMute(perc, this);")= "M"
-                        .soloButton(onclick="toggleSolo(perc, this);")= "S"
-
-                .instrumentControls.perc
-
-                    .percOptions
-                        .vertHeadWrapper
-                            h3.vert= "Position 1"
-                        .vertSliderWrapper
-                            input.slider.vert#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes(perc);")
-                        .barSelectCon
-                            .barOption(data-bar= 0, data-perc = 1)= "1"
-                            .barOption(data-bar= 1, data-perc= 1)= "2"
-                            .barOption(data-bar= 2, data-perc= 1)= "3"
-                            .barOption(data-bar= 3, data-perc= 1)= "4"
-                            .barOption(data-bar= 4, data-perc= 1)= "5"
-                            .barOption(data-bar= 5, data-perc= 1)= "6"
-                            .barOption(data-bar= 6, data-perc= 1)= "7"
-                            .barOption(data-bar= 7, data-perc= 1)= "8"
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(snr, this);")= "M"
+                    .soloButton(onclick="toggleSolo(snr, this);")= "S"
 
 
-                    .percOptions
-                        .vertHeadWrapper
-                            h3.vert= "Position 2"
-                        .vertSliderWrapper
-                            input.slider.vert#per2pos(type="range", min="0", max="30", value="14", step="2", oninput="ShowNotes(perc);")
-                        .barSelectCon
-                            .barOption(data-bar= 0, data-perc= 2)= "1"
-                            .barOption(data-bar= 1, data-perc= 2)= "2"
-                            .barOption(data-bar= 2, data-perc= 2)= "3"
-                            .barOption(data-bar= 3, data-perc= 2)= "4"
-                            .barOption(data-bar= 4, data-perc= 2)= "5"
-                            .barOption(data-bar= 5, data-perc= 2)= "6"
-                            .barOption(data-bar= 6, data-perc= 2)= "7"
-                            .barOption(data-bar= 7, data-perc= 2)= "8"
+            .instrumentControls
+                h3= "Pattern"
+
+                .snareSelect(onclick="toggleSnarePattern();")
+                    .snrOption= "3"
+                    .snrOption= "2 & 4"
+
+        .instrumentPanel.percPanel
+            .instrumentInfo
+                h2= "Perc"
+
+                .soundUpload(onclick="this.getElementsByClassName('fileUpload')[0].click();", ondrop="soundUpload(event, 'perc');", ondragover="dragOverHandler(event);")
+                    .uploadText= "Upload"
+                    input.fileUpload(onchange="browseUpload('perc', this.files[0], this);", type="file", style="display: none")
+
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute(perc, this);")= "M"
+                    .soloButton(onclick="toggleSolo(perc, this);")= "S"
+
+            .instrumentControls.perc
+
+                .percOptions
+                    .vertHeadWrapper
+                        h3.vert= "Position 1"
+                    .vertSliderWrapper
+                        input.slider.vert#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes(perc);")
+                    .barSelectCon
+                        .barOption(data-bar= 0, data-perc = 1)= "1"
+                        .barOption(data-bar= 1, data-perc= 1)= "2"
+                        .barOption(data-bar= 2, data-perc= 1)= "3"
+                        .barOption(data-bar= 3, data-perc= 1)= "4"
+                        .barOption(data-bar= 4, data-perc= 1)= "5"
+                        .barOption(data-bar= 5, data-perc= 1)= "6"
+                        .barOption(data-bar= 6, data-perc= 1)= "7"
+                        .barOption(data-bar= 7, data-perc= 1)= "8"
+
+
+                .percOptions
+                    .vertHeadWrapper
+                        h3.vert= "Position 2"
+                    .vertSliderWrapper
+                        input.slider.vert#per2pos(type="range", min="0", max="30", value="14", step="2", oninput="ShowNotes(perc);")
+                    .barSelectCon
+                        .barOption(data-bar= 0, data-perc= 2)= "1"
+                        .barOption(data-bar= 1, data-perc= 2)= "2"
+                        .barOption(data-bar= 2, data-perc= 2)= "3"
+                        .barOption(data-bar= 3, data-perc= 2)= "4"
+                        .barOption(data-bar= 4, data-perc= 2)= "5"
+                        .barOption(data-bar= 5, data-perc= 2)= "6"
+                        .barOption(data-bar= 6, data-perc= 2)= "7"
+                        .barOption(data-bar= 7, data-perc= 2)= "8"
 

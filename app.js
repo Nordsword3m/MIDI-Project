@@ -25,9 +25,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
-  res.render("drumBuilder", {
-    title: "Midi Ting Fi Real",
-  });
+  res.render("index");
+});
+
+app.get("/constructor", (req, res) => {
+  res.render("constructor", {title: "Constructor"});
+});
+
+app.post("/constructor", (req, res) => {
+
+});
+
+app.get("/drums", (req, res) => {
+  res.render("drumBuilder", {title: "Drums"});
 });
 
 // catch 404 and forward to error handler

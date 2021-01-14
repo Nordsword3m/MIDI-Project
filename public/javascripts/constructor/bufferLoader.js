@@ -6,10 +6,11 @@ function BufferLoader(context, urlList, callback) {
   this.loadCount = 0;
 }
 
-BufferLoader.prototype.loadBuffer = function (url) {
+BufferLoader.prototype.loadBuffer = function (name) {
   // Load buffer asynchronously
   let request = new XMLHttpRequest();
   let ctx = this.context;
+  let url = "../audio/" + name;
 
   return new Promise(function (resolve, reject) {
     request.open("GET", url, true);

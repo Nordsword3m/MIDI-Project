@@ -1,0 +1,25 @@
+extends layout
+
+mixin divs
+    .trackDivs
+        .div
+        .div
+        .div
+        .div
+        .div
+        .div
+        .div
+
+block content
+    div(style = "display: none;")
+        script(src = "/javascripts/constructor/constructor.js")
+
+    +header("constructor")
+
+    .tracks
+        .trackCon
+            .trackButton
+                a(href="/drums")
+                    .i.fas.fa-drum.trackIcon
+            .trackDisp
+                +divs
