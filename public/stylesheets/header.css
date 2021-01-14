@@ -1,0 +1,136 @@
+:root {
+    --headerHeight: 60px;
+}
+
+.topBar {
+    background-color: var(--panelColor);
+    height: var(--headerHeight);
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    margin-left: 1vw;
+    white-space: nowrap;
+}
+
+#toolBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.fa-sign-out-alt {
+    transform: rotate(-90deg) scale(1.2);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+#tempoCon, #seedCon {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    margin: 1vw;
+}
+
+#tempoInput, #seedInput {
+    box-shadow: 0 0 4px 1px var(--purple);
+    border-radius: 5px;
+}
+
+#tempoInput, #seedInput, #seedPrefix {
+    background-color: transparent;
+    border: 0;
+    color: white;
+    width: 3ch;
+    padding: 0 0.5ch 0 0.5ch;
+    font-weight: 100;
+}
+
+#bpmSuffix {
+    width: 4ch;
+    font-size: 4vmin;
+    font-style: oblique;
+    font-weight: bolder;
+    cursor: pointer;
+
+    transition: all 100ms;
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+    margin-left: 1vw;
+}
+
+#bpmSuffix:hover {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+#bpmSuffix.barTap {
+    color: var(--red);
+    text-shadow: 0 0 3px var(--red);
+}
+
+#bpmSuffix.noteTap {
+    color: var(--blue);
+    text-shadow: 0 0 3px var(--blue);
+}
+
+#seedPrefix {
+    width: 5ch;
+}
+
+#tempoInput, #bpmSuffix, #seedInput, #seedPrefix {
+    font-size: min(max(3vw, 15px), 30px);
+}
+
+
+.icon {
+    font-size: 35px;
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+    transition: all 100ms;
+    margin: 1vw;
+}
+
+.icon:hover {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.icon:active {
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+}
+
+#metronomeButton {
+    font-size: 4vmin;
+    font-style: oblique;
+    font-weight: bolder;
+    cursor: pointer;
+
+    transition: all 100ms;
+    color: var(--dispColor);
+    text-shadow: 0 0 0 transparent;
+    margin: 1vw;
+}
+
+#metronomeButton:hover:not(.metOn) {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.metOn {
+    color: white;
+    text-shadow: 0 0 3px white;
+}

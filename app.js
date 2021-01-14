@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
-  res.render("builder", {
+  res.render("drumBuilder", {
     title: "Midi Ting Fi Real",
   });
 });

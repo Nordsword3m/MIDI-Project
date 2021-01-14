@@ -1,0 +1,22 @@
+mixin header(page)
+    script(src = "/javascripts/header.js")
+
+    .topBar
+        h1.title= title
+
+        #toolBar
+            i.fas.fa-drum.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+
+            if page === "drumBuilder"
+                #seedCon
+                    #seedPrefix= "Seed"
+                    input#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
+                    i.fas.fa-dice.icon#randomSeedButton
+
+            #tempoCon
+                input#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="setTempo(this.value);")
+                #bpmSuffix= "bpm"
+
+            p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
+
+            i.fas.fa-play.icon#playButton

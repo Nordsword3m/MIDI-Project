@@ -1,0 +1,381 @@
+.builderPage {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--headerHeight));
+    width: 100%;
+}
+
+/* Config panel stuff--------------------------------------------------------------*/
+.instrumentControls.perc {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.percOptions {
+    display: flex;
+    flex-direction: row;
+}
+
+.instrumentPanel {
+    background-color: var(--panelColor);
+    padding: 15px 15px 10px 15px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.instrumentInfo {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    justify-content: space-between;
+}
+
+.configPanel {
+    display: grid;
+    gap: 7px 7px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.soundUpload {
+    box-shadow: 0 0 4px 1px white;
+    border-radius: 5px;
+    padding: 0.5vw;
+    width: 25%;
+    font-size: 2vmin;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: all 200ms;
+}
+
+.soundUpload:hover {
+    box-shadow: 0 0 4px 1px var(--orange);
+}
+
+.muteSoloSwitch {
+    display: flex;
+    width: 10vw;
+    border-radius: 5px;
+    box-shadow: 0 0 4px 1px white;
+}
+
+.muteSoloSwitch > * {
+    font-size: 2vmin;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5vw;
+
+    cursor: pointer;
+    transition: all 200ms;
+}
+
+.muteButton {
+    border-radius: 5px 0 0 5px;
+}
+
+.muteButton.selected {
+    background-color: var(--red);
+    box-shadow: 0 0 4px 1px var(--red);
+}
+
+.muteButton:hover:not(.selected) {
+    box-shadow: 0 0 4px 1px var(--red);
+}
+
+.soloButton {
+    border-radius: 0 5px 5px 0;
+}
+
+.soloButton.selected {
+    background-color: var(--darkblue);
+    box-shadow: 0 0 4px 1px var(--darkblue);
+}
+
+.soloButton:hover:not(.selected) {
+    box-shadow: 0 0 4px 1px var(--darkblue);
+}
+
+.hihatPanel {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.kickPanel {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.snarePanel {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+.percPanel {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+/* Display Elements----------------------------------------------------------*/
+.mainDisp {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.displayCon {
+    width: 100%;
+    height: 175px;
+    margin-top: 7px;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+}
+
+.labelCon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.instrumentCon {
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    position: absolute;
+}
+
+.instrumentDisp {
+    height: 25%;
+    position: relative;
+}
+
+#divDisp {
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: relative;
+}
+
+#display {
+    width: 100%;
+    height: 100%;
+    background-color: var(--dispColor);
+    display: flex;
+    position: relative;
+}
+
+#playHead {
+    background-color: white;
+    opacity: 0.5;
+    width: 2px;
+    height: 100%;
+    margin: -0.5px;
+    position: absolute;
+    box-sizing: border-box;
+    z-index: 10;
+    box-shadow: 0 0 2px white;
+}
+
+.note {
+    background-color: var(--blue);
+    width: calc(60% / 256);
+    height: 100%;
+    position: absolute;
+    box-shadow: 0 0 5px var(--blue);
+    box-sizing: border-box;
+    transition: all 300ms;
+    opacity: 0;
+}
+
+.note.visible {
+    opacity: 1;
+}
+
+.note.ghost {
+    background-color: var(--green);
+    box-shadow: 0 0 5px var(--green);
+}
+
+.division {
+    background-color: white;
+    box-shadow: 0 0 2px white;
+    width: 1px;
+    height: 100%;
+    margin: -0.5px;
+    position: absolute;
+}
+
+/* UI Controls-------------------------------------------------------------------- */
+.barSelectCon {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    box-shadow: 0 0 4px 1px var(--green);
+    border-radius: 5px;
+    height: 100%;
+    width: max(min(10vw, 80px), 40px);
+    margin: 10px 0 10px 0;
+}
+
+@media only screen and (min-width: 900px) {
+    .barSelectCon {
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        height: 80%;
+        width: 15vw;
+        position: relative;
+        top: 10%;
+    }
+
+    .barOption:first-child {
+        border-radius: 5px 0 0 0;
+    }
+
+    .barOption:nth-child(4) {
+        border-radius: 0 5px 0 0;
+    }
+
+    .barOption:nth-child(5) {
+        border-radius: 0 0 0 5px;
+    }
+
+    .barOption:last-child {
+        border-radius: 0 0 5px 0;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .barOption:first-child {
+        border-radius: 5px 0 0 0;
+    }
+
+    .barOption:nth-child(2) {
+        border-radius: 0 5px 0 0;
+    }
+
+    .barOption:nth-child(7) {
+        border-radius: 0 0 0 5px;
+    }
+
+    .barOption:last-child {
+        border-radius: 0 0 5px 0;
+    }
+}
+
+.barOption:hover {
+    box-shadow: 0 0 5px 2px var(--green);
+}
+
+.barOption {
+    flex-grow: 1;
+    text-align: center;
+    transition: all 500ms;
+    font-size: min(3vw, 20px);
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px;
+    border: 1px solid var(--green);
+    box-sizing: border-box;
+}
+
+.barOption.selected {
+    background-color: var(--green);
+    box-shadow: 0 0 4px 1px var(--green);
+}
+
+.barOption:hover:not(.selected) {
+}
+
+.snareSelect {
+    display: flex;
+    font-size: 4vmin;
+    width: 80%;
+    height: 3ch;
+    margin: 30px auto 0 auto;
+    box-shadow: 0 0 4px 1px var(--purple);
+    border-radius: 5px;
+}
+
+.option {
+    flex-grow: 1;
+    text-align: center;
+
+    transition: all 500ms;
+    cursor: pointer;
+    box-shadow: 0 0 4px 1px var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.option:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+.option.selected {
+    background-color: var(--purple);
+}
+
+.vertSliderWrapper {
+    display: inline-flex;
+    width: 2px;
+    height: 120px;
+    padding: 0;
+    font-size: 0;
+    margin-right: 20px;
+}
+
+.slider.vert {
+    width: 120px;
+    height: 2px;
+    left: -60px;
+    position: relative;
+    top: 50%;
+    margin-right: -50%;
+    transform: rotate(-90deg);
+}
+
+.slider {
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    background: var(--purple);
+    box-shadow: 0 0 5px 1px var(--purple);
+    transition: all 200ms;
+}
+
+.slider::-moz-range-thumb {
+    width: 1vw;
+    height: 20px;
+    background: white;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0 0 4px white;
+    opacity: 0.7;
+    transition: all 200ms;
+}
+
+.slider::-moz-range-thumb:hover {
+    opacity: 1;
+}

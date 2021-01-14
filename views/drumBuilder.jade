@@ -2,31 +2,18 @@ extends layout
 
 block content
     div(style = "display: none;")
-        script(src = "/javascripts/bufferLoader.js")
-        script(src = "/javascripts/audioManager.js")
-        script(src = "/javascripts/noteManager.js")
-        script(src = "/javascripts/displayElementManager.js")
-        script(src = "/javascripts/builder.js")
+        script(src = "/javascripts/drumBuilder/bufferLoader.js")
+        script(src = "/javascripts/drumBuilder/audioManager.js")
+        script(src = "/javascripts/drumBuilder/noteManager.js")
+        script(src = "/javascripts/drumBuilder/displayElementManager.js")
+        script(src = "/javascripts/drumBuilder/drumBuilder.js")
         #chModel(style="display: none")= chModel
         #kickModel(style="display: none")= kickModel
 
+
+    +header("drumBuilder")
+
     .builderPage
-        .topBar
-            h1.title= title
-
-            .seedCon
-                .seedPrefix= "Seed"
-                input#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel(this);")
-                i.fas.fa-dice.icon#randomSeedButton
-
-            .tempoCon
-                input#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="setTempo(this.value);")
-                #bpmSuffix= "bpm"
-
-            p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
-
-            i.fas.fa-play.icon#playButton
-
         .displayCon
             .labelCon
                 .instrumentLabel= "kick"
