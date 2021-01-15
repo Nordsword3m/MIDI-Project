@@ -1,23 +1,47 @@
+#playHeadCon {
+    position: absolute;
+    right: 0;
+    width: 80%;
+    height: 100%;
+    z-index: 5;
+}
+
+#tracksPlayhead {
+    background-color: white;
+    opacity: 0.5;
+    width: 2px;
+    height: 100%;
+    margin: -0.5px;
+    position: absolute;
+    box-sizing: border-box;
+    z-index: 10;
+    box-shadow: 0 0 2px white;
+}
+
 .trackDivs {
     display: flex;
     flex-direction: row;
-    height: 100%;
     width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: relative;
 }
 
-.div {
+.trackDiv {
     position: relative;
     height: 100%;
     width: 1px;
     background-color: white;
     opacity: 0.7;
-    margin-left: calc(12.5% - 0.5px);
+    margin-left: calc(12.5% - 1px);
     flex-shrink: 0;
 }
 
-.tracks {
-    height: 100%;
+#tracks {
+    margin-top: 7px;
+    flex-grow: 1;
     width: 100%;
+    position: relative;
 }
 
 .trackCon {
@@ -38,6 +62,8 @@
 .trackDisp {
     background-color: var(--dispColor);
     flex-grow: 1;
+    display: flex;
+    position: relative;
 }
 
 .trackIcon {

@@ -1,10 +1,54 @@
+let kickPatternCache, chPatternCache;
+
+function getDrumCaches() {
+  let db, tx, store;
+
+  return new Promise(function (resolve, reject) {
+    let request = indexedDB.open("cacheDB", 1);
+
+    request.onerror = function (e) {
+      console.log("Database failed to open" + e.target.errorCode);
+    };
+
+    request.onsuccess = async function (e) {
+      db = e.target.result;
+      tx = db.transaction("cacheStore", "readwrite");
+      store = tx.objectStore("cacheStore");
+
+      db.onerror = function (e) {
+        console.error("Database error: " + e.target.errorCode);
+      };
+
+      let results = 0;
+
+      kickPatternCache = store.get("kickPatternCache");
+      kickPatternCache.onsuccess = () => {
+        kickPatternCache = kickPatternCache.result.cache;
+
+        results++;
+        if (results === 2) {
+          resolve();
+        }
+      }
+
+      chPatternCache = store.get("chPatternCache");
+      chPatternCache.onsuccess = () => {
+        chPatternCache = chPatternCache.result.cache;
+
+        results++;
+        if (results === 2) {
+          resolve();
+        }
+      }
+
+      tx.oncomplete = () => db.close();
+    };
+  });
+}
+
 // Page Elements
 let display;
 let divisionDisplay;
-let hihatDisplay;
-let kickDisplay;
-let snareDisplay;
-let percDisplay;
 
 let chCohesionSlider;
 let chSpontaneitySlider;
@@ -24,7 +68,6 @@ let perc1Pos;
 let perc2Pos;
 
 let playHead;
-let notes;
 
 const numOfDivs = 32;
 
@@ -52,22 +95,13 @@ let percNoteArr;
 let chPatterns;
 let kickPatterns;
 
-let source;
-
-// Index ids
-const all = -1;
-const kick = 0;
-const ch = 1;
-const snr = 2;
-const perc = 3;
-const calc = 10;
-const noncalc = 12;
+let drumSource;
 
 //State variables
 let metroActive = false;
 
-let nm = new NoteManager();
-let dem = new DisplayElementManager();
+let nm = new DrumNoteManager();
+let dem;
 
 //Mute/Solo variables
 let mutes = new Array(4).fill(false);
@@ -85,7 +119,6 @@ function loadData() {
 
   if (data) {
     getById("seedInput").value = data.seed;
-    setTempo(data.tempo);
 
     kickCohesionSlider.value = data.kickCohesion
     kickSpontaneitySlider.value = data.kickSpontaneity
@@ -97,7 +130,7 @@ function loadData() {
     chQuirkSlider.value = data.chQuirk
     chComplexitySlider.value = data.chComplexity
 
-    snarePattern = data.snrPattern
+    snarePattern = data.snarePattern
 
     perc1Pos.value = data.perc1Pos
     percBars[0] = data.perc1Bars
@@ -105,8 +138,8 @@ function loadData() {
     perc1Pos.value = data.perc2Pos
     percBars[1] = data.perc2Bars
   } else {
+    snarePattern = "3";
     getById("seedInput").value = Math.floor(Math.random() * 1000);
-    setTempo(130);
   }
 
   setPercBars();
@@ -116,7 +149,6 @@ function loadData() {
 function saveData() {
   let data = {
     seed: getById("seedInput").value,
-    tempo: tempo,
 
     kickCohesion: kickCohesionSlider.value,
     kickCohesionMin: kickCohesionSlider.min,
@@ -130,7 +162,7 @@ function saveData() {
     chQuirk: chQuirkSlider.value,
     chComplexity: chComplexitySlider.value,
 
-    snrPattern: snarePattern,
+    snarePattern: snarePattern,
 
     perc1Pos: perc1Pos.value,
     perc1Bars: percBars[0],
@@ -162,10 +194,9 @@ function seedModel() {
 // CALCULATE PATTERNS---------------------------------------------------------------------------------------
 function calculatePatterns(changeInst) {
   let start = window.performance.now();
-
   if (changeInst === ch || changeInst === all || changeInst === calc) {
-    chPatterns = nm.GeneratePatterns(ch,
-      source[ch],
+    chPatterns = nm.RetreivePatterns(
+      chPatternCache,
       getById("seedInput").value,
       chCohesionSlider.value,
       Math.round(
@@ -183,8 +214,8 @@ function calculatePatterns(changeInst) {
   let kickStart = window.performance.now();
 
   if (changeInst === kick || changeInst === all || changeInst === calc) {
-    kickPatterns = nm.GeneratePatterns(kick,
-      source[kick],
+    kickPatterns = nm.RetreivePatterns(
+      kickPatternCache,
       getById("seedInput").value,
       kickCohesionSlider.value,
       Math.round(
@@ -201,10 +232,6 @@ function calculatePatterns(changeInst) {
   //console.log("Kick time: " + (window.performance.now() - kickStart) + "ms");
   //console.log("Operation time: " + (window.performance.now() - start) + "ms");
   updateDelay = (window.performance.now() - start) * 5;
-}
-
-function lerp(a, b, t) {
-  return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
 }
 
 // SOUND UPLOAD STUFF---------------------------------------------------------------------------
@@ -482,12 +509,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   );
 
+  dem = new DisplayElementManager();
+
+  await getDrumCaches();
+
   display = getById("display");
   divisionDisplay = getById("divDisp");
-  hihatDisplay = getById("hihatDisp");
-  kickDisplay = getById("kickDisp");
-  snareDisplay = getById("snareDisp");
-  percDisplay = getById("percDisp");
 
   playHead = getById("playHead");
 
@@ -534,11 +561,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   loadData();
 
-  await loadSource();
-  nm.CacheBeatPatterns(ch, source[ch], new NumRange(chCohesionSlider.min, chCohesionSlider.max));
-  nm.CacheBeatPatterns(kick, source[kick], new NumRange(kickCohesionSlider.min, kickCohesionSlider.max));
-
-  notes = dem.InitialiseNotes();
+  dem.InitialiseDrumNotes();
   dem.CreateDivisions();
 
 
@@ -563,41 +586,19 @@ function ShowNotes(changeInst) {
 
     if (changeInst === ch || changeInst === all || changeInst === calc) {
       chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value);
-      dem.Display(chNoteArr, notes[ch]);
+      dem.Display(ch, chNoteArr);
     }
     if (changeInst === kick || changeInst === all || changeInst === calc) {
       kickNoteArr = nm.CalculateNotes(kickPatterns, kickComplexitySlider.value);
-      dem.Display(kickNoteArr, notes[kick]);
+      dem.Display(kick, kickNoteArr);
     }
     if (changeInst === snr || changeInst === all || changeInst === noncalc) {
       snrNoteArr = nm.CalculateSnare(snarePattern);
-      dem.Display(snrNoteArr, notes[snr]);
+      dem.Display(snr, snrNoteArr);
     }
     if (changeInst === perc || changeInst === all || changeInst === noncalc) {
       percNoteArr = nm.CalculatePerc(percBars[0], parseInt(perc1Pos.value), percBars[1], parseInt(perc2Pos.value));
-      dem.Display(percNoteArr, notes[perc]);
+      dem.Display(perc, percNoteArr);
     }
   }
-}
-
-function loadSource() {
-  // Load buffer asynchronously
-  let request = new XMLHttpRequest();
-
-  return new Promise(function (resolve, reject) {
-    request.open("GET", "../sourceData.txt", true);
-    request.responseType = "json";
-
-    request.onload = function () {
-      source = request.response;
-      resolve();
-    };
-
-    request.onerror = function () {
-      alert("Source: XHR error");
-      reject();
-    };
-
-    request.send();
-  });
 }

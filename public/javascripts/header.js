@@ -1,10 +1,14 @@
-const getById = function (id) {
+function getById(id) {
   return document.getElementById(id);
 };
 
-const getByClass = function (classname) {
+function getByClass(classname) {
   return document.getElementsByClassName(classname);
 };
+
+function lerp(a, b, t) {
+  return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
+}
 
 const post = function (url, data) {
   let xhr = new XMLHttpRequest();

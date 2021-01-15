@@ -1,4 +1,4 @@
-function NoteManager() {
+function DrumNoteManager() {
 }
 
 // Step constants
@@ -6,6 +6,14 @@ const barLength = 1 / 8;
 const noteLength = 1 / 32;
 const stepLength = 1 / 256;
 
+// Index ids
+const all = -1;
+const kick = 0;
+const ch = 1;
+const snr = 2;
+const perc = 3;
+const calc = 10;
+const noncalc = 12;
 
 class NumRange {
   constructor(min, max) {
@@ -15,41 +23,41 @@ class NumRange {
 }
 
 class Cache {
-  constructor() {
-    this.patts = new Map();
+  constructor(data) {
+    this.patts = data ? data : {};
   }
 
-  setNewId(id, min, max, beat, data) {
-    this.patts.set(id, new Map());
-    this.setNewMin(id, min, max, beat, data);
+  setNewMin(min, max, beat, data) {
+    this.patts[min] = {};
+    this.setNewMax(min, max, beat, data);
   }
 
-  setNewMin(id, min, max, beat, data) {
-    this.patts.get(id).set(min, new Map());
-    this.setNewMax(id, min, max, beat, data);
+  setNewMax(min, max, beat, data) {
+    this.patts[min][max] = {};
+    this.patts[min][max][beat] = data;
   }
 
-  setNewMax(id, min, max, beat, data) {
-    this.patts.get(id).get(min).set(max, new Map());
-    this.patts.get(id).get(min).get(max).set(beat, data);
-  }
-
-  set(id, min, max, beat, data) {
-    if (!this.patts.has(id)) {
-      this.setNewId(id, min, max, beat, data);
-    } else if (!this.patts.get(id).has(min)) {
-      this.setNewMin(id, min, max, beat, data);
-    } else if (!this.patts.get(id).get(min).has(max)) {
-      this.setNewMax(id, min, max, beat, data);
+  setData(min, max, beat, data) {
+    if (!this.patts.hasOwnProperty(min)) {
+      this.setNewMin(min, max, beat, data);
+    } else if (!this.patts[min].hasOwnProperty(max)) {
+      this.setNewMax(min, max, beat, data);
     } else {
-      this.patts.get(id).get(min).get(max).set(beat, data);
+      this.patts[min][max][beat] = data;
     }
   }
 
-  get(id, min, max, beat) {
-    return this.patts.get(id).get(min).get(max).get(beat);
+  getData(min, max, beat) {
+    return this.patts[min][max][beat];
+  }
+
+  getBeatAmount() {
+    let min = Object.keys(this.patts)[0];
+    let max = Object.keys(this.patts[min])[0];
+    return Object.keys(this.patts[min][max]).length;
   }
 }
+
 
 class PatternInfo {
   constructor(frequency, complexity) {
@@ -58,9 +66,9 @@ class PatternInfo {
   }
 }
 
-let cachedPatterns = new Cache();
 
-NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange) {
+DrumNoteManager.prototype.CacheBeatPatterns = function (beats, patternSizeRange) {
+  let cachedPatterns = new Cache();
   //Analyse source beats
   for (let maxItt = patternSizeRange.min; maxItt <= patternSizeRange.max; maxItt++) {
     let max = Math.pow(2, maxItt);
@@ -70,10 +78,10 @@ NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange)
       for (let beat = 0; beat < beats.length; beat++) {
 
         let emptySect = "0".repeat(min);
-        let beatPatts = new Map();
+        let beatPatts = {};
 
         for (let i = 0; i < 256; i += min) {
-          beatPatts.set(i, new Map());
+          beatPatts[i] = {};
         }
 
         //Each beat
@@ -89,39 +97,43 @@ NoteManager.prototype.CacheBeatPatterns = function (id, beats, patternSizeRange)
             ) {
               patt += beats[beat].slice(i, i + min).join('');
               if (patt.endsWith(emptySect) === false) {
-                let pattInfo = beatPatts.get(div).get(patt);
-                beatPatts.get(div).set(patt, new PatternInfo(1, (patt.match(/1/g) || []).length / patt.length));
+                let pattInfo = beatPatts[div][patt];
+                beatPatts[div][patt] = new PatternInfo(1, (patt.match(/1/g) || []).length / patt.length);
               }
             }
           }
         }
-        cachedPatterns.set(id, min, max, beat, beatPatts);
+        cachedPatterns.setData(min, max, beat, beatPatts);
       }
     }
   }
+  return cachedPatterns.patts;
 };
 
 class PatternContainer {
   constructor(minPatternSize) {
-    this.divs = new Map();
+    this.divs = {};
 
     for (let i = 0; i < 256; i += minPatternSize) {
-      this.divs.set(i, new Map());
+      this.divs[i] = {};
     }
   }
 
   getDiv(d) {
-    return this.divs.get(d);
+    return this.divs[d];
   };
 
   setDiv(d, data) {
-    return this.divs.set(d, data);
+    return this.divs[d] = data;
   };
 }
 
-NoteManager.prototype.GeneratePatterns = function (
-  id,
-  beats,
+function getEntries(obj) {
+  return Object.keys(obj).map((key) => [key, obj[key]]);
+}
+
+DrumNoteManager.prototype.RetreivePatterns = function (
+  cachedPatterns,
   seed,
   maxPatternSize,
   minPatternSize,
@@ -129,15 +141,20 @@ NoteManager.prototype.GeneratePatterns = function (
 ) {
   minPatternSize = Math.pow(2, minPatternSize);
   maxPatternSize = Math.pow(2, maxPatternSize);
+
+  cachedPatterns = new Cache(cachedPatterns);
+
+  const beatAmount = cachedPatterns.getBeatAmount();
+
   //Seed variables
   const scanRange =
     seed.length > 0
-      ? Math.ceil(beats.length * (parseInt(seed.charAt(0)) * 0.2 + 0.3))
-      : beats.length;
+      ? Math.ceil(beatAmount * (parseInt(seed.charAt(0)) * 0.2 + 0.3))
+      : beatAmount;
 
   const scanStart =
     seed.length > 1
-      ? Math.ceil(parseInt(seed.charAt(1)) * 0.1 * beats.length)
+      ? Math.ceil(parseInt(seed.charAt(1)) * 0.1 * beatAmount)
       : 0;
 
   const scanSkip = seed.length > 2 ? parseInt(seed.charAt(2)) + 1 : 1;
@@ -149,21 +166,21 @@ NoteManager.prototype.GeneratePatterns = function (
 
   //Analyse source beats
   for (let beatPos = 0; beatPos < scanRange; beatPos++) {
-    let beat = (beatPos * scanSkip + scanStart) % beats.length; //Complex beat picking for seeds
-    let beatPatts = cachedPatterns.get(id, minPatternSize, maxPatternSize, beat);
+    let beat = (beatPos * scanSkip + scanStart) % beatAmount; //Complex beat picking for seeds
+    let beatPatts = cachedPatterns.getData(minPatternSize, maxPatternSize, beat);
     for (let div = 0; div <= endCap; div += minPatternSize) {
-      let patts = [...beatPatts.get(div).entries()];
+      let patts = getEntries(beatPatts[div]);
       for (let p = 0; p < patts.length; p++) {
-        let pattInfo = patterns.getDiv(div).get(patts[p][0]);
-        patterns.getDiv(div).set(patts[p][0], new PatternInfo(!pattInfo ? 1 : pattInfo.frequency + 1, patts[p][1].complexity));
+        let pattInfo = patterns.getDiv(div)[patts[p][0]];
+        patterns.getDiv(div)[patts[p][0]] = new PatternInfo(!pattInfo ? 1 : pattInfo.frequency + 1, patts[p][1].complexity);
       }
     }
   }
 
 //Fix values
   for (let i = 0; i <= endCap; i += minPatternSize) {
-    if (patterns.getDiv(i).size > 0) {
-      let pArr = [...patterns.getDiv(i).entries()].sort((a, b) => a[1].frequency - b[1].frequency);
+    if (Object.keys(patterns.getDiv(i)).length > 0) {
+      let pArr = getEntries(patterns.getDiv(i)).sort((a, b) => a[1].frequency - b[1].frequency);
       let maxCalcFreq = maxPatternRelFrequency * Math.sqrt(pArr[pArr.length - 1][1].frequency);
       pArr = pArr.filter((a) => Math.sqrt(a[1].frequency) >= maxCalcFreq);
       let min = 1, max = 0;
@@ -173,7 +190,8 @@ NoteManager.prototype.GeneratePatterns = function (
         max = Math.max(x[1].complexity, max);
       });
 
-      patterns.setDiv(i, new PatternListInfo(pArr, new NumRange(min, max)));
+      let info = new PatternListInfo(pArr, new NumRange(min, max));
+      patterns.setDiv(i, info);
     }
   }
 
@@ -188,13 +206,16 @@ class PatternListInfo {
   }
 }
 
-NoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
+DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
   let noteArr = new Array(256).fill(0);
+
 
   for (let i = 0; i < 256; i++) {
     let divPatts = patterns.getDiv(i);
-    if (divPatts && divPatts.patterns) {
+    //console.log(divPatts);
+    if (divPatts && Object.keys(divPatts).length > 0) {
       let maxComplexity = lerp(divPatts.complexityRange.min, divPatts.complexityRange.max, relMaxComplexity);
+
 
       let patt = "";
       for (let p = 0; p < divPatts.patterns.length; p++) {
@@ -213,7 +234,7 @@ NoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
   return noteArr;
 };
 
-NoteManager.prototype.CalculatePerc = function (optn1Bars, optn1Pos, optn2Bars, optn2Pos) {
+DrumNoteManager.prototype.CalculatePerc = function (optn1Bars, optn1Pos, optn2Bars, optn2Pos) {
   let noteArr = new Array(256).fill(0);
   for (let i = 0; i < 256; i++) {
     let notePos = i % (256 * barLength);
@@ -235,7 +256,7 @@ function toRegion(pos) {
   return Math.floor(pos / (256 / 8));
 }
 
-NoteManager.prototype.CalculateSnare = function (pattern) {
+DrumNoteManager.prototype.CalculateSnare = function (pattern) {
   let noteArr = new Array(256).fill(0);
 
   for (let i = 0; i < 256; i++) {

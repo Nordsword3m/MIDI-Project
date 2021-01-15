@@ -91,12 +91,12 @@ input[type=number] {
 }
 
 #tempoInput, #bpmSuffix, #seedInput, #seedPrefix {
-    font-size: min(max(3vw, 15px), 30px);
+    font-size: min(max(3vw, 10px), 30px);
 }
 
 
 .icon {
-    font-size: 35px;
+    font-size: min(45px, 5vw);
     color: var(--iconColor);
     text-shadow: 0 0 3px var(--iconColor);
     transition: all 100ms;

@@ -2,24 +2,33 @@ extends layout
 
 mixin divs
     .trackDivs
-        .div
-        .div
-        .div
-        .div
-        .div
-        .div
-        .div
+        .trackDiv
+        .trackDiv
+        .trackDiv
+        .trackDiv
+        .trackDiv
+        .trackDiv
+        .trackDiv
 
 block content
     div(style = "display: none;")
+        script(src = "/javascripts/drumBuilder/drumNoteManager.js")
+        script(src = "/javascripts/constructor/displayElementManager.js")
         script(src = "/javascripts/constructor/constructor.js")
 
     +header("constructor")
 
-    .tracks
+    #tracks
+        #playHeadCon
+            #tracksPlayhead
         .trackCon
             .trackButton
                 a(href="/drums")
                     .i.fas.fa-drum.trackIcon
             .trackDisp
                 +divs
+                .instrumentCon
+                    .instrumentDisp#kickDisp
+                    .instrumentDisp#chDisp
+                    .instrumentDisp#snareDisp
+                    .instrumentDisp#percDisp

@@ -2,8 +2,8 @@ extends layout
 
 block content
     div(style = "display: none;")
-        script(src = "/javascripts/drumBuilder/noteManager.js")
-        script(src = "/javascripts/drumBuilder/displayElementManager.js")
+        script(src = "/javascripts/drumBuilder/drumNoteManager.js")
+        script(src = "/javascripts/constructor/displayElementManager.js")
         script(src = "/javascripts/drumBuilder/drumBuilder.js")
 
 
@@ -20,7 +20,7 @@ block content
             #divDisp
             .instrumentCon
                 .instrumentDisp#kickDisp
-                .instrumentDisp#hihatDisp
+                .instrumentDisp#chDisp
                 .instrumentDisp#snareDisp
                 .instrumentDisp#percDisp
 
