@@ -3,10 +3,10 @@
     right: 0;
     width: 80%;
     height: 100%;
-    z-index: 5;
+    z-index: 10;
 }
 
-#tracksPlayhead {
+#trackPlayhead {
     background-color: white;
     opacity: 0.5;
     width: 2px;

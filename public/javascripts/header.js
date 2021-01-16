@@ -20,7 +20,7 @@ const post = function (url, data) {
 let keydownfuncs = [];
 
 let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc"]);
-am.SetDefaultBuffers().then();
+let pm = new PlayManager();
 
 //Tap tempo variables
 let tempo;
@@ -29,6 +29,12 @@ let prevTaps = [];
 let tapTimeoutTimer;
 let tempoInput;
 
+let metroActive = false;
+
+
+function startPlaying() {
+  pm.TogglePlaying(0, !pm.playing);
+}
 
 function toggleLeaveInstrumentIcon() {
   getById("leaveInstrument").classList.toggle('fa-sign-out-alt');
@@ -88,14 +94,50 @@ document.onkeydown = function (e) {
   }
 }
 
+function playSound(name, pos) {
+  am.play(name, pos, tempo);
+}
+
+function scheduleMets() {
+  if (metroActive) {
+    for (let i = 0; i < chunkSize * 256; i++) {
+      const step = pm.relNextChunk * 256 + i;
+
+      if ((step / (256 * noteLength)) % 1 === 0) {
+        if ((step / (256 * barLength)) % 1 === 0) {
+          playSound("m1", step * stepLength);
+        } else {
+          playSound("m2", step * stepLength);
+        }
+      }
+    }
+  }
+}
+
+function toggleMetronome(elem) {
+  elem.classList.toggle("metOn");
+  metroActive = !metroActive;
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
+
   keydownfuncs.push((e) => {
     if (e.key === ".") {
       tapTempoButton(getById("tapButton"));
+    } else if (e.key === " ") {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      startPlaying();
     }
   });
+
+  getById("playButton").addEventListener("click", startPlaying);
+
 
   tempo = getById("tempoInput").value;
 
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
+
+
 });

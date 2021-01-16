@@ -130,7 +130,7 @@ input[type=number] {
     text-shadow: 0 0 3px var(--iconHoverColor);
 }
 
-.metOn {
+#metronomeButton.metOn {
     color: white;
     text-shadow: 0 0 3px white;
 }

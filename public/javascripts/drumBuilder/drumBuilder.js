@@ -67,24 +67,7 @@ let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
 let perc1Pos;
 let perc2Pos;
 
-let playHead;
-
 const numOfDivs = 32;
-
-// Play position tracking
-let prevPlayTime;
-let playPos = 0;
-let relPlayPos = 0;
-
-let playTimerID; // Keeps track of the "Playing" routine
-
-let playing = false;
-
-let nextChunk = 0;
-let relNextChunk = 0;
-let chunkPreRender = 1 / 2;
-
-const chunkSize = noteLength / 2;
 
 // Note calculation processing
 let chNoteArr;
@@ -98,7 +81,6 @@ let kickPatterns;
 let drumSource;
 
 //State variables
-let metroActive = false;
 
 let nm = new DrumNoteManager();
 let dem;
@@ -286,101 +268,14 @@ function soloPresent() {
   return res;
 }
 
-// PLAY PROCESSING-------------------------------------------------------------------------
-function Playing() {
-  // Playing routine, run as frequently as possible
-  let timeDelta = am.curTime() - prevPlayTime;
-  prevPlayTime = am.curTime();
-  let trackLength = (60.0 / tempo) * 32;
-
-  setPlayPos(playPos + timeDelta / trackLength);
-
-  if (playPos >= nextChunk - chunkSize * chunkPreRender) {
-    NextChunk();
-  }
-
-  SetHeadPos();
-}
-
-async function TogglePlaying(pos, play) {
-  if (play !== playing) {
-    getById("playButton").classList.toggle("fa-pause");
-    getById("playButton").classList.toggle("fa-play");
-    playing = play;
-  }
-
-  am.ClearContext();
-
-  if (play) {
-    await am.NewContext();
-    prevPlayTime = am.curTime();
-
-    setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
-    setPlayPos(nextChunk);
-    am.SetLoopStart(relPlayPos);
-
-    NextChunk();
-
-    clearInterval(playTimerID);
-    playTimerID = setInterval(Playing, 1);
-  } else {
-    clearInterval(playTimerID);
-    setPlayPos(0);
-    setNextChunk(0);
-  }
-
-  SetHeadPos();
-}
-
-
-function setPlayPos(pos) {
-  let posDelta = pos - playPos;
-  playPos = pos;
-  relPlayPos += posDelta;
-
-  if (relPlayPos >= 1) {
-    while (relPlayPos >= 1) {
-      relPlayPos--;
-    }
-    am.SetLoopStart(relPlayPos);
-  } else if (relPlayPos < 0) {
-    while (relPlayPos < 0) {
-      relPlayPos++;
-    }
-  }
-}
-
-function SetHeadPos() {
-  playHead.style.left = relPlayPos * (display.offsetWidth - 1) + "px";
-}
-
-// CHUNK MANAGEMENT-----------------------------------------------------------------
-function NextChunk() {
-  if (relPlayPos + chunkSize * chunkPreRender >= 1) {
-    let trackLength = (60.0 / tempo) * (256 * barLength);
-    am.SetLoopStart(relPlayPos - 1);
-  }
-
-  scheduleMets();
+// SCHEDULING-------------------------------------------------------------------------
+function soundSchedule() {
   scheduleNotes();
-
-  setNextChunk(nextChunk + chunkSize);
 }
 
-function setNextChunk(chunk) {
-  nextChunk = chunk;
-  relNextChunk = nextChunk % 1;
-}
-
-// AUDIO PROCESSING------------------------------------------------------------
-function playSound(name, pos) {
-  am.play(name, pos, tempo);
-}
-
-// NOTE PLAYING-------------------------------------------------------------------------
 function scheduleNotes() {
   for (let i = 0; i < chunkSize * 256; i++) {
-    const step = relNextChunk * 256 + i;
+    const step = pm.relNextChunk * 256 + i;
 
     if (chNoteArr[step] > 0) {
       if (!mutes[ch] && (!soloPresent() || solos[ch])) {
@@ -406,28 +301,6 @@ function scheduleNotes() {
       }
     }
   }
-}
-
-// METRONOME-----------------------------------------------------------------------------
-function scheduleMets() {
-  if (metroActive) {
-    for (let i = 0; i < chunkSize * 256; i++) {
-      const step = relNextChunk * 256 + i;
-
-      if ((step / (256 * noteLength)) % 1 === 0) {
-        if ((step / (256 * barLength)) % 1 === 0) {
-          playSound("m1", step * stepLength);
-        } else {
-          playSound("m2", step * stepLength);
-        }
-      }
-    }
-  }
-}
-
-function toggleMetronome(elem) {
-  elem.classList.toggle("metOn");
-  metroActive = !metroActive;
 }
 
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
@@ -499,24 +372,14 @@ function toggleSnarePattern(elem) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  keydownfuncs.push((e) => {
-      if (e.key === " ") {
-        if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur();
-        }
-        TogglePlaying(0, !playing).then();
-      }
-    }
-  );
-
   dem = new DisplayElementManager();
+
+  await am.SetDefaultBuffers();
 
   await getDrumCaches();
 
   display = getById("display");
   divisionDisplay = getById("divDisp");
-
-  playHead = getById("playHead");
 
   chCohesionSlider = getById("chCohesion");
   chSpontaneitySlider = getById("chSpontaneity");
@@ -533,15 +396,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
 
   display.addEventListener("click", function (event) {
-    TogglePlaying(
+    pm.TogglePlaying(
       (event.pageX - display.offsetLeft) / display.offsetWidth,
       true
     ).then();
   });
 
-  getById("playButton").addEventListener("click", function () {
-    TogglePlaying(0, !playing).then();
-  });
+  getById("playButton").addEventListener("click", startPlaying);
 
   let percSelects = getByClass("barOption");
 

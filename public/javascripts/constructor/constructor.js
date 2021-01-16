@@ -1,6 +1,35 @@
 let dnm = new DrumNoteManager();
 let dem;
 let kickPatternCache, chPatternCache;
+let playHead;
+
+let chNoteArr, kickNoteArr, snrNoteArr, percNoteArr;
+
+function soundSchedule() {
+  scheduleDrumNotes();
+}
+
+function scheduleDrumNotes() {
+  for (let i = 0; i < chunkSize * 256; i++) {
+    const step = pm.relNextChunk * 256 + i;
+
+    if (chNoteArr[step] > 0) {
+      playSound("ch", step * stepLength);
+    }
+
+    if (kickNoteArr[step] > 0) {
+      playSound("kick", step * stepLength);
+    }
+
+    if (snrNoteArr[step] > 0) {
+      playSound("snr", step * stepLength);
+    }
+
+    if (percNoteArr[step] > 0) {
+      playSound("perc", step * stepLength);
+    }
+  }
+}
 
 function setDrumCaches() {
   return new Promise((resolve, reject) => {
@@ -69,21 +98,21 @@ function setDrumCaches() {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  keydownfuncs.push((e) => {
-      if (e.key === " ") {
-        if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur();
-        }
-        TogglePlaying(0, !playing).then();
-      }
-    }
-  );
-
+  await am.SetDefaultBuffers();
   dem = new DisplayElementManager();
   let drumData = JSON.parse(sessionStorage.getItem("drumData"));
   await setDrumCaches();
 
-  let chNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
+  let playHeadCon = getById("playHeadCon");
+
+  playHeadCon.addEventListener("click", function (event) {
+    pm.TogglePlaying(
+      (event.pageX - playHeadCon.offsetLeft) / playHeadCon.offsetWidth,
+      true
+    ).then();
+  });
+
+  chNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
     chPatternCache,
     drumData.seed,
     drumData.chCohesion,
@@ -97,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     1 - drumData.chQuirk
   ), drumData.chComplexity);
 
-  let kickNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
+  kickNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
     kickPatternCache,
     drumData.seed,
     drumData.kickCohesion,
@@ -111,9 +140,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     1 - drumData.kickQuirk
   ), drumData.kickComplexity);
 
-  let snrNoteArr = dnm.CalculateSnare(drumData.snarePattern);
+  snrNoteArr = dnm.CalculateSnare(drumData.snarePattern);
 
-  let percNoteArr = dnm.CalculatePerc(drumData.perc1Bars, parseInt(drumData.perc1Pos), drumData.perc2Bars, parseInt(drumData.perc2Pos));
+  percNoteArr = dnm.CalculatePerc(drumData.perc1Bars, parseInt(drumData.perc1Pos), drumData.perc2Bars, parseInt(drumData.perc2Pos));
 
   dem.InitialiseDrumNotes();
 
@@ -121,6 +150,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   dem.Display(kick, kickNoteArr);
   dem.Display(snr, snrNoteArr);
   dem.Display(perc, percNoteArr);
+
+  playHead = getById("trackPlayhead");
+
 });
 
 function loadDrumSource() {
