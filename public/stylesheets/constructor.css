@@ -1,7 +1,11 @@
+:root {
+    --trackButtWidth: min(20%, 180px);
+}
+
 #playHeadCon {
     position: absolute;
     right: 0;
-    width: 80%;
+    width: calc(100% - var(--trackButtWidth));
     height: 100%;
     z-index: 10;
 }
@@ -56,7 +60,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    width: 20%;
+    width: var(--trackButtWidth);
 }
 
 .trackDisp {
@@ -67,7 +71,7 @@
 }
 
 .trackIcon {
-    font-size: 15vw;
+    font-size: min(15vw, 20vh);
     color: var(--iconColor);
     text-shadow: 0 0 10px var(--iconColor);
     transition: all 100ms;

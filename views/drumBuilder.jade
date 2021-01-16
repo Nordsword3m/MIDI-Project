@@ -3,13 +3,12 @@ extends layout
 block content
     div(style = "display: none;")
         script(src = "/javascripts/drumBuilder/drumNoteManager.js")
-        script(src = "/javascripts/constructor/displayElementManager.js")
         script(src = "/javascripts/drumBuilder/drumBuilder.js")
 
 
     +header("drumBuilder")
 
-    .displayCon
+    .drumDisplayCon
         .labelCon
             .instrumentLabel= "kick"
             .instrumentLabel= "ch"
@@ -24,7 +23,7 @@ block content
                 .instrumentDisp#snareDisp
                 .instrumentDisp#percDisp
 
-    .configPanel
+    .drumConfigPanel
         .instrumentPanel.kickPanel
             .instrumentInfo
                 h2= "Kick"

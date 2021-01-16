@@ -1,3 +1,8 @@
+// Step constants
+const barLength = 1 / 8;
+const noteLength = 1 / 32;
+const stepLength = 1 / 256;
+
 const chunkSize = noteLength / 2;
 
 function PlayManager() {

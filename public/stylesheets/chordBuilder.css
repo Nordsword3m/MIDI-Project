@@ -1,0 +1,14 @@
+:root {
+    --noteHeight: 20px;
+}
+
+.chordConfigPanel {
+    width: 100%;
+    height: 60%;
+}
+
+.chordDisplayCon {
+    width: 100%;
+    height: calc(var(--noteHeight) * 24);
+    margin-top: 7px;
+}

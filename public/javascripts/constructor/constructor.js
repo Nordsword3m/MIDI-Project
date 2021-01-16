@@ -106,10 +106,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   let playHeadCon = getById("playHeadCon");
 
   playHeadCon.addEventListener("click", function (event) {
-    pm.TogglePlaying(
-      (event.pageX - playHeadCon.offsetLeft) / playHeadCon.offsetWidth,
-      true
-    ).then();
+    if (pm.playing) {
+      pm.TogglePlaying(
+        (event.pageX - playHeadCon.offsetLeft) / playHeadCon.offsetWidth,
+        true
+      ).then();
+    }
   });
 
   chNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(

@@ -1,10 +1,18 @@
+const numOfDivs = 32;
+
+// Page Elements
+let display;
+let divisionDisplay;
+
 function DisplayElementManager() {
   this.displays = {}
   this.displays[ch] = new InstrumentDisplay(getById("chDisp"), new Array(256));
   this.displays[kick] = new InstrumentDisplay(getById("kickDisp"), new Array(256));
   this.displays[snr] = new InstrumentDisplay(getById("snareDisp"), new Array(256));
   this.displays[perc] = new InstrumentDisplay(getById("percDisp"), new Array(256));
-
+  
+  display = getById("display");
+  divisionDisplay = getById("divDisp");
 }
 
 class InstrumentDisplay {

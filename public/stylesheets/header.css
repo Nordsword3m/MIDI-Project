@@ -2,6 +2,52 @@
     --headerHeight: 60px;
 }
 
+#keyNoteCon {
+    display: flex;
+    flex-direction: row;
+}
+
+#keyNoteCon .prefix {
+    width: 3.5ch;
+}
+
+#keyNoteCon .inputBox {
+    width: 2ch;
+}
+
+#keyTypeCon {
+    box-shadow: 0 0 4px 2px var(--orange);
+    border-radius: 5px;
+    height: 3.7vw;
+    width: min(80px, 10vw);
+    display: flex;
+    flex-direction: row;
+    margin: 2vw;
+}
+
+.keyType {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: min(5vw, 40px);
+    text-shadow: 0 0 3px white;
+}
+
+.keyType.selected {
+    background-color: var(--orange);
+    box-shadow: 0 0 4px 2px var(--orange);
+}
+
+.keyType:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.keyType:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
 .topBar {
     background-color: var(--panelColor);
     height: var(--headerHeight);
@@ -10,6 +56,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-direction: row;
+}
+
+#leaveInstrument {
+    margin-left: 15px;
+}
+
+.locBar {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex-direction: row;
 }
 
 .title {
@@ -17,7 +75,7 @@
     white-space: nowrap;
 }
 
-#toolBar {
+.toolBar {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -41,15 +99,19 @@ input[type=number] {
     display: flex;
     width: fit-content;
     align-items: center;
-    margin: 1vw;
 }
 
-#tempoInput, #seedInput {
+.inputBox {
     box-shadow: 0 0 4px 1px var(--purple);
     border-radius: 5px;
+    margin: 1vw;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#tempoInput, #seedInput, #seedPrefix {
+.inputBox, .prefix {
     background-color: transparent;
     border: 0;
     color: white;
@@ -68,7 +130,6 @@ input[type=number] {
     transition: all 100ms;
     color: var(--iconColor);
     text-shadow: 0 0 3px var(--iconColor);
-    margin-left: 1vw;
 }
 
 #bpmSuffix:hover {
@@ -86,11 +147,14 @@ input[type=number] {
     text-shadow: 0 0 3px var(--blue);
 }
 
-#seedPrefix {
+.prefix {
     width: 5ch;
+
+    display: flex;
+    align-items: center;
 }
 
-#tempoInput, #bpmSuffix, #seedInput, #seedPrefix {
+#bpmSuffix, .inputBox, .prefix {
     font-size: min(max(3vw, 10px), 30px);
 }
 

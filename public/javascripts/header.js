@@ -17,6 +17,16 @@ const post = function (url, data) {
   xhr.send(JSON.stringify(data));
 }
 
+// Index ids
+const allDrums = -1;
+const kick = 0;
+const ch = 1;
+const snr = 2;
+const perc = 3;
+const calcDrums = 10;
+const noncalcDrums = 12;
+
+
 let keydownfuncs = [];
 
 let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc"]);
@@ -134,10 +144,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   getById("playButton").addEventListener("click", startPlaying);
 
-
   tempo = getById("tempoInput").value;
 
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
-
-
 });

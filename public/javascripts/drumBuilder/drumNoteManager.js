@@ -1,20 +1,6 @@
 function DrumNoteManager() {
 }
 
-// Step constants
-const barLength = 1 / 8;
-const noteLength = 1 / 32;
-const stepLength = 1 / 256;
-
-// Index ids
-const all = -1;
-const kick = 0;
-const ch = 1;
-const snr = 2;
-const perc = 3;
-const calc = 10;
-const noncalc = 12;
-
 class NumRange {
   constructor(min, max) {
     this.min = min;

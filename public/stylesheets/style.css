@@ -1,6 +1,7 @@
 @import "header.css";
 @import "drumBuilder.css";
 @import "constructor.css";
+@import "chordBuilder.css";
 
 :root {
     --panelColor: #222222;
@@ -101,4 +102,19 @@ h3.vert {
 .note.ghost {
     background-color: var(--green);
     box-shadow: 0 0 5px var(--green);
+}
+
+#display {
+    width: 100%;
+    height: 100%;
+    background-color: var(--dispColor);
+    display: flex;
+    position: relative;
+}
+
+#divDisp {
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    position: relative;
 }

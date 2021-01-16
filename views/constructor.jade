@@ -13,7 +13,6 @@ mixin divs
 block content
     div(style = "display: none;")
         script(src = "/javascripts/drumBuilder/drumNoteManager.js")
-        script(src = "/javascripts/constructor/displayElementManager.js")
         script(src = "/javascripts/constructor/constructor.js")
 
     +header("constructor")
@@ -32,3 +31,10 @@ block content
                     .instrumentDisp#chDisp
                     .instrumentDisp#snareDisp
                     .instrumentDisp#percDisp
+        .trackCon
+            .trackButton
+                a(href="/chords")
+                    .i.fas.fa-music.trackIcon
+            .trackDisp
+                +divs
+                .instrumentCon

@@ -2,26 +2,41 @@ mixin header(page)
     script(src = "/javascripts/constructor/bufferLoader.js")
     script(src = "/javascripts/constructor/audioManager.js")
     script(src = "/javascripts/constructor/playManager.js")
+    script(src = "/javascripts/constructor/displayElementManager.js")
     script(src = "/javascripts/header.js")
 
 
     .topBar
-        h1.title= "Midi Ting Fi Real"
+        .locBar
+            h1.title= "Midi Ting Fi Real"
 
-        #toolBar
             if page === "drumBuilder"
                 a(href="/constructor")
                     i.fas.fa-drum.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
 
+            else if page === "chordBuilder"
+                a(href="/constructor")
+                    i.fas.fa-music.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+
+        .toolBar
+            if page === "drumBuilder"
                 #seedCon
-                    #seedPrefix= "Seed"
-                    input#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel();")
+                    .prefix= "Seed"
+                    input.inputBox#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel();")
                     i.fas.fa-dice.icon#randomSeedButton
+            else if page === "chordBuilder"
+                #keyNoteCon
+                    .prefix= "Key"
+                    .inputBox#keyInput(onclick="changeKey()")= 1
+
+                #keyTypeCon(onclick="toggleKeyType();")
+                    .keyType= "+"
+                    .keyType.selected= "-"
 
             #tempoCon
-                input#tempoInput(type="number", step="1", value="130", min="1", max="300", maxlength="3" oninput="setTempo(this.value);")
+                input.inputBox#tempoInput(type="number", step = "1", value = "130", min = "1", max = "300", maxlength = "3" oninput="setTempo(this.value);")
                 #bpmSuffix= "bpm"
 
-            p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
+                p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
 
             i.fas.fa-play.icon#playButton

@@ -46,10 +46,6 @@ function getDrumCaches() {
   });
 }
 
-// Page Elements
-let display;
-let divisionDisplay;
-
 let chCohesionSlider;
 let chSpontaneitySlider;
 let chQuirkSlider;
@@ -66,8 +62,6 @@ let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
 
 let perc1Pos;
 let perc2Pos;
-
-const numOfDivs = 32;
 
 // Note calculation processing
 let chNoteArr;
@@ -117,7 +111,7 @@ function loadData() {
     perc1Pos.value = data.perc1Pos
     percBars[0] = data.perc1Bars
 
-    perc1Pos.value = data.perc2Pos
+    perc2Pos.value = data.perc2Pos
     percBars[1] = data.perc2Bars
   } else {
     snarePattern = "3";
@@ -149,7 +143,7 @@ function saveData() {
     perc1Pos: perc1Pos.value,
     perc1Bars: percBars[0],
 
-    perc2Pos: perc1Pos.value,
+    perc2Pos: perc2Pos.value,
     perc2Bars: percBars[1]
   };
 
@@ -170,13 +164,13 @@ function seedModel() {
       ? "000"
       : parseInt(seedInput.value).toString().padStart(3, "0").slice(0, 3);
 
-  ShowNotes(calc);
+  ShowNotes(calcDrums);
 }
 
 // CALCULATE PATTERNS---------------------------------------------------------------------------------------
 function calculatePatterns(changeInst) {
   let start = window.performance.now();
-  if (changeInst === ch || changeInst === all || changeInst === calc) {
+  if (changeInst === ch || changeInst === allDrums || changeInst === calcDrums) {
     chPatterns = nm.RetreivePatterns(
       chPatternCache,
       getById("seedInput").value,
@@ -195,7 +189,7 @@ function calculatePatterns(changeInst) {
   //console.log("Ch time: " + (window.performance.now() - start) + "ms");
   let kickStart = window.performance.now();
 
-  if (changeInst === kick || changeInst === all || changeInst === calc) {
+  if (changeInst === kick || changeInst === allDrums || changeInst === calcDrums) {
     kickPatterns = nm.RetreivePatterns(
       kickPatternCache,
       getById("seedInput").value,
@@ -290,7 +284,7 @@ function scheduleNotes() {
     }
 
     if (snrNoteArr[step] > 0) {
-      if (!mutes[snr] && (!soloPresent() || solos[snr])) {
+      if (!mutesf[snr] && (!soloPresent() || solos[snr])) {
         playSound("snr", step * stepLength);
       }
     }
@@ -378,9 +372,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   await getDrumCaches();
 
-  display = getById("display");
-  divisionDisplay = getById("divDisp");
-
   chCohesionSlider = getById("chCohesion");
   chSpontaneitySlider = getById("chSpontaneity");
   chQuirkSlider = getById("chQuirk");
@@ -427,7 +418,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
   seedModel();
-  ShowNotes(noncalc);
+  ShowNotes(noncalcDrums);
 });
 
 function ShowNotes(changeInst) {
@@ -445,19 +436,19 @@ function ShowNotes(changeInst) {
     calculatePatterns(changeInst);
     saveData();
 
-    if (changeInst === ch || changeInst === all || changeInst === calc) {
+    if (changeInst === ch || changeInst === allDrums || changeInst === calcDrums) {
       chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value);
       dem.Display(ch, chNoteArr);
     }
-    if (changeInst === kick || changeInst === all || changeInst === calc) {
+    if (changeInst === kick || changeInst === allDrums || changeInst === calcDrums) {
       kickNoteArr = nm.CalculateNotes(kickPatterns, kickComplexitySlider.value);
       dem.Display(kick, kickNoteArr);
     }
-    if (changeInst === snr || changeInst === all || changeInst === noncalc) {
+    if (changeInst === snr || changeInst === allDrums || changeInst === noncalcDrums) {
       snrNoteArr = nm.CalculateSnare(snarePattern);
       dem.Display(snr, snrNoteArr);
     }
-    if (changeInst === perc || changeInst === all || changeInst === noncalc) {
+    if (changeInst === perc || changeInst === allDrums || changeInst === noncalcDrums) {
       percNoteArr = nm.CalculatePerc(percBars[0], parseInt(perc1Pos.value), percBars[1], parseInt(perc2Pos.value));
       dem.Display(perc, percNoteArr);
     }

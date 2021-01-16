@@ -32,12 +32,12 @@ app.get("/constructor", (req, res) => {
   res.render("constructor", {title: "Constructor"});
 });
 
-app.post("/constructor", (req, res) => {
-
-});
-
 app.get("/drums", (req, res) => {
   res.render("drumBuilder", {title: "Drums"});
+});
+
+app.get("/chords", (req, res) => {
+  res.render("chordBuilder", {title: "Chords"});
 });
 
 // catch 404 and forward to error handler
