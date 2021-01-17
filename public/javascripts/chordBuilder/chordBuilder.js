@@ -29,4 +29,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   await am.SetDefaultBuffers();
 
   dem.CreateDivisions();
+
+  dem.PlaceChordProgression("minor", 0.0, [7, 1, 5, 2], [1, 1, 1, 1], [4, 4, 4, 4]);
 });
