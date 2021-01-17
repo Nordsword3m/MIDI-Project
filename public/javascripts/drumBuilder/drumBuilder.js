@@ -284,7 +284,7 @@ function scheduleNotes() {
     }
 
     if (snrNoteArr[step] > 0) {
-      if (!mutesf[snr] && (!soloPresent() || solos[snr])) {
+      if (!mutes[snr] && (!soloPresent() || solos[snr])) {
         playSound("snr", step * stepLength);
       }
     }

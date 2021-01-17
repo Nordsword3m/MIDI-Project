@@ -1,11 +1,9 @@
 const numOfDivs = 32;
 
-const majorScale = [1, 3, 5, 6, 8, 10, 12];
-const minorScale = [1, 3, 4, 6, 8, 9, 11];
-
 // Page Elements
 let display;
 let divisionDisplay;
+let chordNoteCon;
 
 function DisplayElementManager() {
   this.displays = {}
@@ -16,6 +14,7 @@ function DisplayElementManager() {
 
   display = getById("display");
   divisionDisplay = getById("divDisp");
+  chordNoteCon = getById("chordNoteCon");
 }
 
 class InstrumentDisplay {
@@ -25,77 +24,42 @@ class InstrumentDisplay {
   }
 }
 
-function getFromScale(scale, num) {
+DisplayElementManager.prototype.GetFromScale = function (scale, num) {
   let scaleNotes = scale === "major" ? majorScale : minorScale;
   num = num - 1;
-
 
   return (Math.floor(num / 7) * 12) + scaleNotes[num % 7];
 }
 
-DisplayElementManager.prototype.PlaceChordProgression = function (type, maxSpread, chords, lengths, degrees) {
+DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
   let pos = 0;
-  let prevChord = [];
-
-  for (let c = 0; c < chords.length; c++) {
-    let inversion = 0;
-
-    if (c > 0) {
-      let prevBot = prevChord[0].dataset.noteNum;
-      let prevTop = prevChord[prevChord.length - 1].dataset.noteNum;
-
-      for (let n = degrees[c] - 1; n >= 0; n--) {
-        let curNote = getFromScale(type, chords[c] + 2 * n);
-        let topDist = Math.abs(curNote - getFromScale(type, chords[0] + 2 * (degrees[c] - 1)));
-        let botDist = Math.abs(curNote - getFromScale(type, chords[0]));
-
-        if (botDist - 12 > 12 * maxSpread) {
-          inversion--;
-        } else if (topDist - 12 > 12 * maxSpread) {
-          inversion++;
-        }
-      }
-    }
-    prevChord = this.PlaceChord(type, chords[c], pos, lengths[c], degrees[c], inversion).sort((a, b) => a.dataset.noteNum - b.dataset.noteNum);
-    pos += lengths[c];
-  }
-}
-
-DisplayElementManager.prototype.PlaceChord = function (type, num, start, length, degree, inversion) {
-  let notes = [];
-
-  for (let n = 0; n < degree; n++) {
-    let invert = 0;
-
-    if (inversion > 0) {
-      if (n < inversion) {
-        invert = 12;
-      }
-    } else if (inversion < 0) {
-      if (n >= degree + inversion) {
-        invert = -12;
+  for (let c = 0; c < progression.chords.length; c++) {
+    for (let n = 0; n < progression.chords[c].length; n++) {
+      let note = progression.chords[c][n];
+      let noteObj = this.PlaceChordNote(note.num, pos, note.length);
+      if (note.root) {
+        noteObj.classList.add("root");
       }
     }
 
-    notes.push(this.PlaceChordNote(getFromScale(type, num + 2 * n) + invert, start, length));
+    pos += progression.lengths[c];
   }
-  notes[0].classList.add("root");
-  return notes;
 }
 
-DisplayElementManager.prototype.PlaceChordNote = function (noteNum, start, length) {
+DisplayElementManager.prototype.PlaceChordNote = function (num, start, length) {
   let note = document.createElement("div");
   note.className = "chordNote";
 
-  note.dataset.noteNum = noteNum;
+  note.dataset.root = num;
   note.dataset.start = start;
   note.dataset.length = length;
 
   note.style.width = "calc(" + length + " * 12.5%)";
-  note.style.bottom = "calc(" + (noteNum - 1) + " * var(--noteHeight))";
   note.style.left = "calc(" + start + " * 12.5%)";
+  note.style.bottom = "calc(" + (num - 1 + 12) + " * 100% / 36)";
 
-  display.appendChild(note);
+
+  chordNoteCon.appendChild(note);
   return note;
 }
 

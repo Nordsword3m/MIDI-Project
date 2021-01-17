@@ -141,27 +141,6 @@
     justify-content: space-around;
 }
 
-#playHead {
-    background-color: white;
-    opacity: 0.5;
-    width: 2px;
-    height: 100%;
-    margin: -0.5px;
-    position: absolute;
-    box-sizing: border-box;
-    z-index: 10;
-    box-shadow: 0 0 2px white;
-}
-
-.division {
-    background-color: white;
-    box-shadow: 0 0 2px white;
-    width: 1px;
-    height: 100%;
-    margin: -0.5px;
-    position: absolute;
-}
-
 /* UI Controls-------------------------------------------------------------------- */
 .barSelectCon {
     display: grid;

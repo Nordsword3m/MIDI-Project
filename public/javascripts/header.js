@@ -29,7 +29,7 @@ const noncalcDrums = 12;
 
 let keydownfuncs = [];
 
-let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc"]);
+let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "C3", "C4", "C5", "C6", "C7"]);
 let pm = new PlayManager();
 
 //Tap tempo variables
@@ -43,7 +43,9 @@ let metroActive = false;
 
 
 function startPlaying() {
-  pm.TogglePlaying(0, !pm.playing);
+  if (am.buffers) {
+    pm.TogglePlaying(0, !pm.playing);
+  }
 }
 
 function toggleLeaveInstrumentIcon() {
@@ -106,6 +108,10 @@ document.onkeydown = function (e) {
 
 function playSound(name, pos) {
   am.play(name, pos, tempo);
+}
+
+function playNote(pitch, pos, length) {
+  am.playNote(pitch, pos, tempo, length);
 }
 
 function scheduleMets() {

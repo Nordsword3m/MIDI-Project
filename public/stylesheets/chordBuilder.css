@@ -1,21 +1,17 @@
-:root {
-    --noteHeight: 15px;
-}
-
 .chordConfigPanel {
-    width: 100%;
     height: 60%;
+    margin: 7px;
 }
 
 .chordDisplayCon {
     width: 100%;
-    height: calc(var(--noteHeight) * 24);
+    flex-grow: 1;
     margin-top: 7px;
 }
 
 .chordNote {
     background-color: var(--blue);
-    height: var(--noteHeight);
+    height: calc(100% / 36);
     position: absolute;
     box-shadow: 0 0 5px var(--blue);
     box-sizing: border-box;

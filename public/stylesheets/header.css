@@ -105,7 +105,6 @@ input[type=number] {
     box-shadow: 0 0 4px 1px var(--purple);
     border-radius: 5px;
     margin: 1vw;
-    user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
