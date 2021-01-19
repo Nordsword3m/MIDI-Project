@@ -56,7 +56,7 @@ AudioManager.prototype.playNow = function (name) {
   source.start(0);
 };
 
-AudioManager.prototype.play = function (name, pos, tempo) {
+AudioManager.prototype.play = function (name, pos) {
   let source = this.context.createBufferSource();
   source.buffer = this.buffers[this.audioList.indexOf(name)];
   source.connect(this.context.destination);
@@ -66,7 +66,11 @@ AudioManager.prototype.play = function (name, pos, tempo) {
   source.start(this.loopStart + pos * trackLength - this.contextCreated);
 };
 
-AudioManager.prototype.playNote = function (pitch, pos, tempo, length) {
+AudioManager.prototype.playNote = function (pitch, pos, length) {
+  let trackLength = (60.0 / tempo) * (256 * barLength);
+  let startTime = this.loopStart + pos * trackLength - this.contextCreated;
+  let endTime = this.loopStart + ((pos + (length / 8)) * trackLength) - this.contextCreated;
+
   let source = this.context.createBufferSource();
 
   let octave = "C5";
@@ -92,15 +96,48 @@ AudioManager.prototype.playNote = function (pitch, pos, tempo, length) {
   source.buffer = this.buffers[this.audioList.indexOf(octave)];
   source.playbackRate.value = relFreq;
 
-  let trackLength = (60.0 / tempo) * (256 * barLength);
-  let startTime = this.loopStart + pos * trackLength - this.contextCreated;
-  let endTime = this.loopStart + ((pos + (length / 8)) * trackLength) - this.contextCreated;
-
   let env = this.context.createGain();
   env.gain.setTargetAtTime(0, endTime, 0.015);
 
   source.connect(env).connect(this.context.destination);
 
   source.start(startTime);
+  source.stop(endTime + 1);
+};
+
+AudioManager.prototype.playNoteNow = function (pitch) {
+  let endTime = 0.5 + this.mainContext.currentTime;
+
+  let source = this.mainContext.createBufferSource();
+
+  let octave = "C5";
+  let relFreq = 1;
+
+  if (pitch >= 18) {
+    octave = "C7";
+    relFreq = Math.pow(2, (pitch - 24) / 12);
+  } else if (pitch >= 6) {
+    octave = "C6";
+    relFreq = Math.pow(2, (pitch - 12) / 12);
+  } else if (pitch >= -6) {
+    octave = "C5";
+    relFreq = Math.pow(2, (pitch) / 12);
+  } else if (pitch >= -18) {
+    octave = "C4";
+    relFreq = Math.pow(2, (pitch + 12) / 12);
+  } else if (pitch >= -30) {
+    octave = "C3";
+    relFreq = Math.pow(2, (pitch + 24) / 12);
+  }
+
+  source.buffer = this.buffers[this.audioList.indexOf(octave)];
+  source.playbackRate.value = relFreq;
+
+  let env = this.mainContext.createGain();
+  env.gain.setTargetAtTime(0, endTime, 0.015);
+
+  source.connect(env).connect(this.mainContext.destination);
+
+  source.start();
   source.stop(endTime + 1);
 };

@@ -1,12 +1,60 @@
 let dem;
 
+let chordObjs;
+
 let keyType = "minor";
 let keyNum = 1;
 
 const majorScale = [1, 3, 5, 6, 8, 10, 12];
 const minorScale = [1, 3, 4, 6, 8, 9, 11];
 
-let spreadSlider;
+let curChord = 0;
+let chordAmt = 8;
+
+function playCurChord() {
+  let chord = progression.chords[curChord];
+
+  for (let n = 0; n < chord.length; n++) {
+    am.playNoteNow(numToPitch(chord[n].num), chord[n].length);
+  }
+}
+
+function setChord(chord, play = false) {
+  if (chord < 0 || chord >= chordAmt) {
+    return;
+  }
+
+  let allNotes = getByClass("chordNote");
+
+  for (let i = 0; i < allNotes.length; i++) {
+    allNotes[i].classList.remove("ghost");
+  }
+
+  curChord = chord;
+
+  for (let i = 0; i < chordObjs[chord].length; i++) {
+    chordObjs[chord][i].classList.add("ghost");
+  }
+
+  if (curChord > 0) {
+    getById("leftChordArrow").classList.remove("disabled");
+  } else {
+    getById("leftChordArrow").classList.add("disabled");
+  }
+
+  if (curChord < chordAmt - 1) {
+    getById("rightChordArrow").classList.remove("disabled");
+  } else {
+    getById("rightChordArrow").classList.add("disabled");
+  }
+
+  getById("chordPos").innerText = "Chord " + (chord + 1);
+  getById("rootSlider").value = progression.roots[chord];
+
+  if (play) {
+    playCurChord();
+  }
+}
 
 function toggleKeyType() {
   if (keyType === "minor") {
@@ -42,14 +90,21 @@ function progressionToSchedule(pro) {
   return sched;
 }
 
-function ShowChords() {
-  progression = new ChordProgression(keyType, spreadSlider.value, [1, 5, 6, 4, 1, 5, 6, 4], [1, 1, 1, 1, 1, 1, 1, 1], [4, 4, 4, 4, 4, 4, 4, 4]);
-  //progression = new ChordProgression(keyType, spreadSlider.value, [1], [1], [4]);
+function setRoot(root) {
+  if (progression.roots[curChord] !== root) {
+    progression.roots[curChord] = root;
+    ShowChords();
+    playCurChord();
+  }
+}
 
+function ShowChords() {
+  progression.generateChords();
   playSchedule = progressionToSchedule(progression);
 
   chordNoteCon.textContent = "";
-  dem.PlaceChordProgression(progression);
+  chordObjs = dem.PlaceChordProgression(progression);
+  setChord(curChord);
 }
 
 function numToPitch(num) {
@@ -77,17 +132,15 @@ function getFromScale(scale, num) {
 }
 
 class ChordProgression {
-  constructor(type, maxSpread, roots, lengths, degrees) {
+  constructor(type, roots, lengths, degrees) {
     this.type = type;
     this.roots = roots;
     this.lengths = lengths;
     this.degrees = degrees;
     this.chords = [];
-
-    this.generateChords(maxSpread);
   }
 
-  generateChords(maxSpread) {
+  generateChords() {
     let pos = 0;
     this.chords = [];
 
@@ -101,9 +154,9 @@ class ChordProgression {
           let topDist = Math.abs(curNote - getFromScale(this.type, this.roots[0] + 2 * (this.degrees[c] - 1)));
           let botDist = Math.abs(curNote - getFromScale(this.type, this.roots[0]));
 
-          if (botDist - 12 > 12 * maxSpread) {
+          if (botDist > 12) {
             inversion--;
-          } else if (topDist - 12 > 12 * maxSpread) {
+          } else if (topDist > 12) {
             inversion++;
           }
         }
@@ -131,6 +184,9 @@ class ChordProgression {
 
       chord.push(new Note(getFromScale(type, root + 2 * n) + invert, length, n === 0));
     }
+
+    chord.push(new Note(getFromScale(type, root) - 12, length, true));
+
     return chord;
   }
 }
@@ -148,13 +204,17 @@ let playSchedule;
 
 document.addEventListener("DOMContentLoaded", async function () {
     dem = new DisplayElementManager();
-
+    dem.CreateDivisions();
     await am.SetDefaultBuffers();
 
-    dem.CreateDivisions();
+    display.addEventListener("click", function (event) {
+      pm.TogglePlaying(
+        (event.pageX - display.offsetLeft) / display.offsetWidth,
+        true
+      ).then();
+    });
 
-    spreadSlider = getById("spreadSlider");
-
+    progression = new ChordProgression(keyType, [1, 5, 6, 4, 1, 5, 6, 4], [1, 1, 1, 1, 1, 1, 1, 1], [4, 4, 4, 4, 4, 4, 4, 4]);
     ShowChords();
   }
 );

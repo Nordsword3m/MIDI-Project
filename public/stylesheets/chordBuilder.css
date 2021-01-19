@@ -1,5 +1,23 @@
+.chordInfoBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chordInfoBar h3 {
+    font-size: 20px;
+}
+
+.chordInfoBar .icon {
+    font-size: 30px;
+}
+
+.icon.disabled {
+    opacity: 0;
+}
+
 .chordConfigPanel {
-    height: 60%;
+    height: 50%;
     margin: 7px;
 }
 
@@ -11,7 +29,7 @@
 
 .chordNote {
     background-color: var(--blue);
-    height: calc(100% / 36);
+    height: calc(100% / 48);
     position: absolute;
     box-shadow: 0 0 5px var(--blue);
     box-sizing: border-box;
@@ -22,4 +40,14 @@
 .chordNote.root {
     background-color: var(--purple);
     box-shadow: 0 0 5px var(--purple);
+}
+
+.chordNote.ghost {
+    background-color: var(--yellow);
+    box-shadow: 0 0 5px var(--yellow);
+}
+
+.chordNote.ghost.root {
+    background-color: var(--orange);
+    box-shadow: 0 0 5px var(--orange);
 }

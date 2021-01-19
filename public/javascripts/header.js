@@ -107,11 +107,11 @@ document.onkeydown = function (e) {
 }
 
 function playSound(name, pos) {
-  am.play(name, pos, tempo);
+  am.play(name, pos);
 }
 
 function playNote(pitch, pos, length) {
-  am.playNote(pitch, pos, tempo, length);
+  am.playNote(pitch, pos, length);
 }
 
 function scheduleMets() {
