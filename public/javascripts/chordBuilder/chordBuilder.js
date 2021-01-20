@@ -162,15 +162,14 @@ class ChordProgression {
       let inversion = 0;
 
       if (c > 0) {
-
         for (let n = this.degrees[c] - 1; n >= 0; n--) {
           let curNote = getFromScale(this.type, this.roots[c] + 2 * n);
-          let topDist = Math.abs(curNote - getFromScale(this.type, this.roots[0] + 2 * (this.degrees[c] - 1)));
-          let botDist = Math.abs(curNote - getFromScale(this.type, this.roots[0]));
-
+          let topDist = curNote - this.chords[c - 1].sort((a, b) => b.num - a.num)[0].num;
+          let botDist = curNote - this.chords[c - 1].sort((a, b) => a.num - b.num)[1].num;
+          
           if (botDist > 12) {
             inversion--;
-          } else if (topDist > 12) {
+          } else if (topDist < -12) {
             inversion++;
           }
         }
