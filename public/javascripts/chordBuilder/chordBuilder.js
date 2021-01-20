@@ -12,6 +12,10 @@ let curChord = 0;
 let chordAmt = 8;
 
 function playCurChord() {
+  if (pm.playing) {
+    return;
+  }
+
   let chord = progression.chords[curChord];
 
   for (let n = 0; n < chord.length; n++) {
@@ -50,6 +54,7 @@ function setChord(chord, play = false) {
 
   getById("chordPos").innerText = "Chord " + (chord + 1);
   getById("rootSlider").value = progression.roots[chord];
+  getById("fullnessSlider").value = progression.degrees[chord];
 
   if (play) {
     playCurChord();
@@ -62,6 +67,8 @@ function toggleKeyType() {
   } else {
     keyType = "minor";
   }
+
+  progression.type = keyType;
 
   ShowChords();
 
@@ -98,6 +105,14 @@ function setRoot(root) {
   }
 }
 
+function setFullness(degree) {
+  if (progression.degrees[curChord] !== degree) {
+    progression.degrees[curChord] = degree;
+    ShowChords();
+    playCurChord();
+  }
+}
+
 function ShowChords() {
   progression.generateChords();
   playSchedule = progressionToSchedule(progression);
@@ -127,8 +142,7 @@ function soundSchedule() {
 function getFromScale(scale, num) {
   let scaleNotes = scale === "major" ? majorScale : minorScale;
   num = num - 1;
-
-  return (Math.floor(num / 7) * 12) + scaleNotes[num % 7];
+  return ((Math.floor(num / 7) * 12) + scaleNotes[(num + 70) % 7]);
 }
 
 class ChordProgression {
@@ -168,6 +182,7 @@ class ChordProgression {
 
   drawChord(type, root, start, length, degree, inversion) {
     let chord = [];
+    let rootNum = root;
 
     for (let n = 0; n < degree; n++) {
       let invert = 0;
@@ -182,10 +197,14 @@ class ChordProgression {
         }
       }
 
+      if (n === 0) {
+        rootNum = getFromScale(type, root) + invert;
+      }
+
       chord.push(new Note(getFromScale(type, root + 2 * n) + invert, length, n === 0));
     }
 
-    chord.push(new Note(getFromScale(type, root) - 12, length, true));
+    chord.push(new Note(rootNum - 12, length, true));
 
     return chord;
   }
