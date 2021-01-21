@@ -27,3 +27,6 @@ block content
                 h3= "Spread"
                 #spreadCheck.checkbox
                     i.fas.fa-check.checkIcon(onclick="toggleSpread()")
+
+                h3= "Feel"
+                input.slider#feelSlider(type="range" min="0" max="4" value="3" step="0.01" oninput="setFeel(Math.round(this.value))")
