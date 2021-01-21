@@ -25,4 +25,5 @@ block content
                 input.slider#fullnessSlider(type="range" min="1" max="5" value="3" step="0.01" oninput="setFullness(Math.round(this.value))")
 
                 h3= "Spread"
-                input#spreadCheck(type="checkbox")
+                #spreadCheck.checkbox
+                    i.fas.fa-check.checkIcon(onclick="toggleSpread()")

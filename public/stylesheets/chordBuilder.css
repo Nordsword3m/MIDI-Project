@@ -1,3 +1,29 @@
+.checkbox {
+    height: 30px;
+    width: 30px;
+    box-shadow: 0 0 4px 2px var(--purple);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkIcon {
+    font-size: 20px;
+    color: var(--iconHoverColor);
+    transition: all 300ms;
+}
+
+.checkIcon:hover {
+    text-shadow: 0 0 4px var(--iconColor);
+    color: var(--iconColor);
+}
+
+.checkIcon.checked {
+    text-shadow: 0 0 4px var(--green);
+    color: var(--green);
+}
+
 .chordInfoBar {
     display: flex;
     align-items: center;

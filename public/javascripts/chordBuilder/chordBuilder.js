@@ -56,6 +56,11 @@ function setChord(chord, play = false) {
   getById("rootSlider").value = progression.roots[chord];
   getById("fullnessSlider").value = progression.degrees[chord];
   getById("spreadCheck").checked = progression.spreads[chord];
+  if (progression.spreads[chord]) {
+    getById("spreadCheck").getElementsByClassName("checkIcon")[0].classList.add("checked");
+  } else {
+    getById("spreadCheck").getElementsByClassName("checkIcon")[0].classList.remove("checked");
+  }
 
   if (play) {
     playCurChord();
@@ -98,12 +103,11 @@ function progressionToSchedule(pro) {
   return sched;
 }
 
-function setSpread(spreads) {
-  if (progression.spreads[curChord] !== spreads) {
-    progression.spreads[curChord] = spreads;
-    ShowChords();
-    playCurChord();
-  }
+function toggleSpread() {
+  progression.spreads[curChord] = !progression.spreads[curChord];
+  getById("spreadCheck").getElementsByClassName("checkIcon")[0].classList.toggle("checked");
+  ShowChords();
+  playCurChord();
 }
 
 function setRoot(root) {
@@ -272,7 +276,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     let pRoots = [1, 5, 6, 4, 1, 5, 6, 4];
-    //let pRoots = [1, 1, 1, 1, 1, 1, 1, 1];
     let pLengths = [1, 1, 1, 1, 1, 1, 1, 1];
     let pDegrees = [4, 4, 4, 4, 4, 4, 4, 4];
     let pSpreads = [true, true, true, true, true, true, true, true]
