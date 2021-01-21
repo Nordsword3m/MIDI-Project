@@ -55,6 +55,7 @@ function setChord(chord, play = false) {
   getById("chordPos").innerText = "Chord " + (chord + 1);
   getById("rootSlider").value = progression.roots[chord];
   getById("fullnessSlider").value = progression.degrees[chord];
+  getById("spreadCheck").checked = progression.spreads[chord];
 
   if (play) {
     playCurChord();
@@ -95,6 +96,14 @@ function progressionToSchedule(pro) {
   }
 
   return sched;
+}
+
+function setSpread(spreads) {
+  if (progression.spreads[curChord] !== spreads) {
+    progression.spreads[curChord] = spreads;
+    ShowChords();
+    playCurChord();
+  }
 }
 
 function setRoot(root) {
@@ -146,11 +155,12 @@ function getFromScale(scale, num) {
 }
 
 class ChordProgression {
-  constructor(type, roots, lengths, degrees) {
+  constructor(type, roots, lengths, degrees, spreads) {
     this.type = type;
     this.roots = roots;
     this.lengths = lengths;
     this.degrees = degrees;
+    this.spreads = spreads;
     this.chords = [];
   }
 
@@ -159,51 +169,80 @@ class ChordProgression {
     this.chords = [];
 
     for (let c = 0; c < this.roots.length; c++) {
-      let inversion = 0;
+      this.chords.push(this.drawChord(this.type, this.roots[c], pos, this.lengths[c], this.degrees[c]));
+      pos += this.lengths[c];
 
       if (c > 0) {
+        let prevTop = this.chords[c - 1][this.chords[c - 1].length - 1].num;
+        let prevBot = this.chords[c - 1][0].num;
         for (let n = this.degrees[c] - 1; n >= 0; n--) {
-          let curNote = getFromScale(this.type, this.roots[c] + 2 * n);
-          let topDist = curNote - this.chords[c - 1].sort((a, b) => b.num - a.num)[0].num;
-          let botDist = curNote - this.chords[c - 1].sort((a, b) => a.num - b.num)[1].num;
-          
-          if (botDist > 12) {
-            inversion--;
-          } else if (topDist < -12) {
-            inversion++;
+
+          let curSpread = Math.abs(this.chords[c][n].num - prevTop) + Math.abs(this.chords[c][n].num - prevBot)
+          let newSpreadDown = Math.abs(this.chords[c][n].num - 12 - prevTop) + Math.abs(this.chords[c][n].num - 12 - prevBot)
+          let newSpreadUp = Math.abs(this.chords[c][n].num + 12 - prevTop) + Math.abs(this.chords[c][n].num + 12 - prevBot)
+
+
+          if (newSpreadDown < newSpreadUp) {
+            if (newSpreadDown < curSpread) {
+              this.chords[c][n].num -= 12;
+            }
+          } else {
+            if (newSpreadUp < curSpread) {
+              this.chords[c][n].num += 12;
+            }
           }
         }
       }
-      this.chords.push(this.drawChord(this.type, this.roots[c], pos, this.lengths[c], this.degrees[c], inversion));
-      pos += this.lengths[c];
+
+      this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
+
+      if (this.spreads[c] && this.degrees[c] >= 3) {
+        if (c > 0) {
+          let prevTop = this.chords[c - 1][this.chords[c - 1].length - 1].num;
+          let prevBot = this.chords[c - 1][0].num;
+
+          let topSpreadNote = Math.floor(this.degrees[c] / 2);
+          let botSpreadNote = this.degrees[c] - 1 - Math.floor(this.degrees[c] / 2);
+
+          if (botSpreadNote + 12 - prevTop <= prevBot - topSpreadNote - 12) {
+            this.chords[c][botSpreadNote].num += 12;
+          } else {
+            this.chords[c][topSpreadNote].num -= 12;
+          }
+        } else {
+          this.chords[c][this.degrees[c] - 1 - Math.floor(this.degrees[c] / 2)].num += 12;
+        }
+      }
+
+      this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
+    }
+
+    for (let c = 0; c < this.chords.length; c++) {
+      let rootNum = this.roots[c];
+
+      this.chords[c].forEach((n) => {
+        if (n.root) {
+          rootNum = n.num - 12;
+        }
+      });
+
+      this.chords[c].forEach((n) => {
+        if (Math.abs(n.num - rootNum) <= 4) {
+          rootNum -= 12;
+        }
+      });
+
+      this.chords[c].push(new Note(rootNum, this.lengths[c], true));
+      this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
     }
   }
 
-  drawChord(type, root, start, length, degree, inversion) {
+  drawChord(type, root, start, length, degree) {
     let chord = [];
-    let rootNum = root;
 
     for (let n = 0; n < degree; n++) {
-      let invert = 0;
-
-      if (inversion > 0) {
-        if (n < inversion) {
-          invert = 12;
-        }
-      } else if (inversion < 0) {
-        if (n >= degree + inversion) {
-          invert = -12;
-        }
-      }
-
-      if (n === 0) {
-        rootNum = getFromScale(type, root) + invert;
-      }
-
-      chord.push(new Note(getFromScale(type, root + 2 * n) + invert, length, n === 0));
+      chord.push(new Note(getFromScale(type, root + 2 * n), length, n === 0));
     }
-
-    chord.push(new Note(rootNum - 12, length, true));
 
     return chord;
   }
@@ -232,7 +271,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).then();
     });
 
-    progression = new ChordProgression(keyType, [1, 5, 6, 4, 1, 5, 6, 4], [1, 1, 1, 1, 1, 1, 1, 1], [4, 4, 4, 4, 4, 4, 4, 4]);
+    let pRoots = [1, 5, 6, 4, 1, 5, 6, 4];
+    //let pRoots = [1, 1, 1, 1, 1, 1, 1, 1];
+    let pLengths = [1, 1, 1, 1, 1, 1, 1, 1];
+    let pDegrees = [4, 4, 4, 4, 4, 4, 4, 4];
+    let pSpreads = [true, true, true, true, true, true, true, true]
+
+    progression = new ChordProgression(keyType, pRoots, pLengths, pDegrees, pSpreads);
     ShowChords();
   }
 );

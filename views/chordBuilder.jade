@@ -19,7 +19,10 @@ block content
                 i.fas.fa-chevron-right.icon#rightChordArrow(onclick="setChord(curChord+1, true)")
             .chordControlPanel
                 h3= "Root"
-                input.slider#rootSlider(type="range" min="-5" max="7" value="0" step="0.01" oninput="setRoot(Math.round(this.value))")
+                input.slider#rootSlider(type="range" min="1" max="7" value="1" step="0.01" oninput="setRoot(Math.round(this.value))")
 
                 h3= "Fullness"
-                input.slider#fullnessSlider(type="range" min="1" max="7" value="3" step="0.01" oninput="setFullness(Math.round(this.value))")
+                input.slider#fullnessSlider(type="range" min="1" max="5" value="3" step="0.01" oninput="setFullness(Math.round(this.value))")
+
+                h3= "Spread"
+                input#spreadCheck(type="checkbox")

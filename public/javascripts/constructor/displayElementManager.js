@@ -59,7 +59,7 @@ DisplayElementManager.prototype.PlaceChordNote = function (num, start, length) {
 
   note.style.width = "calc(" + length + " * 12.5%)";
   note.style.left = "calc(" + start + " * 12.5%)";
-  note.style.bottom = "calc(" + (num - 1 + 24) + " * 100% / 48)";
+  note.style.bottom = "calc(" + (num - 1 + 24) + " * 100% / 60)";
 
 
   chordNoteCon.appendChild(note);

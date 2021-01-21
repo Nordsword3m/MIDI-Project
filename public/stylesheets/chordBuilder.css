@@ -29,7 +29,7 @@
 
 .chordNote {
     background-color: var(--blue);
-    height: calc(100% / 48);
+    height: calc(100% / 60);
     position: absolute;
     box-shadow: 0 0 5px var(--blue);
     box-sizing: border-box;
