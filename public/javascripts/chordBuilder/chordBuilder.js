@@ -9,7 +9,7 @@ const majorScale = [1, 3, 5, 6, 8, 10, 12];
 const minorScale = [1, 3, 4, 6, 8, 9, 11];
 
 let curChord = 0;
-let chordAmt = 8;
+let chordAmt;
 
 //Chord feel consts
 let sus2 = 1;
@@ -27,6 +27,39 @@ function playCurChord() {
   for (let n = 0; n < chord.length; n++) {
     am.playNoteNow(numToPitch(chord[n].num), chord[n].length);
   }
+}
+
+function removeChord() {
+  if (chordAmt <= 1) {
+    return;
+  }
+
+  progression.roots.pop();
+  progression.lengths.pop();
+  progression.degrees.pop();
+  progression.spreads.pop();
+  progression.feels.pop();
+
+  chordAmt--;
+  setChord(curChord - 1, true);
+  ShowChords();
+}
+
+function addNewChord() {
+  let totLength = progression.lengths.reduce((a, t) => a + t);
+  if (totLength >= 8) {
+    return;
+  }
+
+  progression.roots.push(progression.roots[progression.roots.length - 1]);
+  progression.lengths.push(Math.min(8 - totLength, progression.lengths[progression.lengths.length - 1]));
+  progression.degrees.push(progression.degrees[progression.degrees.length - 1]);
+  progression.spreads.push(progression.spreads[progression.spreads.length - 1]);
+  progression.feels.push(progression.feels[progression.feels.length - 1]);
+
+  chordAmt++;
+  ShowChords();
+  setChord(curChord + 1, true);
 }
 
 function setChord(chord, play = false) {
@@ -54,8 +87,10 @@ function setChord(chord, play = false) {
 
   if (curChord < chordAmt - 1) {
     getById("rightChordArrow").classList.remove("disabled");
+    getById("chordNumButtons").style.display = "none";
   } else {
     getById("rightChordArrow").classList.add("disabled");
+    getById("chordNumButtons").style.display = "initial";
   }
 
   getById("chordPos").innerText = "Chord " + (chord + 1);
@@ -68,6 +103,7 @@ function setChord(chord, play = false) {
     getById("spreadCheck").getElementsByClassName("checkIcon")[0].classList.remove("checked");
   }
   getById("feelSlider").value = progression.feels[chord];
+  getById("lengthSlider").value = progression.lengths[chord];
 
   if (play) {
     playCurChord();
@@ -103,7 +139,7 @@ function progressionToSchedule(pro) {
   let sched = new Array(256);
 
   for (let c = 0; c < progression.lengths.length; c++) {
-    sched[pos] = c;
+    sched[Math.round(pos)] = c;
     pos += pro.lengths[c] * 256 * barLength;
   }
 
@@ -115,6 +151,18 @@ function toggleSpread() {
   getById("spreadCheck").getElementsByClassName("checkIcon")[0].classList.toggle("checked");
   ShowChords();
   playCurChord();
+}
+
+function setLength(length) {
+  if (progression.lengths[curChord] !== length) {
+    let totLength = progression.lengths.reduce((a, t) => a + t);
+    if ((totLength - progression.lengths[curChord]) + length <= 8) {
+      progression.lengths[curChord] = length;
+      ShowChords();
+    } else {
+      getById("lengthSlider").value = progression.lengths[curChord];
+    }
+  }
 }
 
 function setFeel(feel) {
@@ -306,13 +354,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).then();
     });
 
-    let pRoots = [1, 3, 4, 2, 5, 1, 3, 4, 2, 5];
-    let pLengths = [1, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5];
-    let pDegrees = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4];
-    let pSpreads = [true, true, true, true, true, true, true, true, true, true]
-    let pFeels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    let pRoots = [1, 3, 5, 4];
+    let pLengths = [1, 1, 1, 1];
+    let pDegrees = [4, 4, 4, 4];
+    let pSpreads = [true, true, true, true];
+    let pFeels = [0, 0, 0, 2];
 
     progression = new ChordProgression(keyType, pRoots, pLengths, pDegrees, pSpreads, pFeels);
+    chordAmt = progression.roots.length
     ShowChords();
   }
 );

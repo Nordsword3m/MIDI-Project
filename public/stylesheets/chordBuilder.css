@@ -1,3 +1,9 @@
+#chordNumButtons {
+    position: absolute;
+    right: 0;
+    margin-right: 10px;
+}
+
 .checkbox {
     height: 30px;
     width: 30px;
@@ -6,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .checkIcon {
@@ -34,7 +41,7 @@
     font-size: 20px;
 }
 
-.chordInfoBar .icon {
+.chordInfoBar > .icon {
     font-size: 30px;
 }
 
