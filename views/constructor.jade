@@ -25,6 +25,9 @@ block content
             .trackButton
                 a(href="/drums")
                     .i.fas.fa-drum.trackIcon
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute('drums', this);")= "M"
+                    .soloButton(onclick="toggleSolo('drums', this);")= "S"
             .trackDisp
                 +divs
                 .instrumentCon
@@ -36,6 +39,9 @@ block content
             .trackButton
                 a(href="/chords")
                     .i.fas.fa-music.trackIcon
+                .muteSoloSwitch
+                    .muteButton(onclick="toggleMute('chords', this);")= "M"
+                    .soloButton(onclick="toggleSolo('chords', this);")= "S"
             .trackDisp
                 +divs
                 .instrumentCon

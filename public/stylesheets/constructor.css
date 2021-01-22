@@ -61,6 +61,7 @@
     justify-content: center;
     height: 100%;
     width: var(--trackButtWidth);
+    flex-direction: column;
 }
 
 .trackDisp {
@@ -75,6 +76,7 @@
     color: var(--iconColor);
     text-shadow: 0 0 10px var(--iconColor);
     transition: all 100ms;
+    margin-bottom: 10px;
 }
 
 .trackIcon:hover {

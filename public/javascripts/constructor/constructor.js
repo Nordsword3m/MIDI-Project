@@ -9,11 +9,38 @@ let chNoteArr, kickNoteArr, snrNoteArr, percNoteArr;
 let progression;
 let chordPlaySchedule;
 
+//Mute/Solo variables
+let mutes = new Map().set("drums", false).set("chords", false);
+let solos = new Map().set("drums", false).set("chords", false);
+
+// MUTE / SOLO OPERATIONS-------------------------------------------------------------------------------------------------------
+function toggleMute(inst, elem) {
+  elem.classList.toggle("selected");
+  mutes.set(inst, !mutes.get(inst));
+  solos.set(inst, false);
+
+  let soloButton = elem.parentElement.getElementsByClassName("soloButton")[0];
+  soloButton.classList.remove("selected");
+}
+
+function toggleSolo(inst, elem) {
+  elem.classList.toggle("selected");
+  solos.set(inst, !solos.get(inst));
+  mutes.set(inst, false);
+
+  let muteButton = elem.parentElement.getElementsByClassName("muteButton")[0];
+  muteButton.classList.remove("selected");
+}
+
 function soundSchedule() {
   for (let i = 0; i < chunkSize * 256; i++) {
     const step = pm.relNextChunk * 256 + i;
-    scheduleDrumNotes(step);
-    scheduleChordNotes(step);
+    if (!mutes.get("drums") && ([...solos.values()].reduce((x, t) => x && t) || solos.get("drums"))) {
+      scheduleDrumNotes(step);
+    }
+    if (!mutes.get("chords") && ([...solos.values()].reduce((x, t) => x && t) || solos.get("chords"))) {
+      scheduleChordNotes(step);
+    }
   }
 }
 
