@@ -11,11 +11,12 @@ mixin divs
         .trackDiv
 
 block content
+    +header("constructor")
+
     div(style = "display: none;")
         script(src = "/javascripts/drumBuilder/drumNoteManager.js")
+        script(src = "/javascripts/chordBuilder/chordNoteManager.js")
         script(src = "/javascripts/constructor/constructor.js")
-
-    +header("constructor")
 
     #tracks
         #playHeadCon
@@ -38,3 +39,4 @@ block content
             .trackDisp
                 +divs
                 .instrumentCon
+                    .instrumentDisp#chordNoteCon

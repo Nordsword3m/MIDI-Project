@@ -1,12 +1,11 @@
 extends layout
 
 block content
+    +header("drumBuilder")
+
     div(style = "display: none;")
         script(src = "/javascripts/drumBuilder/drumNoteManager.js")
         script(src = "/javascripts/drumBuilder/drumBuilder.js")
-
-
-    +header("drumBuilder")
 
     .drumDisplayCon
         .labelCon

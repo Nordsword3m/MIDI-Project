@@ -29,6 +29,8 @@ const noncalcDrums = 12;
 
 let keydownfuncs = [];
 
+let readyStates = new Map();
+
 let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "C3", "C4", "C5", "C6", "C7"]);
 let pm = new PlayManager();
 
@@ -43,7 +45,7 @@ let metroActive = false;
 
 
 function startPlaying() {
-  if (am.buffers) {
+  if (am.buffers && [...readyStates.values()].reduce((a, t) => a && t)) {
     pm.TogglePlaying(0, !pm.playing);
   }
 }

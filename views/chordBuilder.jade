@@ -1,9 +1,9 @@
 extends layout
 
 block content
-    script(src = "/javascripts/chordBuilder/chordBuilder.js")
-
     +header("chordBuilder")
+    script(src = "/javascripts/chordBuilder/chordNoteManager.js")
+    script(src = "/javascripts/chordBuilder/chordBuilder.js")
 
     .chordDisplayCon
         #display

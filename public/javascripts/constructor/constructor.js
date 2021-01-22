@@ -1,34 +1,49 @@
+readyStates.set("constructor", false);
+
 let dnm = new DrumNoteManager();
 let dem;
 let kickPatternCache, chPatternCache;
 let playHead;
 
 let chNoteArr, kickNoteArr, snrNoteArr, percNoteArr;
+let progression;
+let chordPlaySchedule;
 
 function soundSchedule() {
-  scheduleDrumNotes();
-}
-
-function scheduleDrumNotes() {
   for (let i = 0; i < chunkSize * 256; i++) {
     const step = pm.relNextChunk * 256 + i;
+    scheduleDrumNotes(step);
+    scheduleChordNotes(step);
+  }
+}
 
-    if (chNoteArr[step] > 0) {
-      playSound("ch", step * stepLength);
-    }
+function scheduleChordNotes(step) {
+  if (chordPlaySchedule[step] !== undefined) {
+    let chord = progression.chords[chordPlaySchedule[step]];
 
-    if (kickNoteArr[step] > 0) {
-      playSound("kick", step * stepLength);
-    }
-
-    if (snrNoteArr[step] > 0) {
-      playSound("snr", step * stepLength);
-    }
-
-    if (percNoteArr[step] > 0) {
-      playSound("perc", step * stepLength);
+    for (let n = 0; n < chord.length; n++) {
+      playNote(numToPitch(chord[n].num, progression.keyNum), step * stepLength, chord[n].length);
     }
   }
+}
+
+function scheduleDrumNotes(step) {
+  if (chNoteArr[step] > 0) {
+    playSound("ch", step * stepLength);
+  }
+
+  if (kickNoteArr[step] > 0) {
+    playSound("kick", step * stepLength);
+  }
+
+  if (snrNoteArr[step] > 0) {
+    playSound("snr", step * stepLength);
+  }
+
+  if (percNoteArr[step] > 0) {
+    playSound("perc", step * stepLength);
+  }
+
 }
 
 function setDrumCaches() {
@@ -97,22 +112,8 @@ function setDrumCaches() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-  await am.SetDefaultBuffers();
-  dem = new DisplayElementManager();
+function loadDrumData() {
   let drumData = JSON.parse(sessionStorage.getItem("drumData"));
-  await setDrumCaches();
-
-  let playHeadCon = getById("playHeadCon");
-
-  playHeadCon.addEventListener("click", function (event) {
-    if (pm.playing) {
-      pm.TogglePlaying(
-        (event.pageX - playHeadCon.offsetLeft) / playHeadCon.offsetWidth,
-        true
-      ).then();
-    }
-  });
 
   chNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
     chPatternCache,
@@ -152,9 +153,39 @@ document.addEventListener("DOMContentLoaded", async function () {
   dem.Display(kick, kickNoteArr);
   dem.Display(snr, snrNoteArr);
   dem.Display(perc, percNoteArr);
+}
+
+function loadChordData() {
+  let data = JSON.parse(sessionStorage.getItem("chordData"));
+  progression = new ChordProgression(data.type, data.keyNum, data.roots, data.lengths, data.degrees, data.spreads, data.feels);
+  chordPlaySchedule = progressionToSchedule(progression);
+
+  progression.generateChords();
+
+  dem.PlaceChordProgression(progression);
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+  await am.SetDefaultBuffers();
+  dem = new DisplayElementManager();
+  await setDrumCaches();
+
+  let playHeadCon = getById("playHeadCon");
+
+  playHeadCon.addEventListener("click", function (event) {
+    if (pm.playing) {
+      pm.TogglePlaying(
+        (event.pageX - playHeadCon.offsetLeft) / playHeadCon.offsetWidth,
+        true
+      ).then();
+    }
+  });
+
+  loadDrumData();
+  loadChordData();
 
   playHead = getById("trackPlayhead");
-
+  readyStates.set("constructor", true);
 });
 
 function loadDrumSource() {

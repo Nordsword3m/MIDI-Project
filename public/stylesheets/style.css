@@ -78,11 +78,13 @@ h3.vert {
     height: 100%;
     z-index: 5;
     position: absolute;
+    display: flex;
+    flex-direction: column;
 }
 
 .instrumentDisp {
-    height: 25%;
     position: relative;
+    flex-grow: 1;
 }
 
 .note {

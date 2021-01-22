@@ -1,21 +1,38 @@
+readyStates.set("chords", false);
+
 let dem;
 
 let chordObjs;
 
-let keyType = "minor";
-let keyNum = 1;
-
-const majorScale = [1, 3, 5, 6, 8, 10, 12];
-const minorScale = [1, 3, 4, 6, 8, 9, 11];
-
 let curChord = 0;
 let chordAmt;
 
-//Chord feel consts
-let sus2 = 1;
-let sus4 = 2;
-let dim = 3;
-let aug = 4;
+function saveData() {
+  sessionStorage.setItem("chordData", JSON.stringify(progression));
+}
+
+function loadData() {
+  let data = JSON.parse(sessionStorage.getItem("chordData"));
+
+  if (data) {
+    setKeyType(data.type);
+
+    progression = new ChordProgression(data.type, data.keyNum, data.roots, data.lengths, data.degrees, data.spreads, data.feels);
+    chordAmt = progression.roots.length;
+  } else {
+    let pRoots = [1, 3, 5, 4];
+    let pLengths = [1, 1, 1, 1];
+    let pDegrees = [4, 4, 4, 4];
+    let pSpreads = [true, true, true, true];
+    let pFeels = [0, 0, 0, 2];
+
+    setKeyType("minor");
+
+    progression = new ChordProgression("minor", 1, pRoots, pLengths, pDegrees, pSpreads, pFeels);
+    chordAmt = progression.roots.length;
+  }
+}
+
 
 function playCurChord() {
   if (pm.playing) {
@@ -25,7 +42,7 @@ function playCurChord() {
   let chord = progression.chords[curChord];
 
   for (let n = 0; n < chord.length; n++) {
-    am.playNoteNow(numToPitch(chord[n].num), chord[n].length);
+    am.playNoteNow(numToPitch(chord[n].num, progression.keyNum), chord[n].length);
   }
 }
 
@@ -110,40 +127,36 @@ function setChord(chord, play = false) {
   }
 }
 
-function toggleKeyType() {
-  if (keyType === "minor") {
-    keyType = "major";
-  } else {
-    keyType = "minor";
-  }
-
-  progression.type = keyType;
-
-  ShowChords();
-
+function setKeyType(type) {
   let keyTypeOptns = getByClass("keyType");
 
-  for (let i = 0; i < keyTypeOptns.length; i++) {
-    keyTypeOptns[i].classList.toggle("selected");
+  if (type === "major") {
+    keyTypeOptns[0].classList.add("selected");
+    keyTypeOptns[1].classList.remove("selected");
+  } else if (type === "minor") {
+    keyTypeOptns[0].classList.remove("selected");
+    keyTypeOptns[1].classList.add("selected");
   }
+}
+
+function toggleKeyType() {
+  if (progression.type === "minor") {
+    setKeyType("major");
+    progression.type = "major";
+  } else {
+    setKeyType("minor");
+    progression.type = "minor";
+  }
+
+
+  ShowChords();
 }
 
 function changeKey() {
-  keyNum = parseInt(getById("keyInput").innerText) + 1;
-  keyNum = keyNum > 12 ? 1 : keyNum;
-  getById("keyInput").innerText = keyNum.toString();
-}
-
-function progressionToSchedule(pro) {
-  let pos = 0;
-  let sched = new Array(256);
-
-  for (let c = 0; c < progression.lengths.length; c++) {
-    sched[Math.round(pos)] = c;
-    pos += pro.lengths[c] * 256 * barLength;
-  }
-
-  return sched;
+  progression.keyNum = parseInt(getById("keyInput").innerText) + 1;
+  progression.keyNum = progression.keyNum > 12 ? 1 : progression.keyNum;
+  getById("keyInput").innerText = progression.keyNum.toString();
+  saveData();
 }
 
 function toggleSpread() {
@@ -196,10 +209,7 @@ function ShowChords() {
   chordNoteCon.textContent = "";
   chordObjs = dem.PlaceChordProgression(progression);
   setChord(curChord);
-}
-
-function numToPitch(num) {
-  return (num - 1) + (keyNum - 1);
+  saveData();
 }
 
 function soundSchedule() {
@@ -209,133 +219,9 @@ function soundSchedule() {
       let chord = progression.chords[playSchedule[step]];
 
       for (let n = 0; n < chord.length; n++) {
-        playNote(numToPitch(chord[n].num), step * stepLength, chord[n].length);
+        playNote(numToPitch(chord[n].num, progression.keyNum), step * stepLength, chord[n].length);
       }
     }
-  }
-}
-
-function getFromScale(scale, num) {
-  let scaleNotes = scale === "major" ? majorScale : minorScale;
-  num = num - 1;
-  return ((Math.floor(num / 7) * 12) + scaleNotes[(num + 70) % 7]);
-}
-
-class ChordProgression {
-  constructor(type, roots, lengths, degrees, spreads, feels) {
-    this.type = type;
-    this.roots = roots;
-    this.lengths = lengths;
-    this.degrees = degrees;
-    this.spreads = spreads;
-    this.feels = feels;
-    this.chords = [];
-  }
-
-  generateChords() {
-    let pos = 0;
-    this.chords = [];
-
-    for (let c = 0; c < this.roots.length; c++) {
-      this.chords.push(this.drawChord(this.type, this.roots[c], pos, this.lengths[c], this.degrees[c], this.feels[c]));
-      pos += this.lengths[c];
-
-      if (c > 0) {
-        let prevTop = this.chords[0][this.chords[0].length - 1].num;
-        let prevBot = this.chords[0][0].num;
-        for (let n = 0; n < this.degrees[c]; n++) {
-
-          let curNormSpread = Math.abs(this.chords[c][n].num - prevTop) + Math.abs(this.chords[c][n].num - prevBot);
-          let newNormSpreadDown = Math.abs(this.chords[c][n].num - 12 - prevTop) + Math.abs(this.chords[c][n].num - 12 - prevBot);
-          let newNormSpreadUp = Math.abs(this.chords[c][n].num + 12 - prevTop) + Math.abs(this.chords[c][n].num + 12 - prevBot);
-
-          if (newNormSpreadDown < newNormSpreadUp) {
-            if (newNormSpreadDown < curNormSpread) {
-              this.chords[c][n].num -= 12;
-            }
-          } else {
-            if (newNormSpreadUp < curNormSpread) {
-              this.chords[c][n].num += 12;
-            }
-          }
-        }
-      }
-
-      this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
-
-      if (this.spreads[c] && this.degrees[c] >= 3) {
-        if (c > 0) {
-          let prevTop = this.chords[c - 1][this.chords[c - 1].length - 1].num;
-          let prevBot = this.chords[c - 1][0].num;
-
-          let topSpreadNote = Math.floor(this.degrees[c] / 2);
-          let botSpreadNote = this.degrees[c] - 1 - Math.floor(this.degrees[c] / 2);
-
-          if (Math.abs(this.chords[c][botSpreadNote].num + 12 - prevTop) < Math.abs(this.chords[c][topSpreadNote].num - 12 - prevBot)) {
-            this.chords[c][botSpreadNote].num += 12;
-          } else {
-            this.chords[c][topSpreadNote].num -= 12;
-          }
-        } else {
-          this.chords[c][this.degrees[c] - 1 - Math.floor(this.degrees[c] / 2)].num += 12;
-        }
-      }
-
-      this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
-    }
-
-    for (let c = 0; c < this.chords.length; c++) {
-      let rootNum = this.roots[c];
-
-      this.chords[c].forEach((n) => {
-        if (n.root) {
-          rootNum = n.num - 12;
-        }
-      });
-
-      this.chords[c].forEach((n) => {
-        if (Math.abs(n.num - rootNum) <= 4) {
-          rootNum -= 12;
-        }
-      });
-
-      this.chords[c].push(new Note(rootNum, this.lengths[c], true));
-      this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
-    }
-  }
-
-  drawChord(type, root, start, length, degree, feel) {
-    let chord = [];
-
-    for (let n = 0; n < degree; n++) {
-      let noteNum = getFromScale(type, root + 2 * n);
-
-      if (n === 1) {
-        if (feel === sus2) {
-          noteNum = getFromScale(type, (root + 2 * n) - 1);
-        } else if (feel === sus4) {
-          noteNum = getFromScale(type, (root + 2 * n) + 1);
-        }
-      } else if (n === 2) {
-        if (feel === dim) {
-          noteNum = getFromScale(type, (root + 2 * n)) - 1;
-        } else if (feel === aug) {
-          noteNum = getFromScale(type, (root + 2 * n)) + 1;
-        }
-      }
-
-      chord.push(new Note(noteNum, length, n === 0));
-    }
-
-    return chord;
-  }
-}
-
-class Note {
-  constructor(num, length, root) {
-    this.num = num;
-    this.length = length;
-    this.root = root;
   }
 }
 
@@ -354,14 +240,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).then();
     });
 
-    let pRoots = [1, 3, 5, 4];
-    let pLengths = [1, 1, 1, 1];
-    let pDegrees = [4, 4, 4, 4];
-    let pSpreads = [true, true, true, true];
-    let pFeels = [0, 0, 0, 2];
+    loadData();
 
-    progression = new ChordProgression(keyType, pRoots, pLengths, pDegrees, pSpreads, pFeels);
-    chordAmt = progression.roots.length
     ShowChords();
+    readyStates.set("chords", true);
   }
 );

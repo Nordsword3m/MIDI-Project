@@ -7,17 +7,17 @@ let chordNoteCon;
 
 function DisplayElementManager() {
   this.displays = {}
-  this.displays[ch] = new InstrumentDisplay(getById("chDisp"), new Array(256));
-  this.displays[kick] = new InstrumentDisplay(getById("kickDisp"), new Array(256));
-  this.displays[snr] = new InstrumentDisplay(getById("snareDisp"), new Array(256));
-  this.displays[perc] = new InstrumentDisplay(getById("percDisp"), new Array(256));
+  this.displays[ch] = new DrumDisplay(getById("chDisp"), new Array(256));
+  this.displays[kick] = new DrumDisplay(getById("kickDisp"), new Array(256));
+  this.displays[snr] = new DrumDisplay(getById("snareDisp"), new Array(256));
+  this.displays[perc] = new DrumDisplay(getById("percDisp"), new Array(256));
 
   display = getById("display");
   divisionDisplay = getById("divDisp");
   chordNoteCon = getById("chordNoteCon");
 }
 
-class InstrumentDisplay {
+class DrumDisplay {
   constructor(disp, notesElems) {
     this.disp = disp;
     this.noteObjs = notesElems;
@@ -52,7 +52,7 @@ DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
 DisplayElementManager.prototype.PlaceChordNote = function (num, start, length) {
   let note = document.createElement("div");
   note.className = "chordNote";
-
+  
   note.dataset.root = num;
   note.dataset.start = start;
   note.dataset.length = length;

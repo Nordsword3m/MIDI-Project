@@ -1,3 +1,5 @@
+readyStates.set("drums", false);
+
 let kickPatternCache, chPatternCache;
 
 function getDrumCaches() {
@@ -419,6 +421,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   seedModel();
   ShowNotes(noncalcDrums);
+  readyStates.set("drums", true);
 });
 
 function ShowNotes(changeInst) {
