@@ -12,9 +12,7 @@ function saveData() {
 function loadChordDataValues() {
   setKeyType(chordData.type);
 
-  progression = new ChordProgression(chordData.type, chordData.keyNum, chordData.roots, chordData.lengths, chordData.degrees, chordData.spreads, chordData.feels);
   chordAmt = progression.roots.length;
-
 }
 
 
@@ -105,6 +103,7 @@ function setChord(chord, play = false) {
   }
   getById("feelSlider").value = progression.feels[chord];
   getById("lengthSlider").value = progression.lengths[chord];
+  getById("strumSlider").value = progression.strums[chord];
 
   if (play) {
     playCurChord();
@@ -148,6 +147,14 @@ function toggleSpread() {
   getById("spreadCheck").getElementsByClassName("checkIcon")[0].classList.toggle("checked");
   ShowChords();
   playCurChord();
+}
+
+function setStrum(strum) {
+  if (progression.strums[curChord] !== strum) {
+    progression.strums[curChord] = strum;
+    ShowChords();
+    playCurChord();
+  }
 }
 
 function setLength(length) {

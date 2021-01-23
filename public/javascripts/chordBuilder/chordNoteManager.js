@@ -8,7 +8,7 @@ let dim = 3;
 let aug = 4;
 
 class ChordProgression {
-  constructor(type, keyNum, roots, lengths, degrees, spreads, feels) {
+  constructor(type, keyNum, roots, lengths, degrees, spreads, feels, strums) {
     this.type = type;
     this.keyNum = keyNum;
     this.roots = roots;
@@ -16,6 +16,7 @@ class ChordProgression {
     this.degrees = degrees;
     this.spreads = spreads;
     this.feels = feels;
+    this.strums = strums;
     this.chords = [];
   }
 
@@ -24,7 +25,7 @@ class ChordProgression {
     this.chords = [];
 
     for (let c = 0; c < this.roots.length; c++) {
-      this.chords.push(this.drawChord(this.type, this.roots[c], pos, this.lengths[c], this.degrees[c], this.feels[c]));
+      this.chords.push(this.drawChord(this.type, this.roots[c], pos, this.lengths[c], this.degrees[c], this.feels[c], this.strums[c]));
       pos += this.lengths[c];
 
       if (c > 0) {
@@ -75,7 +76,7 @@ class ChordProgression {
       let rootNum = this.roots[c];
 
       this.chords[c].forEach((n) => {
-        if (n.root) {
+        if (n.isRoot) {
           rootNum = n.num - 12;
         }
       });
@@ -86,8 +87,12 @@ class ChordProgression {
         }
       });
 
-      this.chords[c].push(new Note(rootNum, this.lengths[c], true));
+      this.chords[c].push(new Note(rootNum, this.lengths[c], true, 0));
       this.chords[c] = this.chords[c].sort((a, b) => a.num - b.num);
+
+      for (let n = 1; n < this.chords[c].length; n++) {
+        this.chords[c][n].startOffset = (n - 1) * this.strums[c];
+      }
     }
   }
 
@@ -111,7 +116,7 @@ class ChordProgression {
         }
       }
 
-      chord.push(new Note(noteNum, length, n === 0));
+      chord.push(new Note(noteNum, length, n === 0, 0));
     }
 
     return chord;
@@ -119,10 +124,11 @@ class ChordProgression {
 }
 
 class Note {
-  constructor(num, length, root) {
+  constructor(num, length, isRoot, startOffset) {
     this.num = num;
     this.length = length;
-    this.root = root;
+    this.isRoot = isRoot;
+    this.startOffset = startOffset;
   }
 }
 
@@ -140,8 +146,19 @@ function progressionToSchedule(pro) {
   let pos = 0;
   let sched = new Array(256);
 
-  for (let c = 0; c < progression.lengths.length; c++) {
-    sched[Math.round(pos)] = c;
+  for (let i = 0; i < 256; i++) {
+    sched[i] = [];
+  }
+
+  for (let c = 0; c < pro.chords.length; c++) {
+    for (let n = 0; n < pro.chords[c].length; n++) {
+      let noteStart = pos + (pro.chords[c][n].startOffset * 256 * barLength);
+      if (!sched[noteStart]) {
+        console.log(pos);
+      }
+      sched[Math.round(noteStart)].push(pro.chords[c][n]);
+    }
+
     pos += pro.lengths[c] * 256 * barLength;
   }
 

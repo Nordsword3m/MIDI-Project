@@ -47,10 +47,10 @@ let progression;
 let chordPlaySchedule;
 
 function loadChordData() {
-  progression = new ChordProgression(chordData.type, chordData.keyNum, chordData.roots, chordData.lengths, chordData.degrees, chordData.spreads, chordData.feels);
+  progression = new ChordProgression(chordData.type, chordData.keyNum, chordData.roots, chordData.lengths, chordData.degrees, chordData.spreads, chordData.feels, chordData.strums);
 
-  chordPlaySchedule = progressionToSchedule(progression);
   progression.generateChords();
+  chordPlaySchedule = progressionToSchedule(progression);
 
   if (curPage === "constructor" || curPage === "chords") {
     dem.PlaceChordProgression(progression);
@@ -186,13 +186,14 @@ function getChordData() {
 
   if (!data) {
     data = {
-      "type": 6,
+      "type": "minor",
       "keyNum": 4,
       "roots": [1, 3, 4, 2, 5, 1, 3, 4, 2, 5],
       "lengths": [1, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5],
       "degrees": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
       "spreads": [true, true, true, true, true, true, true, true, true, true],
-      "feels": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      "feels": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "strums": [0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625]
     };
   }
 
@@ -415,7 +416,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   tempo = getById("tempoInput").value;
 
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
-  
+
   loadChordData();
   loadDrumData();
 });
@@ -433,11 +434,9 @@ function soundSchedule() {
 }
 
 function scheduleChordNotes(step) {
-  if (chordPlaySchedule[step] !== undefined) {
-    let chord = progression.chords[chordPlaySchedule[step]];
-
-    for (let n = 0; n < chord.length; n++) {
-      playNote(numToPitch(chord[n].num, progression.keyNum), step * stepLength, chord[n].length);
+  if (chordPlaySchedule[step].length > 0) {
+    for (let n = 0; n < chordPlaySchedule[step].length; n++) {
+      playNote(numToPitch(chordPlaySchedule[step][n].num, progression.keyNum), step * stepLength, chordPlaySchedule[step][n].length - chordPlaySchedule[step][n].startOffset);
     }
   }
 }

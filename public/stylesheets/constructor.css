@@ -72,7 +72,7 @@
 }
 
 .trackIcon {
-    font-size: min(15vw, 20vh);
+    font-size: min(110px, min(15vw, 20vh));
     color: var(--iconColor);
     text-shadow: 0 0 10px var(--iconColor);
     transition: all 100ms;

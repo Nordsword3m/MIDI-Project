@@ -1,3 +1,10 @@
+.chordControlPanel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 20px;
+    flex-grow: 1;
+}
+
 #chordNumButtons {
     position: absolute;
     right: 0;
@@ -35,6 +42,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .chordInfoBar h3 {
@@ -50,8 +58,11 @@
 }
 
 .chordConfigPanel {
-    height: 50%;
     margin: 7px;
+    padding: 15px;
+    background-color: var(--panelColor);
+    display: flex;
+    flex-direction: column;
 }
 
 .chordDisplayCon {

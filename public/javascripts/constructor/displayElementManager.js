@@ -38,8 +38,8 @@ DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
     chordObjs.push([]);
     for (let n = 0; n < progression.chords[c].length; n++) {
       let note = progression.chords[c][n];
-      let noteObj = this.PlaceChordNote(note.num, pos, note.length);
-      if (note.root) {
+      let noteObj = this.PlaceChordNote(note.num, pos, note.length, note.startOffset);
+      if (note.isRoot) {
         noteObj.classList.add("root");
       }
       chordObjs[c].push(noteObj);
@@ -49,16 +49,16 @@ DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
   return chordObjs;
 }
 
-DisplayElementManager.prototype.PlaceChordNote = function (num, start, length) {
+DisplayElementManager.prototype.PlaceChordNote = function (num, start, length, startOffset) {
   let note = document.createElement("div");
   note.className = "chordNote";
 
-  note.dataset.root = num;
-  note.dataset.start = start;
-  note.dataset.length = length;
+  //note.dataset.root = num;
+  //note.dataset.start = start;
+  //note.dataset.length = length;
 
-  note.style.width = "calc(" + length + " * 12.5%)";
-  note.style.left = "calc(" + start + " * 12.5%)";
+  note.style.width = "calc(" + (length - startOffset) + " * 12.5%)";
+  note.style.left = "calc(" + (start + startOffset) + " * 12.5%)";
   note.style.bottom = "calc(" + (num - 1 + 24) + " * 100% / 60)";
 
 
