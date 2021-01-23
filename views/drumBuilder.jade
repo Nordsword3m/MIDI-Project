@@ -4,7 +4,6 @@ block content
     +header("drumBuilder")
 
     div(style = "display: none;")
-        script(src = "/javascripts/drumBuilder/drumNoteManager.js")
         script(src = "/javascripts/drumBuilder/drumBuilder.js")
 
     .drumDisplayCon
@@ -32,21 +31,21 @@ block content
                     input.fileUpload(onchange="browseUpload('kick', this.files[0], this);", type="file", style="display: none")
 
                 .muteSoloSwitch
-                    .muteButton(onclick="toggleMute(kick, this);")= "M"
-                    .soloButton(onclick="toggleSolo(kick, this);")= "S"
+                    .muteButton(data-inst="kick" onclick="toggleMute('kick');")= "M"
+                    .soloButton(data-inst="kick" onclick="toggleSolo('kick',);")= "S"
 
             .instrumentControls
                 h3= "Cohesion"
-                input#kickCohesion.slider(type="range", min="4", max="7", value="2", step="1", oninput="ShowNotes(kick);")
+                input#kickCohesion.slider(type="range", min="4", max="7", value="2", step="1", oninput="ShowNotes('kick');")
 
                 h3= "Spontaneity"
-                input#kickSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
+                input#kickSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes('kick');")
 
                 h3= "Quirk"
-                input#kickQuirk.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
+                input#kickQuirk.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes('kick');")
 
                 h3= "Complexity"
-                input#kickComplexity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(kick);")
+                input#kickComplexity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes('kick');")
 
         .instrumentPanel.hihatPanel
             .instrumentInfo
@@ -57,21 +56,21 @@ block content
                     input.fileUpload(onchange="browseUpload('ch', this.files[0], this);", type="file", style="display: none")
 
                 .muteSoloSwitch
-                    .muteButton(onclick="toggleMute(ch, this);")= "M"
-                    .soloButton(onclick="toggleSolo(ch, this);")= "S"
+                    .muteButton(data-inst="ch" onclick="toggleMute('ch');")= "M"
+                    .soloButton(data-inst="ch" onclick="toggleSolo('ch');")= "S"
 
             .instrumentControls
                 h3= "Cohesion"
-                input#chCohesion.slider(type="range", min="3", max="6", value="2", step="1", oninput="ShowNotes(ch);")
+                input#chCohesion.slider(type="range", min="3", max="6", value="2", step="1", oninput="ShowNotes('ch');")
 
                 h3= "Spontaneity"
-                input#chSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes(ch);")
+                input#chSpontaneity.slider(type="range", min="0", max="1", value="0.5", step="0.01", oninput="ShowNotes('ch');")
 
                 h3= "Quirk"
-                input#chQuirk.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
+                input#chQuirk.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes('ch');")
 
                 h3= "Complexity"
-                input#chComplexity.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes(ch);")
+                input#chComplexity.slider(type="range", min="0", max="0.95", value="0.5", step="0.01", oninput="ShowNotes('ch');")
 
         .instrumentPanel.snarePanel
             .instrumentInfo
@@ -82,8 +81,8 @@ block content
                     input.fileUpload(onchange="browseUpload('snr', this.files[0], this);", type="file", style="display: none")
 
                 .muteSoloSwitch
-                    .muteButton(onclick="toggleMute(snr, this);")= "M"
-                    .soloButton(onclick="toggleSolo(snr, this);")= "S"
+                    .muteButton(data-inst="snare" onclick="toggleMute('snare');")= "M"
+                    .soloButton(data-inst="snare" onclick="toggleSolo('snare');")= "S"
 
 
             .instrumentControls
@@ -102,8 +101,8 @@ block content
                     input.fileUpload(onchange="browseUpload('perc', this.files[0], this);", type="file", style="display: none")
 
                 .muteSoloSwitch
-                    .muteButton(onclick="toggleMute(perc, this);")= "M"
-                    .soloButton(onclick="toggleSolo(perc, this);")= "S"
+                    .muteButton(data-inst="perc" onclick="toggleMute('perc', this);")= "M"
+                    .soloButton(data-inst="perc" onclick="toggleSolo('perc', this);")= "S"
 
             .instrumentControls.perc
 
@@ -111,7 +110,7 @@ block content
                     .vertHeadWrapper
                         h3.vert= "Position 1"
                     .vertSliderWrapper
-                        input.slider.vert#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes(perc);")
+                        input.slider.vert#per1pos(type="range", min="0", max="30", value="2", step="2", oninput="ShowNotes('perc');")
                     .barSelectCon
                         .barOption(data-bar= 0, data-perc = 1)= "1"
                         .barOption(data-bar= 1, data-perc= 1)= "2"

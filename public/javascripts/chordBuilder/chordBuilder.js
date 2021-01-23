@@ -1,7 +1,5 @@
 readyStates.set("chords", false);
 
-let dem;
-
 let chordObjs;
 
 let curChord = 0;
@@ -11,26 +9,12 @@ function saveData() {
   sessionStorage.setItem("chordData", JSON.stringify(progression));
 }
 
-function loadData() {
-  let data = JSON.parse(sessionStorage.getItem("chordData"));
+function loadChordDataValues() {
+  setKeyType(chordData.type);
 
-  if (data) {
-    setKeyType(data.type);
+  progression = new ChordProgression(chordData.type, chordData.keyNum, chordData.roots, chordData.lengths, chordData.degrees, chordData.spreads, chordData.feels);
+  chordAmt = progression.roots.length;
 
-    progression = new ChordProgression(data.type, data.keyNum, data.roots, data.lengths, data.degrees, data.spreads, data.feels);
-    chordAmt = progression.roots.length;
-  } else {
-    let pRoots = [1, 3, 5, 4];
-    let pLengths = [1, 1, 1, 1];
-    let pDegrees = [4, 4, 4, 4];
-    let pSpreads = [true, true, true, true];
-    let pFeels = [0, 0, 0, 2];
-
-    setKeyType("minor");
-
-    progression = new ChordProgression("minor", 1, pRoots, pLengths, pDegrees, pSpreads, pFeels);
-    chordAmt = progression.roots.length;
-  }
 }
 
 
@@ -204,7 +188,7 @@ function setFullness(degree) {
 
 function ShowChords() {
   progression.generateChords();
-  playSchedule = progressionToSchedule(progression);
+  chordPlaySchedule = progressionToSchedule(progression);
 
   chordNoteCon.textContent = "";
   chordObjs = dem.PlaceChordProgression(progression);
@@ -212,24 +196,7 @@ function ShowChords() {
   saveData();
 }
 
-function soundSchedule() {
-  for (let i = 0; i < chunkSize * 256; i++) {
-    const step = pm.relNextChunk * 256 + i;
-    if (playSchedule[step] !== undefined) {
-      let chord = progression.chords[playSchedule[step]];
-
-      for (let n = 0; n < chord.length; n++) {
-        playNote(numToPitch(chord[n].num, progression.keyNum), step * stepLength, chord[n].length);
-      }
-    }
-  }
-}
-
-let progression;
-let playSchedule;
-
 document.addEventListener("DOMContentLoaded", async function () {
-    dem = new DisplayElementManager();
     dem.CreateDivisions();
     await am.SetDefaultBuffers();
 
@@ -240,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).then();
     });
 
-    loadData();
+    loadChordDataValues();
 
     ShowChords();
     readyStates.set("chords", true);

@@ -7,10 +7,10 @@ let chordNoteCon;
 
 function DisplayElementManager() {
   this.displays = {}
-  this.displays[ch] = new DrumDisplay(getById("chDisp"), new Array(256));
-  this.displays[kick] = new DrumDisplay(getById("kickDisp"), new Array(256));
-  this.displays[snr] = new DrumDisplay(getById("snareDisp"), new Array(256));
-  this.displays[perc] = new DrumDisplay(getById("percDisp"), new Array(256));
+  this.displays.ch = new DrumDisplay(getById("chDisp"), new Array(256));
+  this.displays.kick = new DrumDisplay(getById("kickDisp"), new Array(256));
+  this.displays.snr = new DrumDisplay(getById("snareDisp"), new Array(256));
+  this.displays.perc = new DrumDisplay(getById("percDisp"), new Array(256));
 
   display = getById("display");
   divisionDisplay = getById("divDisp");
@@ -52,7 +52,7 @@ DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
 DisplayElementManager.prototype.PlaceChordNote = function (num, start, length) {
   let note = document.createElement("div");
   note.className = "chordNote";
-  
+
   note.dataset.root = num;
   note.dataset.start = start;
   note.dataset.length = length;
@@ -68,16 +68,16 @@ DisplayElementManager.prototype.PlaceChordNote = function (num, start, length) {
 
 DisplayElementManager.prototype.InitialiseDrumNotes = function () {
   for (let i = 0; i < 256; i++) {
-    this.displays[ch].noteObjs[i] = this.CreateDrumNote(i, ch);
-    this.displays[kick].noteObjs[i] = this.CreateDrumNote(i, kick);
+    this.displays.ch.noteObjs[i] = this.CreateDrumNote(i, "ch");
+    this.displays.kick.noteObjs[i] = this.CreateDrumNote(i, "kick");
 
     if (i % 2 === 0) {
       if ((i / (256 * noteLength)) % 1 === 0) {
         if ((i / (256 * barLength)) % 1 !== 0) {
-          this.displays[snr].noteObjs[i] = this.CreateDrumNote(i, snr);
+          this.displays.snr.noteObjs[i] = this.CreateDrumNote(i, "snr");
         }
       }
-      this.displays[perc].noteObjs[i] = this.CreateDrumNote(i, perc);
+      this.displays.perc.noteObjs[i] = this.CreateDrumNote(i, "perc");
     }
   }
 };
@@ -96,9 +96,8 @@ DisplayElementManager.prototype.CreateDivisions = function () {
 
 DisplayElementManager.prototype.CreateDrumNote = function (id, dispId) {
   let note = document.createElement("div");
-  let type = dispId === kick ? "kick" : dispId === ch ? "ch" : dispId === snr ? "snr" : dispId === perc ? "perc" : "";
 
-  note.id = type + "Note" + id;
+  note.id = dispId + "Note" + id;
   note.className = "note";
 
   this.PlaceDrumNote(note);

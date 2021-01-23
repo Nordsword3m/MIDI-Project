@@ -14,8 +14,6 @@ block content
     +header("constructor")
 
     div(style = "display: none;")
-        script(src = "/javascripts/drumBuilder/drumNoteManager.js")
-        script(src = "/javascripts/chordBuilder/chordNoteManager.js")
         script(src = "/javascripts/constructor/constructor.js")
 
     #tracks
@@ -26,8 +24,8 @@ block content
                 a(href="/drums")
                     .i.fas.fa-drum.trackIcon
                 .muteSoloSwitch
-                    .muteButton(onclick="toggleMute('drums', this);")= "M"
-                    .soloButton(onclick="toggleSolo('drums', this);")= "S"
+                    .muteButton(data-inst="drums" onclick="toggleMute('drums');")= "M"
+                    .soloButton(data-inst="drums" onclick="toggleSolo('drums');")= "S"
             .trackDisp
                 +divs
                 .instrumentCon
@@ -40,8 +38,8 @@ block content
                 a(href="/chords")
                     .i.fas.fa-music.trackIcon
                 .muteSoloSwitch
-                    .muteButton(onclick="toggleMute('chords', this);")= "M"
-                    .soloButton(onclick="toggleSolo('chords', this);")= "S"
+                    .muteButton(data-inst="chords" onclick="toggleMute('chords');")= "M"
+                    .soloButton(data-inst="chords" onclick="toggleSolo('chords');")= "S"
             .trackDisp
                 +divs
                 .instrumentCon

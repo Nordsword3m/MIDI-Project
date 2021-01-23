@@ -95,5 +95,5 @@ function ParseBatch(files) {
     }
   }
 
-  return [kikArr, chArr];
+  return {kick: kikArr, ch: chArr};
 }

@@ -1,10 +1,14 @@
 mixin header(page)
     script(src = "/javascripts/constructor/bufferLoader.js")
     script(src = "/javascripts/constructor/audioManager.js")
+    script(src = "/javascripts/drumBuilder/drumNoteManager.js")
+    script(src = "/javascripts/chordBuilder/chordNoteManager.js")
     script(src = "/javascripts/constructor/playManager.js")
     script(src = "/javascripts/constructor/displayElementManager.js")
     script(src = "/javascripts/header.js")
 
+    script.
+      curPage = "#{page}";
 
     .topBar
         .locBar

@@ -1,7 +1,5 @@
 readyStates.set("drums", false);
 
-let kickPatternCache, chPatternCache;
-
 function getDrumCaches() {
   let db, tx, store;
 
@@ -65,25 +63,12 @@ let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
 let perc1Pos;
 let perc2Pos;
 
-// Note calculation processing
-let chNoteArr;
-let kickNoteArr;
-let snrNoteArr;
-let percNoteArr;
-
 let chPatterns;
 let kickPatterns;
-
-let drumSource;
 
 //State variables
 
 let nm = new DrumNoteManager();
-let dem;
-
-//Mute/Solo variables
-let mutes = new Array(4).fill(false);
-let solos = new Array(4).fill(false);
 
 //Performance enhancing
 let updateDelay = 150;
@@ -92,33 +77,26 @@ let nextUpdate;
 let updateQueued = false;
 
 // SAVE AND LOAD STUFF--------------------------------------------------------------------
-function loadData() {
-  let data = JSON.parse(sessionStorage.getItem("drumData"));
+function loadDrumDataValues() {
+  getById("seedInput").value = drumData.seed;
 
-  if (data) {
-    getById("seedInput").value = data.seed;
+  kickCohesionSlider.value = drumData.kickCohesion
+  kickSpontaneitySlider.value = drumData.kickSpontaneity
+  kickQuirkSlider.value = drumData.kickQuirk
+  kickComplexitySlider.value = drumData.kickComplexity
 
-    kickCohesionSlider.value = data.kickCohesion
-    kickSpontaneitySlider.value = data.kickSpontaneity
-    kickQuirkSlider.value = data.kickQuirk
-    kickComplexitySlider.value = data.kickComplexity
+  chCohesionSlider.value = drumData.chCohesion
+  chSpontaneitySlider.value = drumData.chSpontaneity
+  chQuirkSlider.value = drumData.chQuirk
+  chComplexitySlider.value = drumData.chComplexity
 
-    chCohesionSlider.value = data.chCohesion
-    chSpontaneitySlider.value = data.chSpontaneity
-    chQuirkSlider.value = data.chQuirk
-    chComplexitySlider.value = data.chComplexity
+  snarePattern = drumData.snarePattern
 
-    snarePattern = data.snarePattern
+  perc1Pos.value = drumData.perc1Pos
+  percBars[0] = drumData.perc1Bars
 
-    perc1Pos.value = data.perc1Pos
-    percBars[0] = data.perc1Bars
-
-    perc2Pos.value = data.perc2Pos
-    percBars[1] = data.perc2Bars
-  } else {
-    snarePattern = "3";
-    getById("seedInput").value = Math.floor(Math.random() * 1000);
-  }
+  perc2Pos.value = drumData.perc2Pos
+  percBars[1] = drumData.perc2Bars
 
   setPercBars();
   setSnarePattern();
@@ -166,13 +144,13 @@ function seedModel() {
       ? "000"
       : parseInt(seedInput.value).toString().padStart(3, "0").slice(0, 3);
 
-  ShowNotes(calcDrums);
+  ShowNotes("calcDrums");
 }
 
 // CALCULATE PATTERNS---------------------------------------------------------------------------------------
 function calculatePatterns(changeInst) {
   let start = window.performance.now();
-  if (changeInst === ch || changeInst === allDrums || changeInst === calcDrums) {
+  if (changeInst === "ch" || changeInst === "allDrums" || changeInst === "calcDrums") {
     chPatterns = nm.RetreivePatterns(
       chPatternCache,
       getById("seedInput").value,
@@ -191,7 +169,7 @@ function calculatePatterns(changeInst) {
   //console.log("Ch time: " + (window.performance.now() - start) + "ms");
   let kickStart = window.performance.now();
 
-  if (changeInst === kick || changeInst === allDrums || changeInst === calcDrums) {
+  if (changeInst === "kick" || changeInst === "allDrums" || changeInst === "calcDrums") {
     kickPatterns = nm.RetreivePatterns(
       kickPatternCache,
       getById("seedInput").value,
@@ -237,68 +215,6 @@ function dragOverHandler(ev) {
   ev.preventDefault();
 }
 
-// MUTE / SOLO OPERATIONS-------------------------------------------------------------------------------------------------------
-function toggleMute(inst, elem) {
-  elem.classList.toggle("selected");
-  mutes[inst] = !mutes[inst];
-  solos[inst] = false;
-
-  let soloButton = elem.parentElement.getElementsByClassName("soloButton")[0];
-  soloButton.classList.remove("selected");
-}
-
-function toggleSolo(inst, elem) {
-  elem.classList.toggle("selected");
-  solos[inst] = !solos[inst];
-  mutes[inst] = false;
-
-  let muteButton = elem.parentElement.getElementsByClassName("muteButton")[0];
-  muteButton.classList.remove("selected");
-}
-
-function soloPresent() {
-  let res = false;
-
-  solos.forEach((x) => (res ||= x));
-
-  return res;
-}
-
-// SCHEDULING-------------------------------------------------------------------------
-function soundSchedule() {
-  scheduleNotes();
-}
-
-function scheduleNotes() {
-  for (let i = 0; i < chunkSize * 256; i++) {
-    const step = pm.relNextChunk * 256 + i;
-
-    if (chNoteArr[step] > 0) {
-      if (!mutes[ch] && (!soloPresent() || solos[ch])) {
-        playSound("ch", step * stepLength);
-      }
-    }
-
-    if (kickNoteArr[step] > 0) {
-      if (!mutes[kick] && (!soloPresent() || solos[kick])) {
-        playSound("kick", step * stepLength);
-      }
-    }
-
-    if (snrNoteArr[step] > 0) {
-      if (!mutes[snr] && (!soloPresent() || solos[snr])) {
-        playSound("snr", step * stepLength);
-      }
-    }
-
-    if (percNoteArr[step] > 0) {
-      if (!mutes[perc] && (!soloPresent() || solos[perc])) {
-        playSound("perc", step * stepLength);
-      }
-    }
-  }
-}
-
 // SETUP AND WINDOW STUFF-----------------------------------------------------------------
 
 function showPercGhostNote(elem, show) {
@@ -328,7 +244,7 @@ function barSelect(elem) {
   elem.dataset.perc - 1
     ][elem.dataset.bar];
 
-  ShowNotes(perc);
+  ShowNotes('perc');
 }
 
 function setPercBars() {
@@ -364,12 +280,10 @@ function toggleSnarePattern(elem) {
 
   setSnarePattern();
 
-  ShowNotes(snr);
+  ShowNotes('snr');
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  dem = new DisplayElementManager();
-
   await am.SetDefaultBuffers();
 
   await getDrumCaches();
@@ -413,14 +327,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     saveData();
   });
 
-  loadData();
-
   dem.InitialiseDrumNotes();
   dem.CreateDivisions();
 
+  loadDrumDataValues();
 
   seedModel();
-  ShowNotes(noncalcDrums);
+  ShowNotes("noncalcDrums");
   readyStates.set("drums", true);
 });
 
@@ -439,21 +352,21 @@ function ShowNotes(changeInst) {
     calculatePatterns(changeInst);
     saveData();
 
-    if (changeInst === ch || changeInst === allDrums || changeInst === calcDrums) {
+    if (changeInst === "ch" || changeInst === "allDrums" || changeInst === "calcDrums") {
       chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value);
-      dem.Display(ch, chNoteArr);
+      dem.Display("ch", chNoteArr);
     }
-    if (changeInst === kick || changeInst === allDrums || changeInst === calcDrums) {
+    if (changeInst === "kick" || changeInst === "allDrums" || changeInst === "calcDrums") {
       kickNoteArr = nm.CalculateNotes(kickPatterns, kickComplexitySlider.value);
-      dem.Display(kick, kickNoteArr);
+      dem.Display("kick", kickNoteArr);
     }
-    if (changeInst === snr || changeInst === allDrums || changeInst === noncalcDrums) {
+    if (changeInst === "snr" || changeInst === "allDrums" || changeInst === "noncalcDrums") {
       snrNoteArr = nm.CalculateSnare(snarePattern);
-      dem.Display(snr, snrNoteArr);
+      dem.Display("snr", snrNoteArr);
     }
-    if (changeInst === perc || changeInst === allDrums || changeInst === noncalcDrums) {
+    if (changeInst === "perc" || changeInst === "allDrums" || changeInst === "noncalcDrums") {
       percNoteArr = nm.CalculatePerc(percBars[0], parseInt(perc1Pos.value), percBars[1], parseInt(perc2Pos.value));
-      dem.Display(perc, percNoteArr);
+      dem.Display("perc", percNoteArr);
     }
   }
 }
