@@ -62,8 +62,7 @@ AudioManager.prototype.play = function (name, pos) {
   source.connect(this.context.destination);
 
   let trackLength = (60.0 / tempo) * (256 * barLength);
-
-  source.start(this.loopStart + pos * trackLength - this.contextCreated);
+  source.start(Math.max(this.context.currentTime, this.loopStart + pos * trackLength - this.contextCreated));
 };
 
 AudioManager.prototype.playNote = function (pitch, pos, length) {
@@ -101,7 +100,7 @@ AudioManager.prototype.playNote = function (pitch, pos, length) {
 
   source.connect(env).connect(this.context.destination);
 
-  source.start(startTime);
+  source.start(Math.max(this.context.currentTime, startTime));
   source.stop(endTime + 1);
 };
 

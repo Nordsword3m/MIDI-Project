@@ -1,4 +1,4 @@
-readyStates.set("chords", false);
+readyStates.declarePresence("chords");
 
 let chordObjs;
 
@@ -11,7 +11,7 @@ function saveData() {
 
 function loadChordDataValues() {
   setKeyType(chordData.type);
-  getById("keyInput").innerText = progression.keyNum.toString();
+  getById("keyInput").innerText = chordData.keyNum.toString();
 
   chordAmt = progression.roots.length;
 }
@@ -228,7 +228,6 @@ function ShowChords() {
 
 document.addEventListener("DOMContentLoaded", async function () {
     dem.CreateDivisions();
-    await am.SetDefaultBuffers();
 
     keydownfuncs.push((e) => {
       if (e.key === "ArrowLeft") {
@@ -245,9 +244,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).then();
     });
 
+    await readyStates.waitFor("instDataLoad");
+
     loadChordDataValues();
 
     ShowChords();
-    readyStates.set("chords", true);
+    readyStates.readyUp("chords");
   }
 );

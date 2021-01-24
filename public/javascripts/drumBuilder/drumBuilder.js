@@ -1,50 +1,4 @@
-readyStates.set("drums", false);
-
-function getDrumCaches() {
-  let db, tx, store;
-
-  return new Promise(function (resolve, reject) {
-    let request = indexedDB.open("cacheDB", 1);
-
-    request.onerror = function (e) {
-      console.log("Database failed to open" + e.target.errorCode);
-    };
-
-    request.onsuccess = async function (e) {
-      db = e.target.result;
-      tx = db.transaction("cacheStore", "readwrite");
-      store = tx.objectStore("cacheStore");
-
-      db.onerror = function (e) {
-        console.error("Database error: " + e.target.errorCode);
-      };
-
-      let results = 0;
-
-      kickPatternCache = store.get("kickPatternCache");
-      kickPatternCache.onsuccess = () => {
-        kickPatternCache = kickPatternCache.result.cache;
-
-        results++;
-        if (results === 2) {
-          resolve();
-        }
-      }
-
-      chPatternCache = store.get("chPatternCache");
-      chPatternCache.onsuccess = () => {
-        chPatternCache = chPatternCache.result.cache;
-
-        results++;
-        if (results === 2) {
-          resolve();
-        }
-      }
-
-      tx.oncomplete = () => db.close();
-    };
-  });
-}
+readyStates.declarePresence("drums");
 
 let chCohesionSlider;
 let chSpontaneitySlider;
@@ -303,10 +257,6 @@ function toggleSnarePattern(elem) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  await am.SetDefaultBuffers();
-
-  await getDrumCaches();
-
   chCohesionSlider = getById("chCohesion");
   chSpontaneitySlider = getById("chSpontaneity");
   chQuirkSlider = getById("chQuirk");
@@ -349,11 +299,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   dem.InitialiseDrumNotes();
   dem.CreateDivisions();
 
+  await readyStates.waitFor("instDataLoad");
+
   loadDrumDataValues();
 
   seedModel();
   ShowNotes("noncalcDrums");
-  readyStates.set("drums", true);
+  readyStates.readyUp("drums");
 });
 
 function ShowNotes(changeInst) {

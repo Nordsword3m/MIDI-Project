@@ -1,10 +1,8 @@
-readyStates.set("constructor", false);
+readyStates.declarePresence("constructor");
 
 let playHead;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  await am.SetDefaultBuffers();
-
   let playHeadCon = getById("playHeadCon");
 
   playHeadCon.addEventListener("click", function (event) {
@@ -15,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).then();
     }
   });
-  
+
   playHead = getById("trackPlayhead");
-  readyStates.set("constructor", true);
+  readyStates.readyUp("constructor");
 });

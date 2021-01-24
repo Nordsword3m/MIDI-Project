@@ -28,7 +28,38 @@ const post = function (url, data) {
 
 let keydownfuncs = [];
 
-let readyStates = new Map();
+class ReadyStates {
+  constructor() {
+    this.states = new Map();
+    this.promises = new Map();
+    this.resolves = new Map();
+  }
+
+  readyUp(id) {
+    this.states.set(id, true);
+    this.resolves.get(id)();
+  }
+
+  declarePresence(id) {
+    this.states.set(id, false);
+    this.promises.set(id, new Promise((resolve) => {
+        this.resolves.set(id, resolve);
+      })
+    );
+  }
+
+  allReady() {
+    return [...this.states.values()].reduce((a, t) => a && t);
+  }
+
+  async waitFor(id) {
+    return await this.promises.get(id);
+  }
+}
+
+let readyStates = new ReadyStates();
+
+readyStates.declarePresence("instDataLoad");
 
 let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "C3", "C4", "C5", "C6", "C7"]);
 let pm = new PlayManager();
@@ -60,6 +91,18 @@ function loadChordData() {
 //Mute/Solo variables
 let mutes = {drums: false, chords: false, ch: false, kick: false, snare: false, perc: false};
 let solos = {drums: false, chords: false, ch: false, kick: false, snare: false, perc: false};
+
+function autoPlay() {
+  let autoPlayData = JSON.parse(sessionStorage.getItem("autoPlayData"));
+
+  if (autoPlayData && autoPlayData.playing) {
+    pm.TogglePlaying(autoPlayData.relPlayPos, true);
+  }
+}
+
+function savePlayPos() {
+  sessionStorage.setItem("autoPlayData", JSON.stringify({playing: pm.playing, relPlayPos: pm.relPlayPos}));
+}
 
 function toggleMute(inst) {
   mutes[inst] = !mutes[inst];
@@ -271,7 +314,7 @@ function loadDrumData() {
 }
 
 function startPlaying() {
-  if (am.buffers && [...readyStates.values()].reduce((a, t) => a && t)) {
+  if (readyStates.allReady()) {
     pm.TogglePlaying(0, !pm.playing);
   }
 }
@@ -400,6 +443,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   await setDrumCaches();
   loadMuteSolos();
 
+  loadChordData();
+  loadDrumData();
+  readyStates.readyUp("instDataLoad");
+  tempo = getById("tempoInput").value;
+
+  await am.SetDefaultBuffers();
+  autoPlay();
+
   keydownfuncs.push((e) => {
     if (e.key === ".") {
       tapTempoButton(getById("tapButton"));
@@ -413,12 +464,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   getById("playButton").addEventListener("click", startPlaying);
 
-  tempo = getById("tempoInput").value;
-
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
-
-  loadChordData();
-  loadDrumData();
 });
 
 function soundSchedule() {

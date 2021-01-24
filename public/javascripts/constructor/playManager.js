@@ -37,7 +37,6 @@ PlayManager.prototype.setNextChunk = function (chunk) {
 }
 
 PlayManager.prototype.TogglePlaying = async function (pos, play) {
-
   if (play !== this.playing) {
     getById("playButton").classList.toggle("fa-pause");
     getById("playButton").classList.toggle("fa-play");
@@ -63,6 +62,8 @@ PlayManager.prototype.TogglePlaying = async function (pos, play) {
     this.setPlayPos(0);
     this.setNextChunk(0);
   }
+
+  savePlayPos();
 }
 
 PlayManager.prototype.Playing = function () {
@@ -76,6 +77,8 @@ PlayManager.prototype.Playing = function () {
   if (this.playPos >= this.nextChunk - chunkSize * this.chunkPreRender) {
     this.NextChunk();
   }
+  
+  savePlayPos();
 }
 
 PlayManager.prototype.SetHeadPos = function () {
