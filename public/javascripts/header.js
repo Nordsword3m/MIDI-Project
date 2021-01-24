@@ -283,7 +283,7 @@ function loadDrumData() {
       )
     ),
     1 - drumData.chQuirk
-  ), drumData.chComplexity, drumData.clone);
+  ), drumData.chComplexity, drumData.cloneDrums);
 
   kickNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
     kickPatternCache,
@@ -297,7 +297,7 @@ function loadDrumData() {
       )
     ),
     1 - drumData.kickQuirk
-  ), drumData.kickComplexity, drumData.clone);
+  ), drumData.kickComplexity, drumData.cloneDrums);
 
   snrNoteArr = dnm.CalculateSnare(drumData.snarePattern);
 
