@@ -249,6 +249,7 @@ function getDrumData() {
   if (!data) {
     data = {
       "seed": "102",
+      "cloneDrums": "true",
       "kickCohesion": "5",
       "kickCohesionMin": "4",
       "kickSpontaneity": "0.28",

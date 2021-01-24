@@ -243,10 +243,6 @@ DrumNoteManager.prototype.CalculatePerc = function (optn1Bars, optn1Pos, optn2Ba
   return noteArr;
 };
 
-function toRegion(pos) {
-  return Math.floor(pos / (256 / 8));
-}
-
 DrumNoteManager.prototype.CalculateSnare = function (pattern) {
   let noteArr = new Array(256).fill(0);
 
