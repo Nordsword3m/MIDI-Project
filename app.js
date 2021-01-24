@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/static", express.static(path.join(__dirname, "static")));
 
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
@@ -24,20 +25,20 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get("/", (req, res) => {
-  res.render("index");
+app.get(["/", "/chords", "/drums"], (req, res) => {
+  res.render("index.jade");
 });
 
-app.get("/constructor", (req, res) => {
-  res.render("constructor", {title: "Constructor"});
+app.post("/constructor", (req, res) => {
+  res.render("constructor.jade");
 });
 
-app.get("/drums", (req, res) => {
-  res.render("drumBuilder", {title: "Drums"});
+app.post("/chords", (req, res) => {
+  res.render("chordBuilder.jade");
 });
 
-app.get("/chords", (req, res) => {
-  res.render("chordBuilder", {title: "Chords"});
+app.post("/drums", (req, res) => {
+  res.render("drumBuilder.jade");
 });
 
 // catch 404 and forward to error handler

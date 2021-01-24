@@ -1,46 +1,46 @@
-extends layout
+include header
++header("chordBuilder")
 
-block content
-    +header("chordBuilder")
-    script(src = "/javascripts/chordBuilder/chordBuilder.js")
+.chordDisplayCon
+    #display
+        #divDisp
+        #chordNoteCon
+        #playHead
 
-    .chordDisplayCon
-        #display
-            #divDisp
-            #chordNoteCon
-            #playHead
+.chordConfigPanel
+    .chordInfoBar
+        #doubleChordsButton(onclick="doubleChords()")= "X2"
+        i.fas.fa-chevron-left.icon.disabled#leftChordArrow(onclick="setChord(curChord-1, true)")
+        h3#chordPos= "Chord 1"
+        i.fas.fa-chevron-right.icon#rightChordArrow(onclick="setChord(curChord+1, true)")
+        #chordNumButtons
+            i.fas.fa-plus.icon(onclick="addNewChord()")
+            i.fas.fa-minus.icon(onclick="removeChord()")
+    .chordControlPanel
+        .chordConfigControl
+            h3= "Root"
+            input.slider#rootSlider(type="range" min="-5" max="7" value="1" step="0.01" oninput="setRoot(Math.round(this.value))")
 
-    .chordConfigPanel
-        .chordInfoBar
-            #doubleChordsButton(onclick="doubleChords()")= "X2"
-            i.fas.fa-chevron-left.icon.disabled#leftChordArrow(onclick="setChord(curChord-1, true)")
-            h3#chordPos= "Chord 1"
-            i.fas.fa-chevron-right.icon#rightChordArrow(onclick="setChord(curChord+1, true)")
-            #chordNumButtons
-                i.fas.fa-plus.icon(onclick="addNewChord()")
-                i.fas.fa-minus.icon(onclick="removeChord()")
-        .chordControlPanel
-            .chordConfigControl
-                h3= "Root"
-                input.slider#rootSlider(type="range" min="-5" max="7" value="1" step="0.01" oninput="setRoot(Math.round(this.value))")
+        .chordConfigControl
+            h3= "Fullness"
+            input.slider#fullnessSlider(type="range" min="1" max="5" value="3" step="0.01" oninput="setFullness(Math.round(this.value))")
 
-            .chordConfigControl
-                h3= "Fullness"
-                input.slider#fullnessSlider(type="range" min="1" max="5" value="3" step="0.01" oninput="setFullness(Math.round(this.value))")
+        .chordConfigControl
+            h3= "Feel"
+            input.slider#feelSlider(type="range" min="0" max="4" value="3" step="0.01" oninput="setFeel(Math.round(this.value))")
 
-            .chordConfigControl
-                h3= "Feel"
-                input.slider#feelSlider(type="range" min="0" max="4" value="3" step="0.01" oninput="setFeel(Math.round(this.value))")
+        .chordConfigControl
+            h3= "Length"
+            input.slider#lengthSlider(type="range" min="0.125" max="2" value="1" step="0.01" oninput="setLength(Math.round(this.value * 8) / 8)")
 
-            .chordConfigControl
-                h3= "Length"
-                input.slider#lengthSlider(type="range" min="0.125" max="2" value="1" step="0.01" oninput="setLength(Math.round(this.value * 8) / 8)")
+        .chordConfigControl
+            h3= "Strum"
+            input.slider#strumSlider(type="range" min="-1" max="1" value="0" step="0.01" oninput="setStrum(Math.round(this.value * 4) / 4)")
 
-            .chordConfigControl
-                h3= "Strum"
-                input.slider#strumSlider(type="range" min="-1" max="1" value="0" step="0.01" oninput="setStrum(Math.round(this.value * 4) / 4)")
+        .chordConfigControl
+            h3= "Spread"
+            #spreadCheck.checkbox
+                i.fas.fa-check.checkIcon(onclick="toggleSpread()")
 
-            .chordConfigControl
-                h3= "Spread"
-                #spreadCheck.checkbox
-                    i.fas.fa-check.checkIcon(onclick="toggleSpread()")
+script.
+  loadChordBuilder();

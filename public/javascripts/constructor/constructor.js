@@ -1,8 +1,8 @@
-readyStates.declarePresence("constructor");
-
 let playHead;
 
-document.addEventListener("DOMContentLoaded", async function () {
+async function loadConstructor() {
+  readyStates.declarePresence("constructor");
+
   let playHeadCon = getById("playHeadCon");
 
   playHeadCon.addEventListener("click", function (event) {
@@ -14,6 +14,5 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  playHead = getById("trackPlayhead");
   readyStates.readyUp("constructor");
-});
+}

@@ -10,7 +10,7 @@ function AudioManager(audioList) {
 AudioManager.prototype.SetLoopStart = function (relPos) {
   let trackLength = (60.0 / tempo) * (256 * barLength);
   this.loopStart = am.curTime() - relPos * trackLength;
-}
+};
 
 AudioManager.prototype.ReplaceBuffer = async function (name, file) {
   await this.mainContext.decodeAudioData(

@@ -6,7 +6,6 @@ const stepLength = 1 / 256;
 const chunkSize = noteLength / 2;
 
 function PlayManager() {
-  this.playHead = getById("playHead");
   this.playPos = 0;
   this.relPlayPos = 0;
 
@@ -29,12 +28,12 @@ PlayManager.prototype.NextChunk = function () {
   soundSchedule();
 
   this.setNextChunk(this.nextChunk + chunkSize);
-}
+};
 
 PlayManager.prototype.setNextChunk = function (chunk) {
   this.nextChunk = chunk;
   this.relNextChunk = this.nextChunk % 1;
-}
+};
 
 PlayManager.prototype.TogglePlaying = async function (pos, play) {
   if (play !== this.playing) {
@@ -56,6 +55,7 @@ PlayManager.prototype.TogglePlaying = async function (pos, play) {
     this.NextChunk();
 
     clearInterval(this.playTimerID);
+
     this.playTimerID = setInterval(this.Playing.bind(this), 1);
   } else {
     clearInterval(this.playTimerID);
@@ -64,10 +64,9 @@ PlayManager.prototype.TogglePlaying = async function (pos, play) {
   }
 
   savePlayPos();
-}
+};
 
 PlayManager.prototype.Playing = function () {
-
   // Playing routine, run as frequently as possible
   let timeDelta = am.curTime() - this.prevPlayTime;
   this.prevPlayTime = am.curTime();
@@ -77,13 +76,13 @@ PlayManager.prototype.Playing = function () {
   if (this.playPos >= this.nextChunk - chunkSize * this.chunkPreRender) {
     this.NextChunk();
   }
-  
+
   savePlayPos();
-}
+};
 
 PlayManager.prototype.SetHeadPos = function () {
-  playHead.style.left = this.relPlayPos * 100 + "%";
-}
+  getById("playHead").style.left = this.relPlayPos * 100 + "%";
+};
 
 PlayManager.prototype.setPlayPos = function (pos) {
   let posDelta = pos - this.playPos;
@@ -102,4 +101,4 @@ PlayManager.prototype.setPlayPos = function (pos) {
   }
 
   this.SetHeadPos();
-}
+};

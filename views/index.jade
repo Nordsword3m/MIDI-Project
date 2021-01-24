@@ -1,11 +1,21 @@
 extends layout
 
 block content
-  h1= title
-  p Weclome to #{title}
+    script(type="module" src="static/js/index.js")
 
-  form(action='/upload', method='post', enctype="multipart/form-data")
-    input(type="file", name="uploadFile")
-    br
-    br
-    input(type="submit", value="Upload")
+    script(src = "/javascripts/constructor/bufferLoader.js")
+    script(src = "/javascripts/constructor/audioManager.js")
+    script(src = "/javascripts/drumBuilder/drumNoteManager.js")
+    script(src = "/javascripts/chordBuilder/chordNoteManager.js")
+    script(src = "/javascripts/constructor/playManager.js")
+    script(src = "/javascripts/constructor/displayElementManager.js")
+    script(src = "/javascripts/header.js")
+
+    script(src = "/javascripts/constructor/constructor.js")
+    script(src = "/javascripts/chordBuilder/chordBuilder.js")
+    script(src = "/javascripts/drumBuilder/drumBuilder.js")
+
+    script.
+      oneTimeLoadHeader();
+
+    #app

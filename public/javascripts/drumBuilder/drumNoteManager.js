@@ -40,7 +40,7 @@ class Cache {
   getBeatAmount() {
     let min = Object.keys(this.patts)[0];
     let max = Object.keys(this.patts[min])[0];
-    return Object.keys(this.patts[min][max]).length;
+    return min && max ? Object.keys(this.patts[min][max]).length : 0;
   }
 }
 

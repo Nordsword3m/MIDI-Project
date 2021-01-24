@@ -1,11 +1,4 @@
 mixin header(page)
-    script(src = "/javascripts/constructor/bufferLoader.js")
-    script(src = "/javascripts/constructor/audioManager.js")
-    script(src = "/javascripts/drumBuilder/drumNoteManager.js")
-    script(src = "/javascripts/chordBuilder/chordNoteManager.js")
-    script(src = "/javascripts/constructor/playManager.js")
-    script(src = "/javascripts/constructor/displayElementManager.js")
-    script(src = "/javascripts/header.js")
 
     script.
       curPage = "#{page}";
@@ -15,11 +8,11 @@ mixin header(page)
             h1.title= "Midi Ting Fi Real"
 
             if page === "drumBuilder"
-                a(href="/constructor")
+                a(href="/" data-link)
                     i.fas.fa-drum.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
 
             else if page === "chordBuilder"
-                a(href="/constructor")
+                a(href="/" data-link)
                     i.fas.fa-music.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
 
         .toolBar
@@ -45,3 +38,6 @@ mixin header(page)
                 p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
 
             i.fas.fa-play.icon#playButton
+
+    script.
+      loadHeader();

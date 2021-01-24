@@ -1,11 +1,9 @@
-readyStates.declarePresence("chords");
-
 let chordObjs;
 
 let curChord = 0;
 let chordAmt;
 
-function saveData() {
+function saveChordDataValues() {
   sessionStorage.setItem("chordData", JSON.stringify(progression));
 }
 
@@ -158,7 +156,7 @@ function changeKey() {
   progression.keyNum = parseInt(getById("keyInput").innerText) + 1;
   progression.keyNum = progression.keyNum > 12 ? 1 : progression.keyNum;
   getById("keyInput").innerText = progression.keyNum.toString();
-  saveData();
+  saveChordDataValues();
 }
 
 function toggleSpread() {
@@ -223,32 +221,35 @@ function ShowChords() {
   chordNoteCon.textContent = "";
   chordObjs = dem.PlaceChordProgression(progression);
   setChord(curChord);
-  saveData();
+  saveChordDataValues();
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-    dem.CreateDivisions();
+async function loadChordBuilder() {
+  readyStates.declarePresence("chords");
 
-    keydownfuncs.push((e) => {
-      if (e.key === "ArrowLeft") {
-        setChord(curChord - 1, true);
-      } else if (e.key === "ArrowRight") {
-        setChord(curChord + 1, true)
-      }
-    });
+  await readyStates.waitFor("demLoad");
 
-    display.addEventListener("click", function (event) {
-      pm.TogglePlaying(
-        (event.pageX - display.offsetLeft) / display.offsetWidth,
-        true
-      ).then();
-    });
+  dem.CreateDivisions();
 
-    await readyStates.waitFor("instDataLoad");
+  keydownfuncs.push((e) => {
+    if (e.key === "ArrowLeft") {
+      setChord(curChord - 1, true);
+    } else if (e.key === "ArrowRight") {
+      setChord(curChord + 1, true);
+    }
+  });
 
-    loadChordDataValues();
+  display.addEventListener("click", function (event) {
+    pm.TogglePlaying(
+      (event.pageX - display.offsetLeft) / display.offsetWidth,
+      true
+    ).then();
+  });
 
-    ShowChords();
-    readyStates.readyUp("chords");
-  }
-);
+  await readyStates.waitFor("instDataLoad");
+
+  loadChordDataValues();
+
+  ShowChords();
+  readyStates.readyUp("chords");
+}

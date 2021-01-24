@@ -1,5 +1,3 @@
-extends layout
-
 mixin divs
     .trackDivs
         .trackDiv
@@ -10,37 +8,37 @@ mixin divs
         .trackDiv
         .trackDiv
 
-block content
-    +header("constructor")
+include header
++header("constructor")
 
-    div(style = "display: none;")
-        script(src = "/javascripts/constructor/constructor.js")
+#tracks
+    #playHeadCon
+        #playHead
+    .trackCon
+        .trackButton
+            a(href="/drums" data-link)
+                .i.fas.fa-drum.trackIcon
+            .muteSoloSwitch
+                .muteButton(data-inst="drums" onclick="toggleMute('drums');")= "M"
+                .soloButton(data-inst="drums" onclick="toggleSolo('drums');")= "S"
+        .trackDisp
+            +divs
+            .instrumentCon
+                .instrumentDisp#kickDisp
+                .instrumentDisp#chDisp
+                .instrumentDisp#snareDisp
+                .instrumentDisp#percDisp
+    .trackCon
+        .trackButton
+            a(href="/chords" data-link)
+                .i.fas.fa-music.trackIcon
+            .muteSoloSwitch
+                .muteButton(data-inst="chords" onclick="toggleMute('chords');")= "M"
+                .soloButton(data-inst="chords" onclick="toggleSolo('chords');")= "S"
+        .trackDisp
+            +divs
+            .instrumentCon
+                .instrumentDisp#chordNoteCon
 
-    #tracks
-        #playHeadCon
-            #trackPlayhead
-        .trackCon
-            .trackButton
-                a(href="/drums")
-                    .i.fas.fa-drum.trackIcon
-                .muteSoloSwitch
-                    .muteButton(data-inst="drums" onclick="toggleMute('drums');")= "M"
-                    .soloButton(data-inst="drums" onclick="toggleSolo('drums');")= "S"
-            .trackDisp
-                +divs
-                .instrumentCon
-                    .instrumentDisp#kickDisp
-                    .instrumentDisp#chDisp
-                    .instrumentDisp#snareDisp
-                    .instrumentDisp#percDisp
-        .trackCon
-            .trackButton
-                a(href="/chords")
-                    .i.fas.fa-music.trackIcon
-                .muteSoloSwitch
-                    .muteButton(data-inst="chords" onclick="toggleMute('chords');")= "M"
-                    .soloButton(data-inst="chords" onclick="toggleSolo('chords');")= "S"
-            .trackDisp
-                +divs
-                .instrumentCon
-                    .instrumentDisp#chordNoteCon
+script.
+  loadConstructor();

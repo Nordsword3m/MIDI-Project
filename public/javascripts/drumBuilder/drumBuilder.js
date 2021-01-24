@@ -1,5 +1,3 @@
-readyStates.declarePresence("drums");
-
 let chCohesionSlider;
 let chSpontaneitySlider;
 let chQuirkSlider;
@@ -74,7 +72,7 @@ function loadDrumDataValues() {
   setSnarePattern();
 }
 
-function saveData() {
+function saveDrumDataValues() {
   let data = {
     seed: getById("seedInput").value,
     cloneDrums: drumClone,
@@ -256,7 +254,9 @@ function toggleSnarePattern(elem) {
   ShowNotes('snr');
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
+async function loadDrumBuilder() {
+  readyStates.declarePresence("drums");
+
   chCohesionSlider = getById("chCohesion");
   chSpontaneitySlider = getById("chSpontaneity");
   chQuirkSlider = getById("chQuirk");
@@ -270,6 +270,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   perc2Pos = getById("per2pos");
 
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
+
+  await readyStates.waitFor("demLoad");
 
   display.addEventListener("click", function (event) {
     pm.TogglePlaying(
@@ -293,7 +295,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   getById("tempoInput").addEventListener("input", () => {
-    saveData();
+    saveDrumDataValues();
   });
 
   dem.InitialiseDrumNotes();
@@ -306,7 +308,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   seedModel();
   ShowNotes("noncalcDrums");
   readyStates.readyUp("drums");
-});
+}
 
 function ShowNotes(changeInst) {
   if (lastUpdateTime + updateDelay > window.performance.now()) {
@@ -316,12 +318,12 @@ function ShowNotes(changeInst) {
       setTimeout(() => {
         ShowNotes(nextUpdate);
         updateQueued = false;
-      }, (lastUpdateTime + updateDelay) - window.performance.now())
+      }, (lastUpdateTime + updateDelay) - window.performance.now());
     }
   } else {
     lastUpdateTime = window.performance.now();
     calculatePatterns(changeInst);
-    saveData();
+    saveDrumDataValues();
 
     if (changeInst === "ch" || changeInst === "allDrums" || changeInst === "calcDrums") {
       chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value, drumClone);

@@ -24,7 +24,7 @@ const post = function (url, data) {
   xhr.open("POST", url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(JSON.stringify(data));
-}
+};
 
 let keydownfuncs = [];
 
@@ -61,8 +61,8 @@ let readyStates = new ReadyStates();
 
 readyStates.declarePresence("instDataLoad");
 
-let am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "C3", "C4", "C5", "C6", "C7"]);
-let pm = new PlayManager();
+let am;
+let pm;
 
 //Tap tempo variables
 let tempo;
@@ -145,7 +145,7 @@ function setDrumCaches() {
       db = e.target.result;
       store = db.createObjectStore("cacheStore", {keyPath: "cacheId"});
 
-    }
+    };
 
     request.onerror = function (e) {
       console.log("Database failed to open" + e.target.errorCode);
@@ -178,7 +178,7 @@ function setDrumCaches() {
         if (results === 2) {
           resolve();
         }
-      }
+      };
 
       chPatternCache = store.get("chPatternCache");
       chPatternCache.onsuccess = () => {
@@ -195,7 +195,7 @@ function setDrumCaches() {
         if (results === 2) {
           resolve();
         }
-      }
+      };
 
       tx.oncomplete = () => db.close();
     };
@@ -407,7 +407,7 @@ document.onkeydown = function (e) {
   for (let i = 0; i < keydownfuncs.length; i++) {
     keydownfuncs[i](e);
   }
-}
+};
 
 function playSound(name, pos) {
   am.play(name, pos);
@@ -438,19 +438,13 @@ function toggleMetronome(elem) {
   metroActive = !metroActive;
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-  dem = new DisplayElementManager();
-
+async function oneTimeLoadHeader() {
+  am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "C3", "C4", "C5", "C6", "C7"]);
+  readyStates.declarePresence("headerOneTime");
   await setDrumCaches();
-  loadMuteSolos();
-
-  loadChordData();
-  loadDrumData();
-  readyStates.readyUp("instDataLoad");
-  tempo = getById("tempoInput").value;
-
   await am.SetDefaultBuffers();
-  autoPlay();
+
+  pm = new PlayManager();
 
   keydownfuncs.push((e) => {
     if (e.key === ".") {
@@ -462,11 +456,29 @@ document.addEventListener("DOMContentLoaded", async function () {
       startPlaying();
     }
   });
+  readyStates.readyUp("headerOneTime");
+}
+
+async function loadHeader() {
+  readyStates.declarePresence("demLoad");
+  await readyStates.waitFor("headerOneTime");
+
+  dem = new DisplayElementManager();
+  readyStates.readyUp("demLoad");
+
+  loadMuteSolos();
+
+  loadChordData();
+  loadDrumData();
+  readyStates.readyUp("instDataLoad");
+  tempo = getById("tempoInput").value;
+
+  autoPlay();
 
   getById("playButton").addEventListener("click", startPlaying);
 
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
-});
+}
 
 function soundSchedule() {
   for (let i = 0; i < chunkSize * 256; i++) {
