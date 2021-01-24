@@ -11,6 +11,7 @@ function saveData() {
 
 function loadChordDataValues() {
   setKeyType(chordData.type);
+  getById("keyInput").innerText = progression.keyNum.toString();
 
   chordAmt = progression.roots.length;
 }
@@ -24,7 +25,7 @@ function playCurChord() {
   let chord = progression.chords[curChord];
 
   for (let n = 0; n < chord.length; n++) {
-    am.playNoteNow(numToPitch(chord[n].num, progression.keyNum), chord[n].length);
+    am.playNoteNow(numToPitch(chord[n].num, progression.keyNum));
   }
 }
 
@@ -38,9 +39,10 @@ function removeChord() {
   progression.degrees.pop();
   progression.spreads.pop();
   progression.feels.pop();
+  progression.strums.pop();
 
   chordAmt--;
-  setChord(curChord - 1, true);
+  setChord(curChord - 1);
   ShowChords();
 }
 
@@ -55,6 +57,7 @@ function addNewChord() {
   progression.degrees.push(progression.degrees[progression.degrees.length - 1]);
   progression.spreads.push(progression.spreads[progression.spreads.length - 1]);
   progression.feels.push(progression.feels[progression.feels.length - 1]);
+  progression.strums.push(progression.strums[progression.strums.length - 1]);
 
   chordAmt++;
   ShowChords();
@@ -135,6 +138,22 @@ function toggleKeyType() {
   ShowChords();
 }
 
+function doubleChords() {
+  if (progression.lengths.reduce((a, t) => a + t) <= 4) {
+    progression.roots = progression.roots.concat(progression.roots);
+    progression.lengths = progression.lengths.concat(progression.lengths);
+    progression.degrees = progression.degrees.concat(progression.degrees);
+    progression.spreads = progression.spreads.concat(progression.spreads);
+    progression.feels = progression.feels.concat(progression.feels);
+    progression.strums = progression.strums.concat(progression.strums);
+
+    ShowChords();
+    playCurChord();
+    chordAmt *= 2;
+    setChord(chordAmt - 1);
+  }
+}
+
 function changeKey() {
   progression.keyNum = parseInt(getById("keyInput").innerText) + 1;
   progression.keyNum = progression.keyNum > 12 ? 1 : progression.keyNum;
@@ -151,16 +170,20 @@ function toggleSpread() {
 
 function setStrum(strum) {
   if (progression.strums[curChord] !== strum) {
-    progression.strums[curChord] = strum;
-    ShowChords();
-    playCurChord();
+    if (Math.abs(strum) <= progression.lengths[curChord]) {
+      progression.strums[curChord] = strum;
+      ShowChords();
+      playCurChord();
+    } else {
+      getById("strumSlider").value = progression.strums[curChord];
+    }
   }
 }
 
 function setLength(length) {
   if (progression.lengths[curChord] !== length) {
     let totLength = progression.lengths.reduce((a, t) => a + t);
-    if ((totLength - progression.lengths[curChord]) + length <= 8) {
+    if ((totLength - progression.lengths[curChord]) + length <= 8 && length >= progression.strums[curChord]) {
       progression.lengths[curChord] = length;
       ShowChords();
     } else {
@@ -206,6 +229,14 @@ function ShowChords() {
 document.addEventListener("DOMContentLoaded", async function () {
     dem.CreateDivisions();
     await am.SetDefaultBuffers();
+
+    keydownfuncs.push((e) => {
+      if (e.key === "ArrowLeft") {
+        setChord(curChord - 1, true);
+      } else if (e.key === "ArrowRight") {
+        setChord(curChord + 1, true)
+      }
+    });
 
     display.addEventListener("click", function (event) {
       pm.TogglePlaying(

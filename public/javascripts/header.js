@@ -193,7 +193,7 @@ function getChordData() {
       "degrees": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
       "spreads": [true, true, true, true, true, true, true, true, true, true],
       "feels": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      "strums": [0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625, 0.0625]
+      "strums": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
     };
   }
 
@@ -240,7 +240,7 @@ function loadDrumData() {
       )
     ),
     1 - drumData.chQuirk
-  ), drumData.chComplexity);
+  ), drumData.chComplexity, drumData.clone);
 
   kickNoteArr = dnm.CalculateNotes(dnm.RetreivePatterns(
     kickPatternCache,
@@ -254,7 +254,7 @@ function loadDrumData() {
       )
     ),
     1 - drumData.kickQuirk
-  ), drumData.kickComplexity);
+  ), drumData.kickComplexity, drumData.clone);
 
   snrNoteArr = dnm.CalculateSnare(drumData.snarePattern);
 
@@ -445,29 +445,32 @@ function soloPresent() {
   return Object.values(solos).reduce((x, t) => x || t);
 }
 
+function soloInDrums() {
+  return solos.kick || solos.ch || solos.snare || solos.perc;
+}
+
 function scheduleDrumNotes(step) {
   if (chNoteArr[step] > 0) {
-    if (!mutes.ch && (!soloPresent() || solos.ch)) {
+    if (!mutes.ch && (!soloPresent() || solos.ch || solos.drums && !soloInDrums())) {
       playSound("ch", step * stepLength);
     }
   }
 
   if (kickNoteArr[step] > 0) {
-    if (!mutes.kick && (!soloPresent() || solos.kick)) {
+    if (!mutes.kick && (!soloPresent() || solos.kick || solos.drums && !soloInDrums())) {
       playSound("kick", step * stepLength);
     }
   }
 
   if (snrNoteArr[step] > 0) {
-    if (!mutes.snare && (!soloPresent() || solos.snare)) {
+    if (!mutes.snare && (!soloPresent() || solos.snare || solos.drums && !soloInDrums())) {
       playSound("snr", step * stepLength);
     }
   }
 
   if (percNoteArr[step] > 0) {
-    if (!mutes.perc && (!soloPresent() || solos.perc)) {
+    if (!mutes.perc && (!soloPresent() || solos.perc || solos.drums && !soloInDrums())) {
       playSound("perc", step * stepLength);
     }
   }
-
 }

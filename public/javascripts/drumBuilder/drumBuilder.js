@@ -63,6 +63,8 @@ let percBars = new Array(2).fill(0).map(() => new Array(8).fill(false));
 let perc1Pos;
 let perc2Pos;
 
+let drumClone = true;
+
 let chPatterns;
 let kickPatterns;
 
@@ -76,27 +78,43 @@ let lastUpdateTime = 0;
 let nextUpdate;
 let updateQueued = false;
 
+function toggleDrumClone() {
+  setDrumClone(!drumClone);
+  ShowNotes("calcDrums");
+}
+
+function setDrumClone(clone) {
+  drumClone = clone;
+
+  if (clone) {
+    getById("drumCloneButton").classList.add("cloneOn");
+  } else {
+    getById("drumCloneButton").classList.remove("cloneOn");
+  }
+}
+
 // SAVE AND LOAD STUFF--------------------------------------------------------------------
 function loadDrumDataValues() {
   getById("seedInput").value = drumData.seed;
+  setDrumClone(drumData.cloneDrums);
 
-  kickCohesionSlider.value = drumData.kickCohesion
-  kickSpontaneitySlider.value = drumData.kickSpontaneity
-  kickQuirkSlider.value = drumData.kickQuirk
-  kickComplexitySlider.value = drumData.kickComplexity
+  kickCohesionSlider.value = drumData.kickCohesion;
+  kickSpontaneitySlider.value = drumData.kickSpontaneity;
+  kickQuirkSlider.value = drumData.kickQuirk;
+  kickComplexitySlider.value = drumData.kickComplexity;
 
-  chCohesionSlider.value = drumData.chCohesion
-  chSpontaneitySlider.value = drumData.chSpontaneity
-  chQuirkSlider.value = drumData.chQuirk
-  chComplexitySlider.value = drumData.chComplexity
+  chCohesionSlider.value = drumData.chCohesion;
+  chSpontaneitySlider.value = drumData.chSpontaneity;
+  chQuirkSlider.value = drumData.chQuirk;
+  chComplexitySlider.value = drumData.chComplexity;
 
-  snarePattern = drumData.snarePattern
+  snarePattern = drumData.snarePattern;
 
-  perc1Pos.value = drumData.perc1Pos
-  percBars[0] = drumData.perc1Bars
+  perc1Pos.value = drumData.perc1Pos;
+  percBars[0] = drumData.perc1Bars;
 
-  perc2Pos.value = drumData.perc2Pos
-  percBars[1] = drumData.perc2Bars
+  perc2Pos.value = drumData.perc2Pos;
+  percBars[1] = drumData.perc2Bars;
 
   setPercBars();
   setSnarePattern();
@@ -105,6 +123,7 @@ function loadDrumDataValues() {
 function saveData() {
   let data = {
     seed: getById("seedInput").value,
+    cloneDrums: drumClone,
 
     kickCohesion: kickCohesionSlider.value,
     kickCohesionMin: kickCohesionSlider.min,
@@ -353,11 +372,11 @@ function ShowNotes(changeInst) {
     saveData();
 
     if (changeInst === "ch" || changeInst === "allDrums" || changeInst === "calcDrums") {
-      chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value);
+      chNoteArr = nm.CalculateNotes(chPatterns, chComplexitySlider.value, drumClone);
       dem.Display("ch", chNoteArr);
     }
     if (changeInst === "kick" || changeInst === "allDrums" || changeInst === "calcDrums") {
-      kickNoteArr = nm.CalculateNotes(kickPatterns, kickComplexitySlider.value);
+      kickNoteArr = nm.CalculateNotes(kickPatterns, kickComplexitySlider.value, drumClone);
       dem.Display("kick", kickNoteArr);
     }
     if (changeInst === "snr" || changeInst === "allDrums" || changeInst === "noncalcDrums") {

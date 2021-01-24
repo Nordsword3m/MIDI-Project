@@ -2,6 +2,26 @@
     --headerHeight: 60px;
 }
 
+#drumCloneButton {
+    color: var(--dispColor);
+    text-shadow: 0 0 0 transparent;
+}
+
+#drumCloneButton.cloneOn {
+    color: white;
+    text-shadow: 0 0 3px white;
+}
+
+#drumCloneButton:hover {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+#drumCloneButton:active {
+    color: white;
+    text-shadow: 0 0 3px white;
+}
+
 #keyNoteCon {
     display: flex;
     flex-direction: row;
@@ -18,7 +38,7 @@
 #keyTypeCon {
     box-shadow: 0 0 4px 2px var(--orange);
     border-radius: 5px;
-    height: 3.7vw;
+    height: min(35px, 3.7vw);
     width: min(80px, 10vw);
     display: flex;
     flex-direction: row;
@@ -159,7 +179,7 @@ input[type=number] {
 
 
 .icon {
-    font-size: min(45px, 5vw);
+    font-size: min(45px, 4vw);
     color: var(--iconColor);
     text-shadow: 0 0 3px var(--iconColor);
     transition: all 100ms;
@@ -177,7 +197,7 @@ input[type=number] {
 }
 
 #metronomeButton {
-    font-size: 4vmin;
+    font-size: 3vmin;
     font-style: oblique;
     font-weight: bolder;
     cursor: pointer;

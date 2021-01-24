@@ -24,6 +24,7 @@ mixin header(page)
 
         .toolBar
             if page === "drumBuilder"
+                i.fas.fa-clone.icon.cloneOn#drumCloneButton(onclick="toggleDrumClone()")
                 #seedCon
                     .prefix= "Seed"
                     input.inputBox#seedInput(type="number", step="1", value="000", min="0", max="999", maxlength="3", oninput="seedModel();")

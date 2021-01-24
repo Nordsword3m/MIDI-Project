@@ -192,11 +192,11 @@ class PatternListInfo {
   }
 }
 
-DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity) {
-  let noteArr = new Array(256).fill(0);
+DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity, clone) {
+  let noteArr = new Array(clone ? 128 : 256).fill(0);
 
 
-  for (let i = 0; i < 256; i++) {
+  for (let i = 0; i < noteArr.length; i++) {
     let divPatts = patterns.getDiv(i);
     //console.log(divPatts);
     if (divPatts && Object.keys(divPatts).length > 0) {
@@ -217,6 +217,11 @@ DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity)
       i += patt.length - 1;
     }
   }
+
+  if (clone) {
+    noteArr = noteArr.concat(noteArr);
+  }
+
   return noteArr;
 };
 
