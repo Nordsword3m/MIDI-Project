@@ -1,6 +1,7 @@
 import Constructor from "./views/Constructor.js";
 import DrumBuilder from "./views/DrumBuilder.js";
 import ChordBuilder from "./views/ChordBuilder.js";
+import BassBuilder from "./views/BassBuilder.js";
 
 const navigateTo = url => {
   history.pushState(null, null, url);
@@ -11,7 +12,8 @@ const router = async () => {
   const routes = [
     {path: "/", view: Constructor},
     {path: "/drums", view: DrumBuilder},
-    {path: "/chords", view: ChordBuilder}
+    {path: "/chords", view: ChordBuilder},
+    {path: "/bass", view: BassBuilder}
   ];
 
   const potentialMatches = routes.map(route => {

@@ -29,6 +29,17 @@ include header
             +divs
             .instrumentCon
                 .instrumentDisp#chordNoteCon
+    .trackCon
+        .trackButton
+            a(href="/bass" data-link)
+                .i.fas.fa-guitar.trackIcon
+            .muteSoloSwitch
+                .muteButton(data-inst="bass" onclick="toggleMute('bass');")= "M"
+                .soloButton(data-inst="bass" onclick="toggleSolo('bass');")= "S"
+        .trackDisp
+            +divs
+            .instrumentCon
+                .instrumentDisp#bassNoteCon
 
 script.
   loadConstructor();

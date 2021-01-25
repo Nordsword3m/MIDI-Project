@@ -34,6 +34,10 @@ mixin header(page)
                 a(href="/" data-link)
                     i.fas.fa-music.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
 
+            else if page === "bassBuilder"
+                a(href="/" data-link)
+                    i.fas.fa-guitar.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+
         .toolBar
             if page === "drumBuilder"
                 i.fas.fa-clone.icon.cloneOn#drumCloneButton(onclick="toggleDrumClone()")

@@ -1,0 +1,20 @@
+include header
++header("bassBuilder")
+
+.displayCon
+    #display
+        +divs
+        #bassNoteCon
+        #playHead
+
+.configPanel.bass
+    .bassConfigControl
+        h3= "Type"
+
+        .toggleSelect
+            .toggleOption.selected= "Guitar"
+            .toggleOption= "808"
+
+
+script.
+  loadBassBuilder();

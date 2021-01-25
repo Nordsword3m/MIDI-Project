@@ -472,6 +472,17 @@ async function loadHeader() {
   readyStates.readyUp("instDataLoad");
   tempo = getById("tempoInput").value;
 
+  let disp = getById("display");
+
+  if (disp) {
+    disp.addEventListener("click", function (event) {
+      pm.TogglePlaying(
+        (event.pageX - disp.offsetLeft) / disp.offsetWidth,
+        true
+      ).then();
+    });
+  }
+
   getById("playButton").addEventListener("click", startPlaying);
 
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());

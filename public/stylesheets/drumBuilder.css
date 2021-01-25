@@ -25,17 +25,6 @@
     justify-content: space-between;
 }
 
-.drumConfigPanel {
-    display: grid;
-    gap: 7px 7px;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    margin-top: 7px;
-    margin-bottom: 7px;
-    flex-grow: 1;
-    width: 100%;
-}
-
 .soundUpload {
     box-shadow: 0 0 4px 1px white;
     border-radius: 5px;
@@ -126,15 +115,6 @@
     height: 100%;
 }
 
-.drumDisplayCon {
-    width: 100%;
-    height: 175px;
-    margin-top: 7px;
-    display: flex;
-    flex-direction: row;
-    flex-shrink: 0;
-}
-
 .labelCon {
     display: flex;
     flex-direction: column;
@@ -223,88 +203,4 @@
 }
 
 .barOption:hover:not(.selected) {
-}
-
-.snareSelect {
-    display: flex;
-    font-size: 4vmin;
-    width: 80%;
-    height: 3ch;
-    margin: 30px auto 0 auto;
-    box-shadow: 0 0 4px 1px var(--purple);
-    border-radius: 5px;
-}
-
-.snrOption {
-    flex-grow: 1;
-    text-align: center;
-
-    transition: all 500ms;
-    cursor: pointer;
-    box-shadow: 0 0 4px 1px var(--purple);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.snrOption:first-child {
-    border-radius: 5px 0 0 5px;
-}
-
-.snrOption:last-child {
-    border-radius: 0 5px 5px 0;
-}
-
-.snrOption.selected {
-    background-color: var(--purple);
-}
-
-.vertSliderWrapper {
-    display: inline-flex;
-    width: 2px;
-    height: 120px;
-    padding: 0;
-    font-size: 0;
-    margin-right: 20px;
-}
-
-.slider.vert {
-    width: 120px;
-    height: 2px;
-    left: -60px;
-    position: relative;
-    top: 50%;
-    margin-right: -50%;
-    transform: rotate(-90deg);
-}
-
-.slider {
-    appearance: none;
-    width: 100%;
-    height: 2px;
-    margin-top: 7px;
-    margin-bottom: 7px;
-    background: var(--purple);
-    box-shadow: 0 0 5px 1px var(--purple);
-    transition: all 200ms;
-}
-
-.slider.vert::-moz-range-thumb {
-    height: max(min(20px, 2vw), 5px);
-}
-
-.slider::-moz-range-thumb {
-    width: max(min(10px, 1vw), 2px);
-    height: 20px;
-    background: white;
-    cursor: pointer;
-    border: 0;
-    border-radius: 0;
-    box-shadow: 0 0 4px white;
-    opacity: 0.7;
-    transition: all 200ms;
-}
-
-.slider::-moz-range-thumb:hover {
-    opacity: 1;
 }

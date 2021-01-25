@@ -67,16 +67,16 @@ function setChord(chord, play = false) {
     return;
   }
 
-  let allNotes = getByClass("chordNote");
+  let allNotes = getByClass("note chords");
 
   for (let i = 0; i < allNotes.length; i++) {
-    allNotes[i].classList.remove("ghost");
+    allNotes[i].classList.remove("selected");
   }
 
   curChord = chord;
 
   for (let i = 0; i < chordObjs[chord].length; i++) {
-    chordObjs[chord][i].classList.add("ghost");
+    chordObjs[chord][i].classList.add("selected");
   }
 
   if (curChord > 0) {
@@ -131,7 +131,6 @@ function toggleKeyType() {
     setKeyType("minor");
     progression.type = "minor";
   }
-
 
   ShowChords();
 }
@@ -233,15 +232,6 @@ async function loadChordBuilder() {
     } else if (e.key === "ArrowRight") {
       setChord(curChord + 1, true);
     }
-  });
-
-  let disp = getById("display");
-
-  disp.addEventListener("click", function (event) {
-    pm.TogglePlaying(
-      (event.pageX - disp.offsetLeft) / disp.offsetWidth,
-      true
-    ).then();
   });
 
   await readyStates.waitFor("instDataLoad");

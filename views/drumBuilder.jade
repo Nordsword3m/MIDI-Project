@@ -1,7 +1,7 @@
 include header
 +header("drumBuilder")
 
-.drumDisplayCon
+.displayCon
     .labelCon
         .instrumentLabel= "kick"
         .instrumentLabel= "ch"
@@ -16,7 +16,7 @@ include header
             .instrumentDisp#snareDisp
             .instrumentDisp#percDisp
 
-.drumConfigPanel
+.configPanel.drums
     .instrumentPanel.kickPanel
         .instrumentInfo
             h2= "Kick"
@@ -83,9 +83,9 @@ include header
         .instrumentControls
             h3= "Pattern"
 
-            .snareSelect(onclick="toggleSnarePattern();")
-                .snrOption= "3"
-                .snrOption= "2 & 4"
+            .toggleSelect(onclick="toggleSnarePattern();")
+                .toggleOption= "3"
+                .toggleOption= "2 & 4"
 
     .instrumentPanel.percPanel
         .instrumentInfo

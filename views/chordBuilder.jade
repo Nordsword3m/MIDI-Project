@@ -1,31 +1,13 @@
-mixin barDiv
-    .barDiv
-        .division
-        .division(style="opacity: 0.3; left: 25%")
-        .division(style="opacity: 0.3; left: 50%")
-        .division(style="opacity: 0.3; left: 75%")
-
-mixin divs
-    #divDisp
-        +barDiv
-        +barDiv
-        +barDiv
-        +barDiv
-        +barDiv
-        +barDiv
-        +barDiv
-        +barDiv
-
 include header
 +header("chordBuilder")
 
-.chordDisplayCon
+.displayCon
     #display
         +divs
         #chordNoteCon
         #playHead
 
-.chordConfigPanel
+.configPanel.chords
     .chordInfoBar
         #doubleChordsButton(onclick="doubleChords()")= "X2"
         i.fas.fa-chevron-left.icon.disabled#leftChordArrow(onclick="setChord(curChord-1, true)")

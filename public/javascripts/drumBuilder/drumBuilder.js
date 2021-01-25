@@ -229,7 +229,7 @@ function setPercBars() {
 }
 
 function setSnarePattern() {
-  let snrOpts = getByClass("snrOption");
+  let snrOpts = getByClass("toggleOption");
 
   if (snarePattern === "3") {
     snrOpts[0].classList.add("selected");
@@ -240,8 +240,8 @@ function setSnarePattern() {
   }
 }
 
-function toggleSnarePattern(elem) {
-  let snrOpts = getByClass("snrOption");
+function toggleSnarePattern() {
+  let snrOpts = getByClass("toggleOption");
 
   if (snarePattern === "3") {
     snarePattern = "2and4";
@@ -271,15 +271,6 @@ async function loadDrumBuilder() {
 
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
 
-  getById("display").addEventListener("click", function (event) {
-    pm.TogglePlaying(
-      (event.pageX - display.offsetLeft) / display.offsetWidth,
-      true
-    ).then();
-  });
-
-  getById("playButton").addEventListener("click", startPlaying);
-
   let percSelects = getByClass("barOption");
 
   for (let i = 0; i < percSelects.length; i++) {
@@ -304,7 +295,7 @@ async function loadDrumBuilder() {
   ShowNotes("noncalcDrums");
 
   await readyStates.waitFor("instDataLoad");
-  
+
   seedModel();
   readyStates.readyUp("drums");
 }

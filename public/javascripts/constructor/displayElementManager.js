@@ -51,11 +51,7 @@ DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
 
 DisplayElementManager.prototype.PlaceChordNote = function (num, start, length, startOffset) {
   let note = document.createElement("div");
-  note.className = "chordNote";
-
-  //note.dataset.root = num;
-  //note.dataset.start = start;
-  //note.dataset.length = length;
+  note.className = "note chords";
 
   note.style.width = "calc(" + (length - startOffset) + " * 12.5%)";
   note.style.left = "calc(" + (start + startOffset) + " * 12.5%)";
@@ -85,14 +81,14 @@ DisplayElementManager.prototype.InitialiseDrumNotes = function () {
 DisplayElementManager.prototype.PlaceDrumNote = function (note) {
   note.style.left =
     (100 * parseInt(note.id.slice(note.id.indexOf("Note") + 4)) / 256) + "%";
-
 };
 
 DisplayElementManager.prototype.CreateDrumNote = function (id, dispId) {
   let note = document.createElement("div");
 
   note.id = dispId + "Note" + id;
-  note.className = "note";
+  note.className = "note drum invisible";
+  note.style.height = "100%";
 
   this.PlaceDrumNote(note);
 
@@ -105,9 +101,9 @@ DisplayElementManager.prototype.Display = function (id, noteData) {
     let noteObj = this.displays[id].noteObjs[i];
     if (noteObj && !noteObj.classList.contains("ghost")) {
       if (noteData[i] === 0) {
-        noteObj.classList.remove("visible");
+        noteObj.classList.add("invisible");
       } else {
-        noteObj.classList.add("visible");
+        noteObj.classList.remove("invisible");
       }
     }
   }

@@ -25,7 +25,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get(["/", "/chords", "/drums"], (req, res) => {
+app.get(["/", "/chords", "/drums", "/bass"], (req, res) => {
   res.render("index.jade");
 });
 
@@ -39,6 +39,10 @@ app.post("/chords", (req, res) => {
 
 app.post("/drums", (req, res) => {
   res.render("drumBuilder.jade");
+});
+
+app.post("/bass", (req, res) => {
+  res.render("bassBuilder.jade");
 });
 
 // catch 404 and forward to error handler
