@@ -1,8 +1,7 @@
 function AudioManager(audioList) {
   this.audioList = audioList;
-  this.context = undefined;
+  this.context = new AudioContext();
   this.mainContext = new AudioContext();
-  this.contextCreated = 0;
 
   this.loopStart = 0;
 }
@@ -24,13 +23,6 @@ AudioManager.prototype.curTime = function () {
   return this.mainContext.currentTime;
 };
 
-AudioManager.prototype.ClearContext = function () {
-  if (this.context) {
-    this.context.close().then();
-    this.context = undefined;
-  }
-};
-
 AudioManager.prototype.SetDefaultBuffers = async function () {
   let audio = this.audioList.map((x) => x + ".wav");
 
@@ -41,11 +33,6 @@ AudioManager.prototype.SetDefaultBuffers = async function () {
   );
 
   await bl.load();
-};
-
-AudioManager.prototype.NewContext = async function () {
-  this.context = new AudioContext();
-  this.contextCreated = this.mainContext.currentTime;
 };
 
 AudioManager.prototype.playNow = function (name) {
@@ -62,13 +49,13 @@ AudioManager.prototype.play = function (name, pos) {
   source.connect(this.context.destination);
 
   let trackLength = (60.0 / tempo) * (256 * barLength);
-  source.start(Math.max(this.context.currentTime, this.loopStart + pos * trackLength - this.contextCreated));
+  source.start(Math.max(this.context.currentTime, this.loopStart + pos * trackLength));
 };
 
 AudioManager.prototype.playNote = function (pitch, pos, length) {
   let trackLength = (60.0 / tempo) * (256 * barLength);
-  let startTime = this.loopStart + pos * trackLength - this.contextCreated;
-  let endTime = this.loopStart + ((pos + (length / 8)) * trackLength) - this.contextCreated;
+  let startTime = this.loopStart + pos * trackLength;
+  let endTime = this.loopStart + ((pos + (length / 8)) * trackLength);
 
   let source = this.context.createBufferSource();
 

@@ -30,7 +30,6 @@ const router = async () => {
   const view = new match.route.view();
 
   $("#app").load(view.viewPath, {});
-  //document.querySelector("#app").innerHTML = await view.getHTML();
 };
 
 window.addEventListener("popstate", router);

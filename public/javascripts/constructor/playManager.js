@@ -42,10 +42,7 @@ PlayManager.prototype.TogglePlaying = async function (pos, play) {
     this.playing = play;
   }
 
-  am.ClearContext();
-
   if (play) {
-    await am.NewContext();
     this.prevPlayTime = am.curTime();
 
     this.setNextChunk(Math.floor((1 / chunkSize) * pos) * chunkSize);
@@ -62,8 +59,6 @@ PlayManager.prototype.TogglePlaying = async function (pos, play) {
     this.setPlayPos(0);
     this.setNextChunk(0);
   }
-
-  savePlayPos();
 };
 
 PlayManager.prototype.Playing = function () {
