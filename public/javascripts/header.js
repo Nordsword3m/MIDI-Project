@@ -1,9 +1,5 @@
 let curPage;
 
-let autoPlayPos;
-let loadDelay = 0;
-let loadStarted = 0;
-
 let dnm = new DrumNoteManager();
 let dem;
 let kickPatternCache, chPatternCache;
@@ -96,21 +92,6 @@ function loadChordData() {
 let mutes = {drums: false, chords: false, ch: false, kick: false, snare: false, perc: false};
 let solos = {drums: false, chords: false, ch: false, kick: false, snare: false, perc: false};
 
-function autoPlay() {
-  if (pm.playing) {
-    loadDelay = window.performance.now() - loadStarted;
-    let trackLength = (60.0 / tempo) * (256 * barLength) * 1000;
-
-    let playOffset = loadDelay / trackLength;
-
-    pm.TogglePlaying(autoPlayPos + playOffset, true);
-  }
-}
-
-function savePlayPos() {
-  autoPlayPos = pm.relPlayPos;
-  loadStarted = window.performance.now();
-}
 
 function toggleMute(inst) {
   mutes[inst] = !mutes[inst];
@@ -468,9 +449,9 @@ async function oneTimeLoadHeader() {
 }
 
 async function loadHeader() {
+  readyStates.declarePresence("demLoad");
   await readyStates.waitFor("headerOneTime");
 
-  readyStates.declarePresence("demLoad");
   dem = new DisplayElementManager();
   readyStates.readyUp("demLoad");
 
@@ -480,11 +461,14 @@ async function loadHeader() {
   loadDrumData();
   readyStates.readyUp("instDataLoad");
   tempo = getById("tempoInput").value;
-
-  autoPlay();
-
+  
   if (metroActive) {
     getById("metronomeButton").classList.add("metOn");
+  }
+
+  if (pm.playing) {
+    getById("playButton").classList.toggle("fa-pause");
+    getById("playButton").classList.toggle("fa-play");
   }
 
   getById("playButton").addEventListener("click", startPlaying);

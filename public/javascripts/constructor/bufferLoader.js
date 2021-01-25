@@ -1,5 +1,4 @@
-function BufferLoader(context, urlList, callback) {
-  this.context = context;
+function BufferLoader(urlList, callback) {
   this.urlList = urlList;
   this.onload = callback;
   this.bufferList = [];
@@ -9,7 +8,6 @@ function BufferLoader(context, urlList, callback) {
 BufferLoader.prototype.loadBuffer = function (name) {
   // Load buffer asynchronously
   let request = new XMLHttpRequest();
-  let ctx = this.context;
   let url = "../audio/" + name;
 
   return new Promise(function (resolve, reject) {
@@ -18,7 +16,7 @@ BufferLoader.prototype.loadBuffer = function (name) {
 
     request.onload = function () {
       // Asynchronously decode the audio file data in request.response
-      ctx.decodeAudioData(
+      am.context.decodeAudioData(
         request.response,
         function (buffer) {
           if (!buffer) {

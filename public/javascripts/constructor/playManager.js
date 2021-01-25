@@ -71,8 +71,6 @@ PlayManager.prototype.Playing = function () {
   if (this.playPos >= this.nextChunk - chunkSize * this.chunkPreRender) {
     this.NextChunk();
   }
-
-  savePlayPos();
 };
 
 PlayManager.prototype.SetHeadPos = function () {

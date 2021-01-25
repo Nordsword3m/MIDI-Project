@@ -271,9 +271,7 @@ async function loadDrumBuilder() {
 
   getById("randomSeedButton").addEventListener("click", () => randomizeSeed());
 
-  await readyStates.waitFor("demLoad");
-
-  display.addEventListener("click", function (event) {
+  getById("display").addEventListener("click", function (event) {
     pm.TogglePlaying(
       (event.pageX - display.offsetLeft) / display.offsetWidth,
       true
@@ -297,6 +295,8 @@ async function loadDrumBuilder() {
   getById("tempoInput").addEventListener("input", () => {
     saveDrumDataValues();
   });
+
+  await readyStates.waitFor("demLoad");
 
   dem.InitialiseDrumNotes();
   dem.CreateDivisions();
