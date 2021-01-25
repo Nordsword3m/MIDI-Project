@@ -227,10 +227,6 @@ function ShowChords() {
 async function loadChordBuilder() {
   readyStates.declarePresence("chords");
 
-  await readyStates.waitFor("demLoad");
-
-  dem.CreateDivisions();
-
   keydownfuncs.push((e) => {
     if (e.key === "ArrowLeft") {
       setChord(curChord - 1, true);
@@ -239,9 +235,11 @@ async function loadChordBuilder() {
     }
   });
 
-  display.addEventListener("click", function (event) {
+  let disp = getById("display");
+
+  disp.addEventListener("click", function (event) {
     pm.TogglePlaying(
-      (event.pageX - display.offsetLeft) / display.offsetWidth,
+      (event.pageX - disp.offsetLeft) / disp.offsetWidth,
       true
     ).then();
   });

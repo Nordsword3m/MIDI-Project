@@ -123,11 +123,18 @@ h3.vert {
     position: relative;
 }
 
+.barDiv {
+    flex-grow: 1;
+    height: 100%;
+    position: relative;
+}
+
 #divDisp {
     width: 100%;
     height: 100%;
     z-index: 3;
     position: relative;
+    display: flex;
 }
 
 #playHead {

@@ -6,7 +6,7 @@ let divisionDisplay;
 let chordNoteCon;
 
 function DisplayElementManager() {
-  this.displays = {}
+  this.displays = {};
   this.displays.ch = new DrumDisplay(getById("chDisp"), new Array(256));
   this.displays.kick = new DrumDisplay(getById("kickDisp"), new Array(256));
   this.displays.snr = new DrumDisplay(getById("snareDisp"), new Array(256));
@@ -29,7 +29,7 @@ DisplayElementManager.prototype.GetFromScale = function (scale, num) {
   num = num - 1;
 
   return (Math.floor(num / 7) * 12) + scaleNotes[num % 7];
-}
+};
 
 DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
   let chordObjs = [];
@@ -47,7 +47,7 @@ DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
     pos += progression.lengths[c];
   }
   return chordObjs;
-}
+};
 
 DisplayElementManager.prototype.PlaceChordNote = function (num, start, length, startOffset) {
   let note = document.createElement("div");
@@ -64,7 +64,7 @@ DisplayElementManager.prototype.PlaceChordNote = function (num, start, length, s
 
   chordNoteCon.appendChild(note);
   return note;
-}
+};
 
 DisplayElementManager.prototype.InitialiseDrumNotes = function () {
   for (let i = 0; i < 256; i++) {
@@ -88,12 +88,6 @@ DisplayElementManager.prototype.PlaceDrumNote = function (note) {
 
 };
 
-DisplayElementManager.prototype.CreateDivisions = function () {
-  for (let i = 1; i < numOfDivs; i++) {
-    this.CreateDivision(i);
-  }
-};
-
 DisplayElementManager.prototype.CreateDrumNote = function (id, dispId) {
   let note = document.createElement("div");
 
@@ -108,7 +102,7 @@ DisplayElementManager.prototype.CreateDrumNote = function (id, dispId) {
 
 DisplayElementManager.prototype.Display = function (id, noteData) {
   for (let i = 0; i < 256; i++) {
-    let noteObj = this.displays[id].noteObjs[i]
+    let noteObj = this.displays[id].noteObjs[i];
     if (noteObj && !noteObj.classList.contains("ghost")) {
       if (noteData[i] === 0) {
         noteObj.classList.remove("visible");
@@ -117,15 +111,4 @@ DisplayElementManager.prototype.Display = function (id, noteData) {
       }
     }
   }
-};
-
-DisplayElementManager.prototype.CreateDivision = function (loc) {
-  let div = document.createElement("div");
-
-  div.className = "division";
-  div.id = "div" + loc;
-  div.style.opacity = "" + (loc % 4 === 0 ? 1 : 0.3);
-  div.style.left = (loc / numOfDivs) * 100 + "%";
-
-  divisionDisplay.appendChild(div);
 };

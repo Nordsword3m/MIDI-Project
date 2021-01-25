@@ -299,14 +299,13 @@ async function loadDrumBuilder() {
   await readyStates.waitFor("demLoad");
 
   dem.InitialiseDrumNotes();
-  dem.CreateDivisions();
-
-  await readyStates.waitFor("instDataLoad");
 
   loadDrumDataValues();
-
-  seedModel();
   ShowNotes("noncalcDrums");
+
+  await readyStates.waitFor("instDataLoad");
+  
+  seedModel();
   readyStates.readyUp("drums");
 }
 

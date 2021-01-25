@@ -452,6 +452,16 @@ async function loadHeader() {
   readyStates.declarePresence("demLoad");
   await readyStates.waitFor("headerOneTime");
 
+
+  if (metroActive) {
+    getById("metronomeButton").classList.add("metOn");
+  }
+
+  if (pm.playing) {
+    getById("playButton").classList.toggle("fa-pause");
+    getById("playButton").classList.toggle("fa-play");
+  }
+
   dem = new DisplayElementManager();
   readyStates.readyUp("demLoad");
 
@@ -461,15 +471,6 @@ async function loadHeader() {
   loadDrumData();
   readyStates.readyUp("instDataLoad");
   tempo = getById("tempoInput").value;
-  
-  if (metroActive) {
-    getById("metronomeButton").classList.add("metOn");
-  }
-
-  if (pm.playing) {
-    getById("playButton").classList.toggle("fa-pause");
-    getById("playButton").classList.toggle("fa-play");
-  }
 
   getById("playButton").addEventListener("click", startPlaying);
 
