@@ -15,6 +15,7 @@ function DisplayElementManager() {
   display = getById("display");
   divisionDisplay = getById("divDisp");
   chordNoteCon = getById("chordNoteCon");
+  bassNoteCon = getById("bassNoteCon");
 }
 
 class DrumDisplay {
@@ -24,11 +25,24 @@ class DrumDisplay {
   }
 }
 
-DisplayElementManager.prototype.GetFromScale = function (scale, num) {
-  let scaleNotes = scale === "major" ? majorScale : minorScale;
-  num = num - 1;
+DisplayElementManager.prototype.PlaceBassLine = function (bassLine) {
+  let bassNoteObjs = [];
+  let pos = 0;
+  for (let n = 0; n < bassLine.length; n++) {
+    let note = document.createElement("div");
+    note.className = "note bass";
 
-  return (Math.floor(num / 7) * 12) + scaleNotes[num % 7];
+
+    note.style.left = "calc(" + pos + " * 12.5%)";
+    note.style.width = "calc(" + bassLine[n].length + " * 12.5%)";
+    note.style.bottom = "calc(" + (bassLine[n].num - 1 + 24) + " * 100% / var(--bassNoteAmt))";
+
+    pos += bassLine[n].length;
+
+    bassNoteCon.appendChild(note);
+    bassNoteObjs.push(note);
+  }
+  return bassNoteObjs;
 };
 
 DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
@@ -55,7 +69,7 @@ DisplayElementManager.prototype.PlaceChordNote = function (num, start, length, s
 
   note.style.width = "calc(" + (length - startOffset) + " * 12.5%)";
   note.style.left = "calc(" + (start + startOffset) + " * 12.5%)";
-  note.style.bottom = "calc(" + (num - 1 + 24) + " * 100% / 60)";
+  note.style.bottom = "calc(" + (num - 1 + 24) + " * 100% / var(--chordNoteAmt))";
 
 
   chordNoteCon.appendChild(note);
@@ -88,7 +102,6 @@ DisplayElementManager.prototype.CreateDrumNote = function (id, dispId) {
 
   note.id = dispId + "Note" + id;
   note.className = "note drum invisible";
-  note.style.height = "100%";
 
   this.PlaceDrumNote(note);
 

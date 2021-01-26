@@ -50,7 +50,7 @@ AudioManager.prototype.play = function (name, pos) {
   source.start(Math.max(this.context.currentTime, this.loopStart + pos * trackLength));
 };
 
-AudioManager.prototype.pitchToSource = function (pitch, startTime, endTime) {
+AudioManager.prototype.pitchToSource = function (pitch, startTime, endTime, sound) {
   let source = this.context.createBufferSource();
 
   let octave = "C5";
@@ -73,7 +73,7 @@ AudioManager.prototype.pitchToSource = function (pitch, startTime, endTime) {
     relFreq = Math.pow(2, (pitch + 24) / 12);
   }
 
-  source.buffer = this.buffers[this.audioList.indexOf(octave)];
+  source.buffer = this.buffers[this.audioList.indexOf(sound + octave)];
   source.playbackRate.value = relFreq;
 
   let env = this.context.createGain();
@@ -86,16 +86,16 @@ AudioManager.prototype.pitchToSource = function (pitch, startTime, endTime) {
   return source;
 };
 
-AudioManager.prototype.playNote = function (pitch, pos, length) {
+AudioManager.prototype.playNote = function (pitch, pos, length, sound) {
   let trackLength = (60.0 / tempo) * (256 * barLength);
   let startTime = this.loopStart + pos * trackLength;
   let endTime = this.loopStart + ((pos + (length / 8)) * trackLength);
 
-  this.pitchToSource(pitch, Math.max(this.context.currentTime, startTime), endTime);
+  this.pitchToSource(pitch, Math.max(this.context.currentTime, startTime), endTime, sound);
 };
 
-AudioManager.prototype.playNoteNow = function (pitch) {
+AudioManager.prototype.playNoteNow = function (pitch, sound) {
   let endTime = 0.5 + this.context.currentTime;
 
-  this.pitchToSource(pitch, 0, endTime);
+  this.pitchToSource(pitch, 0, endTime, sound);
 };

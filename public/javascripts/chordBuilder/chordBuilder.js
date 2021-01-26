@@ -23,7 +23,7 @@ function playCurChord() {
   let chord = progression.chords[curChord];
 
   for (let n = 0; n < chord.length; n++) {
-    am.playNoteNow(numToPitch(chord[n].num, progression.keyNum));
+    am.playNoteNow(numToPitch(chord[n].num, progression.keyNum), "piano");
   }
 }
 

@@ -15,6 +15,10 @@ include header
             .toggleOption.selected= "Guitar"
             .toggleOption= "808"
 
+    .bassConfigControl
+        h3= "Intensity"
+        input.slider#intensitySlider(type="range" min="0" max="1" value="0.2" step="0.01" oninput="setIntensity(this.value)")
+
 
 script.
   loadBassBuilder();

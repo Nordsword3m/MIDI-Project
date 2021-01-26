@@ -1,13 +1,6 @@
 function DrumNoteManager() {
 }
 
-class NumRange {
-  constructor(min, max) {
-    this.min = min;
-    this.max = max;
-  }
-}
-
 class Cache {
   constructor(data) {
     this.patts = data ? data : {};

@@ -19,6 +19,17 @@ function lerp(a, b, t) {
   return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
 }
 
+class NumRange {
+  constructor(min, max) {
+    this.min = min;
+    this.max = max;
+  }
+
+  getRange() {
+    return this.max - this.min;
+  }
+}
+
 const post = function (url, data) {
   let xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
@@ -398,14 +409,6 @@ document.onkeydown = function (e) {
   }
 };
 
-function playSound(name, pos) {
-  am.play(name, pos);
-}
-
-function playNote(pitch, pos, length) {
-  am.playNote(pitch, pos, length);
-}
-
 function scheduleMets() {
   if (metroActive) {
     for (let i = 0; i < chunkSize * 256; i++) {
@@ -413,9 +416,9 @@ function scheduleMets() {
 
       if ((step / (256 * noteLength)) % 1 === 0) {
         if ((step / (256 * barLength)) % 1 === 0) {
-          playSound("m1", step * stepLength);
+          am.play("m1", step * stepLength);
         } else {
-          playSound("m2", step * stepLength);
+          am.play("m2", step * stepLength);
         }
       }
     }
@@ -428,7 +431,7 @@ function toggleMetronome(elem) {
 }
 
 async function oneTimeLoadHeader() {
-  am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "C3", "C4", "C5", "C6", "C7"]);
+  am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "pianoC3", "pianoC4", "pianoC5", "pianoC6", "pianoC7", "bassC4", "bassC5"]);
   readyStates.declarePresence("headerOneTime");
   await setDrumCaches();
   await am.SetDefaultBuffers();
@@ -497,13 +500,20 @@ function soundSchedule() {
     if (!mutes.chords && (!soloPresent() || solos.chords)) {
       scheduleChordNotes(step);
     }
+    scheduleBassNotes(step);
+  }
+}
+
+function scheduleBassNotes(step) {
+  if (bassPlaySchedule[step]) {
+    am.playNote(numToPitch(bassPlaySchedule[step].num, progression.keyNum), step * stepLength, bassPlaySchedule[step].length, "bass");
   }
 }
 
 function scheduleChordNotes(step) {
   if (chordPlaySchedule[step].length > 0) {
     for (let n = 0; n < chordPlaySchedule[step].length; n++) {
-      playNote(numToPitch(chordPlaySchedule[step][n].num, progression.keyNum), step * stepLength, chordPlaySchedule[step][n].length - chordPlaySchedule[step][n].startOffset);
+      am.playNote(numToPitch(chordPlaySchedule[step][n].num, progression.keyNum), step * stepLength, chordPlaySchedule[step][n].length - chordPlaySchedule[step][n].startOffset, "piano");
     }
   }
 }
@@ -519,25 +529,25 @@ function soloInDrums() {
 function scheduleDrumNotes(step) {
   if (chNoteArr[step] > 0) {
     if (!mutes.ch && (!soloPresent() || solos.ch || solos.drums && !soloInDrums())) {
-      playSound("ch", step * stepLength);
+      am.play("ch", step * stepLength);
     }
   }
 
   if (kickNoteArr[step] > 0) {
     if (!mutes.kick && (!soloPresent() || solos.kick || solos.drums && !soloInDrums())) {
-      playSound("kick", step * stepLength);
+      am.play("kick", step * stepLength);
     }
   }
 
   if (snrNoteArr[step] > 0) {
     if (!mutes.snare && (!soloPresent() || solos.snare || solos.drums && !soloInDrums())) {
-      playSound("snr", step * stepLength);
+      am.play("snr", step * stepLength);
     }
   }
 
   if (percNoteArr[step] > 0) {
     if (!mutes.perc && (!soloPresent() || solos.perc || solos.drums && !soloInDrums())) {
-      playSound("perc", step * stepLength);
+      am.play("perc", step * stepLength);
     }
   }
 }

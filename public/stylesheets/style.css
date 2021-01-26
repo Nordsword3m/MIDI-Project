@@ -15,6 +15,9 @@
     --green: #7dd06a;
     --red: #e23f3f;
     --yellow: #e2df3f;
+
+    --chordNoteAmt: 60;
+    --bassNoteAmt: 36;
 }
 
 #app {
@@ -117,10 +120,11 @@ h3.vert {
 
 .note {
     background-color: var(--blue);
-    height: calc(100% / 60);
+    height: calc(100% / var(--chordNoteAmt));
     position: absolute;
     box-shadow: 0 0 5px var(--blue);
     box-sizing: border-box;
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
     transition: all 300ms;
     z-index: 5;
 }
@@ -136,6 +140,13 @@ h3.vert {
 
 .note.drum {
     width: calc(60% / 256);
+    height: 100%;
+    border: 0;
+}
+
+.note.bass {
+    width: calc(60% / 256);
+    height: calc(100% / var(--bassNoteAmt));
 }
 
 .note.root {
