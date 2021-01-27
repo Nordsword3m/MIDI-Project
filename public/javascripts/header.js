@@ -433,7 +433,7 @@ function toggleMetronome(elem) {
 }
 
 async function oneTimeLoadHeader() {
-  am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "pianoC3", "pianoC4", "pianoC5", "pianoC6", "pianoC7", "bassC4", "bassC5"]);
+  am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "pianoC3", "pianoC4", "pianoC5", "pianoC6", "pianoC7", "bassC4", "bassC5", "bassC6"]);
   readyStates.declarePresence("headerOneTime");
   await setDrumCaches();
   await am.SetDefaultBuffers();

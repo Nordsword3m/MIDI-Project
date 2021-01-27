@@ -3,6 +3,14 @@ let bassPlaySchedule;
 
 let intensity;
 let energyRamp;
+let jumpiness;
+let flip;
+
+function toggleFlip() {
+  flip = !flip;
+  getById("flipCheck").getElementsByClassName("checkIcon")[0].classList.toggle("checked");
+  ShowBassLine();
+}
 
 function setEnergyRamp(en) {
   energyRamp = parseFloat(en);
@@ -11,6 +19,11 @@ function setEnergyRamp(en) {
 
 function setIntensity(it) {
   intensity = parseFloat(it);
+  ShowBassLine();
+}
+
+function setJumpiness(jmp) {
+  jumpiness = parseFloat(jmp);
   ShowBassLine();
 }
 
@@ -107,7 +120,7 @@ function calculateBaseLine() {
     if (reducePos + 1 >= 7) {
       trueIntensity += energyRamp;
     }
-    
+
     if (insertNote.length >= clamp(1 - trueIntensity, new NumRange(0, 1)) * bassRanges[curRange].getRange() / (256 * barLength)) {
       bLine.push(insertNote);
       insertNote = undefined;
@@ -118,6 +131,39 @@ function calculateBaseLine() {
 
   if (insertNote) {
     bLine.push(insertNote);
+  }
+
+  // Octave jumping
+  let prevNoteChangeDir = 0;
+  let bLineOrigin = JSON.parse(JSON.stringify(bLine));
+  let jmpPos = 0;
+
+  for (let n = 0; n < bLineOrigin.length; n++) {
+    if (n > 0) {
+      if (bLineOrigin[n].num !== bLineOrigin[n - 1].num) {
+        prevNoteChangeDir = bLineOrigin[n].num - bLineOrigin[n - 1].num;
+      }
+    }
+
+    let jumpDir = Math.sign(jumpiness);
+    let trueJumpiness = Math.abs(jumpiness);
+
+    if ((jmpPos % 4) / 4 >= 1 - trueJumpiness) {
+      if (bLineOrigin[n].length < 1 / 4) {
+        if (prevNoteChangeDir * jumpDir * (flip && jmpPos >= 4 ? -1 : 1) <= 0) {
+          bLine[n].num += 7;
+          if (bLine[n - 1].num === bLine[n].num) {
+            bLine[n - 1].num += 5;
+          }
+        } else {
+          bLine[n].num -= 5;
+          if (bLine[n - 1].num === bLine[n].num) {
+            bLine[n - 1].num += 5 - prevNoteChangeDir;
+          }
+        }
+      }
+    }
+    jmpPos += bLineOrigin[n].length;
   }
 
   return bLine;
@@ -140,6 +186,7 @@ async function loadBassBuilder() {
 
   intensity = parseFloat(getById("intensitySlider").value);
   energyRamp = parseFloat(getById("intensitySlider").value);
+  jumpiness = parseFloat(getById("jumpinessSlider").value);
 
   ShowBassLine();
 }
