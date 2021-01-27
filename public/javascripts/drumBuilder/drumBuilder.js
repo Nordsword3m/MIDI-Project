@@ -332,4 +332,6 @@ function ShowNotes(changeInst) {
       dem.Display("perc", percNoteArr);
     }
   }
+
+  generateBassNotes();
 }

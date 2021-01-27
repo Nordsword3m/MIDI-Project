@@ -170,6 +170,7 @@ h3.vert {
     background-color: var(--dispColor);
     display: flex;
     position: relative;
+    overflow: hidden;
 }
 
 .displayCon {

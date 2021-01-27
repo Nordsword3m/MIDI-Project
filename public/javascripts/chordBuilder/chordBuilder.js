@@ -217,6 +217,8 @@ function ShowChords() {
   progression.generateChords();
   chordPlaySchedule = progressionToSchedule(progression);
 
+  generateBassNotes();
+
   chordNoteCon.textContent = "";
   chordObjs = dem.PlaceChordProgression(progression);
   setChord(curChord);

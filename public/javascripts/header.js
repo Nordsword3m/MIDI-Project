@@ -6,6 +6,7 @@ let kickPatternCache, chPatternCache;
 
 let drumData;
 let chordData;
+let bassData;
 
 function getById(id) {
   return document.getElementById(id);
@@ -96,6 +97,16 @@ function loadChordData() {
 
   if (curPage === "constructor" || curPage === "chords") {
     dem.PlaceChordProgression(progression);
+  }
+}
+
+function loadBassData() {
+  bassLine = new BassLine(bassData.intensity, bassData.energyRamp, bassData.jumpiness, bassData.flip);
+
+  generateBassNotes();
+
+  if (curPage === "constructor" || curPage === "bass") {
+    dem.PlaceBassLine(bassLine);
   }
 }
 
@@ -226,6 +237,22 @@ function loadDrumSource() {
 
     request.send();
   });
+}
+
+function getBassData() {
+  let data = JSON.parse(sessionStorage.getItem("bassData"));
+
+
+  if (!data) {
+    data = {
+      "intensity": 0.2,
+      "energyRamp": 0.2,
+      "jumpiness": 0.25,
+      "flip": true
+    };
+  }
+
+  return data;
 }
 
 function getChordData() {
@@ -472,6 +499,7 @@ async function loadHeader() {
 
   drumData = getDrumData();
   chordData = getChordData();
+  bassData = getBassData();
 
   mutes = {drums: false, chords: false, bass: false, ch: false, kick: false, snare: false, perc: false};
   solos = {drums: false, chords: false, bass: false, ch: false, kick: false, snare: false, perc: false};
@@ -480,6 +508,8 @@ async function loadHeader() {
 
   loadChordData();
   loadDrumData();
+  loadBassData();
+
   readyStates.readyUp("instDataLoad");
   tempo = getById("tempoInput").value;
 
