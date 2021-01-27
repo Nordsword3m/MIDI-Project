@@ -19,6 +19,10 @@ include header
         h3= "Intensity"
         input.slider#intensitySlider(type="range" min="0" max="1" value="0.2" step="0.01" oninput="setIntensity(this.value)")
 
+    .bassConfigControl
+        h3= "Energy Ramp"
+        input.slider#energyRampSlider(type="range" min="0" max="1" value="0.2" step="0.01" oninput="setEnergyRamp(this.value)")
+
 
 script.
   loadBassBuilder();

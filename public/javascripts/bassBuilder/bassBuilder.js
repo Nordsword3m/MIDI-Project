@@ -2,9 +2,15 @@ let bassLine;
 let bassPlaySchedule;
 
 let intensity;
+let energyRamp;
+
+function setEnergyRamp(en) {
+  energyRamp = parseFloat(en);
+  ShowBassLine();
+}
 
 function setIntensity(it) {
-  intensity = it;
+  intensity = parseFloat(it);
   ShowBassLine();
 }
 
@@ -26,23 +32,39 @@ function bassLineToSchedule(bLine) {
   return sched;
 }
 
+function repeat(num, range) {
+  while (num < range.min) {
+    num += range.getRange();
+  }
+
+  while (num > range.max) {
+    num -= range.getRange();
+  }
+  return num;
+}
+
+function clamp(num, range) {
+  return Math.min(range.max, Math.max(num, range.min));
+}
+
 function calculateBaseLine() {
   let roots = progression.chords.map((c) => c[0]);
-  let kickLine = [];
+  let aligned = [];
   let bassRanges = [];
   let bLine = [];
 
-  // Align kick to bass notes
-  let kickAlignPos = 0;
+  // Align bass notes
+  let alignPos = 0;
+  let aligner = kickNoteArr;
   let noteStart = 0;
   let prevNoteRoot = roots[0];
 
   for (let n = 0; n < roots.length; n++) {
-    for (let k = kickAlignPos * 256 * barLength; k < (kickAlignPos + roots[n].length) * 256 * barLength; k++) {
-      if (kickNoteArr[k] > 0) {
+    for (let k = alignPos * 256 * barLength; k < (alignPos + roots[n].length) * 256 * barLength; k++) {
+      if (aligner[k] > 0) {
         let dist = (k - noteStart) / (256 * barLength);
         if (dist > 0) {
-          kickLine.push(new BassNote(prevNoteRoot.num, dist));
+          aligned.push(new BassNote(repeat(prevNoteRoot.num, new NumRange(-12, 0)), dist));
           noteStart = k;
           if (prevNoteRoot !== roots[n]) {
             bassRanges.push(new NumRange(bassRanges.length > 0 ? bassRanges[bassRanges.length - 1].max : 0, k));
@@ -51,9 +73,9 @@ function calculateBaseLine() {
         }
       }
     }
-    kickAlignPos += roots[n].length;
+    alignPos += roots[n].length;
   }
-  kickLine.push(new BassNote(prevNoteRoot.num, (256 - noteStart) / (256 * barLength)));
+  aligned.push(new BassNote(repeat(prevNoteRoot.num, new NumRange(-12, 0)), (256 - noteStart) / (256 * barLength)));
   bassRanges.push(new NumRange(bassRanges.length > 0 ? bassRanges[bassRanges.length - 1].max : 0, 256));
 
   // Reduce based on intensity
@@ -61,7 +83,7 @@ function calculateBaseLine() {
   let reducePos = 0;
 
   let insertNote;
-  for (let n = 0; n < kickLine.length; n++) {
+  for (let n = 0; n < aligned.length; n++) {
     if (reducePos >= bassRanges[curRange].max / (256 * barLength)) {
       curRange++;
       if (insertNote) {
@@ -71,17 +93,31 @@ function calculateBaseLine() {
     }
 
     if (!insertNote) {
-      insertNote = new BassNote(kickLine[n].num, kickLine[n].length);
+      insertNote = new BassNote(aligned[n].num, aligned[n].length);
     } else {
-      insertNote = combineNotes(insertNote, kickLine[n]);
+      insertNote = combineNotes(insertNote, aligned[n]);
     }
 
-    if (insertNote.length >= intensity * bassRanges[curRange].getRange() / (256 * barLength)) {
+    let trueIntensity = intensity;
+
+    if (Math.trunc(reducePos + 1) % 4 === 0) {
+      trueIntensity += energyRamp;
+    }
+
+    if (reducePos + 1 >= 7) {
+      trueIntensity += energyRamp;
+    }
+    
+    if (insertNote.length >= clamp(1 - trueIntensity, new NumRange(0, 1)) * bassRanges[curRange].getRange() / (256 * barLength)) {
       bLine.push(insertNote);
       insertNote = undefined;
     }
 
-    reducePos += kickLine[n].length;
+    reducePos += aligned[n].length;
+  }
+
+  if (insertNote) {
+    bLine.push(insertNote);
   }
 
   return bLine;
@@ -102,7 +138,8 @@ function ShowBassLine() {
 async function loadBassBuilder() {
   await readyStates.waitFor("instDataLoad");
 
-  intensity = getById("intensitySlider").value;
+  intensity = parseFloat(getById("intensitySlider").value);
+  energyRamp = parseFloat(getById("intensitySlider").value);
 
   ShowBassLine();
 }

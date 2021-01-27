@@ -195,13 +195,15 @@ DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity,
     if (divPatts && Object.keys(divPatts).length > 0) {
       let maxComplexity = lerp(divPatts.complexityRange.min, divPatts.complexityRange.max, relMaxComplexity);
 
-
       let patt = "";
       for (let p = 0; p < divPatts.patterns.length; p++) {
         patt = divPatts.patterns[p][0];
 
         if (divPatts.patterns[p][1].complexity <= maxComplexity) {
           for (let n = 0; n < patt.length; n++) {
+            if (i + n === noteArr.length) {
+              break;
+            }
             noteArr[i + n] = parseInt(patt.charAt(n));
           }
           break;
@@ -210,7 +212,7 @@ DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity,
       i += patt.length - 1;
     }
   }
-
+  
   if (clone) {
     noteArr = noteArr.concat(noteArr);
   }

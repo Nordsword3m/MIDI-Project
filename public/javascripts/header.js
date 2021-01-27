@@ -4,8 +4,8 @@ let dnm = new DrumNoteManager();
 let dem;
 let kickPatternCache, chPatternCache;
 
-let drumData = getDrumData();
-let chordData = getChordData();
+let drumData;
+let chordData;
 
 function getById(id) {
   return document.getElementById(id);
@@ -100,11 +100,11 @@ function loadChordData() {
 }
 
 //Mute/Solo variables
-let mutes = {drums: false, chords: false, ch: false, kick: false, snare: false, perc: false};
-let solos = {drums: false, chords: false, ch: false, kick: false, snare: false, perc: false};
+let mutes;
+let solos;
 
 
-function toggleMute(inst) {
+function toggleMute(inst, save = true) {
   mutes[inst] = !mutes[inst];
   solos[inst] = false;
 
@@ -117,10 +117,12 @@ function toggleMute(inst) {
     }
   }
 
-  saveMuteSolos();
+  if (save) {
+    saveMuteSolos();
+  }
 }
 
-function toggleSolo(inst) {
+function toggleSolo(inst, save = true) {
   solos[inst] = !solos[inst];
   mutes[inst] = false;
 
@@ -133,7 +135,9 @@ function toggleSolo(inst) {
     }
   }
 
-  saveMuteSolos();
+  if (save) {
+    saveMuteSolos();
+  }
 }
 
 function setDrumCaches() {
@@ -326,22 +330,20 @@ function loadMuteSolos() {
 
   if (muteStores) {
     let muteData = Object.entries(muteStores);
-    let muteButts = getByClass("muteButton");
 
     for (let i = 0; i < muteData.length; i++) {
       if (muteData[i][1]) {
-        toggleMute(muteData[i][0], muteButts[i]);
+        toggleMute(muteData[i][0], false);
       }
     }
   }
 
   if (soloStores) {
     let soloData = Object.entries(soloStores);
-    let soloButts = getByClass("soloButton");
 
     for (let i = 0; i < soloData.length; i++) {
       if (soloData[i][1]) {
-        toggleSolo(soloData[i][0], soloButts[i]);
+        toggleSolo(soloData[i][0], false);
       }
     }
   }
@@ -468,6 +470,12 @@ async function loadHeader() {
   dem = new DisplayElementManager();
   readyStates.readyUp("demLoad");
 
+  drumData = getDrumData();
+  chordData = getChordData();
+
+  mutes = {drums: false, chords: false, bass: false, ch: false, kick: false, snare: false, perc: false};
+  solos = {drums: false, chords: false, bass: false, ch: false, kick: false, snare: false, perc: false};
+
   loadMuteSolos();
 
   loadChordData();
@@ -500,7 +508,9 @@ function soundSchedule() {
     if (!mutes.chords && (!soloPresent() || solos.chords)) {
       scheduleChordNotes(step);
     }
-    scheduleBassNotes(step);
+    if (!mutes.bass && (!soloPresent() || solos.bass)) {
+      scheduleBassNotes(step);
+    }
   }
 }
 
