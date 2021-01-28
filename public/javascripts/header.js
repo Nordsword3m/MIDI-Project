@@ -1,5 +1,7 @@
 let curPage;
 
+let drumSource;
+
 let dnm = new DrumNoteManager();
 let dem;
 let kickPatternCache, chPatternCache;
@@ -10,11 +12,11 @@ let bassData;
 
 function getById(id) {
   return document.getElementById(id);
-};
+}
 
 function getByClass(classname) {
   return document.getElementsByClassName(classname);
-};
+}
 
 function lerp(a, b, t) {
   return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
@@ -30,13 +32,6 @@ class NumRange {
     return this.max - this.min;
   }
 }
-
-const post = function (url, data) {
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.send(JSON.stringify(data));
-};
 
 let keydownfuncs = [];
 
@@ -101,7 +96,7 @@ function loadChordData() {
 }
 
 function loadBassData() {
-  bassLine = new BassLine(bassData.intensity, bassData.energyRamp, bassData.jumpiness, bassData.flip);
+  bassLine = new BassLine(bassData.type, bassData.intensity, bassData.energyRamp, bassData.jumpiness, bassData.flip);
 
   generateBassNotes();
 
@@ -152,7 +147,7 @@ function toggleSolo(inst, save = true) {
 }
 
 function setDrumCaches() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let db, tx, store;
     let request = indexedDB.open("cacheDB", 1);
 
@@ -245,6 +240,7 @@ function getBassData() {
 
   if (!data) {
     data = {
+      "type": "bass",
       "intensity": 0.2,
       "energyRamp": 0.2,
       "jumpiness": 0.25,
@@ -385,13 +381,26 @@ function toggleLeaveInstrumentIcon() {
   getById("leaveInstrument").classList.toggle('fa-sign-out-alt');
 }
 
-function setTempo(tmp) {
-  tmp = tmp.length === 0
-    ? "001"
-    : parseInt(tmp).toString().padStart(3, "0").slice(0, 3);
+function saveTempo() {
+  sessionStorage.setItem("tempo", tempo);
+}
 
+function loadTempo() {
+  setTempo(sessionStorage.getItem("tempo"));
+}
+
+function setTempo(tmp) {
+  if (tmp) {
+    tmp = tmp.length === 0
+      ? "001"
+      : parseInt(tmp).toString().padStart(3, "0").slice(0, 3);
+  } else {
+    tmp = 130;
+  }
   tempo = parseInt(tmp);
   getById("tempoInput").value = tmp;
+
+  saveTempo();
 }
 
 function tapTempoButton() {
@@ -460,7 +469,24 @@ function toggleMetronome(elem) {
 }
 
 async function oneTimeLoadHeader() {
-  am = new AudioManager(["m1", "m2", "kick", "ch", "snr", "perc", "pianoC3", "pianoC4", "pianoC5", "pianoC6", "pianoC7", "bassC4", "bassC5", "bassC6"]);
+  am = new AudioManager(["m1",
+    "m2",
+    "kick",
+    "ch",
+    "snr",
+    "perc",
+    "pianoC3",
+    "pianoC4",
+    "pianoC5",
+    "pianoC6",
+    "pianoC7",
+    "bassC4",
+    "bassC5",
+    "bassC6",
+    "808C4",
+    "808C5",
+    "808C6"]);
+
   readyStates.declarePresence("headerOneTime");
   await setDrumCaches();
   await am.SetDefaultBuffers();
@@ -511,7 +537,7 @@ async function loadHeader() {
   loadBassData();
 
   readyStates.readyUp("instDataLoad");
-  tempo = getById("tempoInput").value;
+  loadTempo();
 
   let disp = getById("display");
 
@@ -546,7 +572,7 @@ function soundSchedule() {
 
 function scheduleBassNotes(step) {
   if (bassPlaySchedule[step]) {
-    am.playNote(numToPitch(bassPlaySchedule[step].num, progression.keyNum), step * stepLength, bassPlaySchedule[step].length, "bass");
+    am.playNote(numToPitch(bassPlaySchedule[step].num, progression.keyNum), step * stepLength, bassPlaySchedule[step].length, bassLine.type);
   }
 }
 

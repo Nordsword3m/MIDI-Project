@@ -1,6 +1,25 @@
 let bassLine;
 let bassPlaySchedule;
 
+
+function toggleBassType() {
+  bassLine.type = bassLine.type === "bass" ? "808" : "bass";
+  setBassType();
+  ShowBassLine();
+}
+
+function setBassType() {
+  let bassOpts = getByClass("toggleOption");
+
+  if (bassLine.type === "bass") {
+    bassOpts[0].classList.add("selected");
+    bassOpts[1].classList.remove("selected");
+  } else if (bassLine.type === "808") {
+    bassOpts[0].classList.remove("selected");
+    bassOpts[1].classList.add("selected");
+  }
+}
+
 function toggleFlip() {
   bassLine.flip = !bassLine.flip;
   getById("flipCheck").getElementsByClassName("checkIcon")[0].classList.toggle("checked");
@@ -18,7 +37,7 @@ function setIntensity(it) {
 }
 
 function setJumpiness(jmp) {
-  bassLine.jumpines = parseFloat(jmp);
+  bassLine.jumpiness = parseFloat(jmp);
   ShowBassLine();
 }
 
@@ -56,7 +75,8 @@ function clamp(num, range) {
 }
 
 class BassLine {
-  constructor(intensity, energyRamp, jumpiness, flip) {
+  constructor(type, intensity, energyRamp, jumpiness, flip) {
+    this.type = type;
     this.intensity = intensity;
     this.energyRamp = energyRamp;
     this.jumpiness = jumpiness;
@@ -156,7 +176,8 @@ class BassLine {
         if (bLineOrigin[n].length < 1 / 4) {
           if (prevNoteChangeDir * jumpDir * (this.flip && jmpPos >= 4 ? -1 : 1) <= 0) {
             bLine[n].num += 7;
-            if (bLine[n - 1].num === bLine[n].num) {
+            if (bLine[n - 1].num === bLine[n].num
+            ) {
               bLine[n - 1].num += 5;
             }
           } else {
@@ -206,6 +227,8 @@ function loadBassDataValues() {
   } else {
     getById("flipCheck").getElementsByClassName("checkIcon")[0].classList.remove("checked");
   }
+
+  setBassType();
 }
 
 async function loadBassBuilder() {
