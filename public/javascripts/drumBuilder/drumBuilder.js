@@ -138,7 +138,7 @@ function calculatePatterns(changeInst) {
     ;
   }
   //console.log("Ch time: " + (window.performance.now() - start) + "ms");
-  let kickStart = window.performance.now();
+  //let kickStart = window.performance.now();
 
   if (changeInst === "kick" || changeInst === "allDrums" || changeInst === "calcDrums") {
     kickPatterns = nm.RetreivePatterns(
@@ -241,8 +241,6 @@ function setSnarePattern() {
 }
 
 function toggleSnarePattern() {
-  let snrOpts = getByClass("toggleOption");
-
   if (snarePattern === "3") {
     snarePattern = "2and4";
   } else {

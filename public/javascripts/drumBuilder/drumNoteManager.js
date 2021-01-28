@@ -76,7 +76,6 @@ DrumNoteManager.prototype.CacheBeatPatterns = function (beats, patternSizeRange)
             ) {
               patt += beats[beat].slice(i, i + min).join('');
               if (patt.endsWith(emptySect) === false) {
-                let pattInfo = beatPatts[div][patt];
                 beatPatts[div][patt] = new PatternInfo(1, (patt.match(/1/g) || []).length / patt.length);
               }
             }
@@ -212,7 +211,7 @@ DrumNoteManager.prototype.CalculateNotes = function (patterns, relMaxComplexity,
       i += patt.length - 1;
     }
   }
-  
+
   if (clone) {
     noteArr = noteArr.concat(noteArr);
   }

@@ -20,7 +20,6 @@ function PlayManager() {
 
 PlayManager.prototype.NextChunk = function () {
   if (this.relPlayPos + chunkSize * this.chunkPreRender >= 1) {
-    let trackLength = (60.0 / tempo) * (256 * barLength);
     am.SetLoopStart(this.relPlayPos - 1);
   }
 

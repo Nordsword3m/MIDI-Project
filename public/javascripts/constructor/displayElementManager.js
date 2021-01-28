@@ -1,9 +1,8 @@
-const numOfDivs = 32;
-
 // Page Elements
 let display;
 let divisionDisplay;
 let chordNoteCon;
+let bassNoteCon;
 
 function DisplayElementManager() {
   this.displays = {};
