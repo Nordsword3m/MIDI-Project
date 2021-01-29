@@ -40,6 +40,17 @@ include header
             +divs
             .instrumentCon
                 .instrumentDisp#bassNoteCon
+    .trackCon
+        .trackButton
+            a(href="/melo" data-link)
+                .i.fas.fa-bolt.trackIcon
+            .muteSoloSwitch
+                .muteButton(data-inst="melo" onclick="toggleMute('melo');")= "M"
+                .soloButton(data-inst="melo" onclick="toggleSolo('melo');")= "S"
+        .trackDisp
+            +divs
+            .instrumentCon
+                .instrumentDisp#meloNoteCon
 
 script.
   loadConstructor();

@@ -45,6 +45,10 @@ app.post("/bass", (req, res) => {
   res.render("bassBuilder.jade");
 });
 
+app.post("/melo", (req, res) => {
+  res.render("meloBuilder.jade");
+});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   let err = new Error("Not Found");

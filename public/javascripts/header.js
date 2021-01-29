@@ -22,6 +22,21 @@ function lerp(a, b, t) {
   return parseFloat(a) + (parseFloat(b) - parseFloat(a)) * parseFloat(t);
 }
 
+function repeat(num, range) {
+  while (num < range.min) {
+    num += range.getRange();
+  }
+
+  while (num > range.max) {
+    num -= range.getRange();
+  }
+  return num;
+}
+
+function clamp(num, range) {
+  return Math.min(range.max, Math.max(num, range.min));
+}
+
 class NumRange {
   constructor(min, max) {
     this.min = min;

@@ -107,7 +107,7 @@ h3.vert {
     grid-template-rows: auto auto;
 }
 
-.configPanel.chords, .configPanel.bass {
+.configPanel.chords, .configPanel.bass, .configPanel.melo {
     padding: 15px;
     display: flex;
     flex-direction: column;
