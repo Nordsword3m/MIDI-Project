@@ -37,20 +37,20 @@ function clamp(num, range) {
   return Math.min(range.max, Math.max(num, range.min));
 }
 
-function sums(curList, startList, maxLength, target) {
+function sums(curList, startList, length, target) {
   let curSum = curList.reduce((a, b) => a + b, 0);
   let results = [];
 
-  if (curList.length < maxLength) {
+  if (curList.length < length) {
     for (let i = 0; i < startList.length; i++) {
       let newList = [...curList];
       newList.push(startList[i]);
       let newSum = curSum + startList[i];
 
-      if (newSum === target) {
+      if (newSum === target && newList.length === length) {
         results.push(newList);
       } else if (newSum < target) {
-        sums(newList, startList, maxLength, target).forEach((x) => results.push(x));
+        sums(newList, startList, length, target).forEach((x) => results.push(x));
       }
     }
   }
