@@ -3,6 +3,7 @@ let display;
 let divisionDisplay;
 let chordNoteCon;
 let bassNoteCon;
+let meloNoteCon;
 
 function DisplayElementManager() {
   this.displays = {};
@@ -15,6 +16,7 @@ function DisplayElementManager() {
   divisionDisplay = getById("divDisp");
   chordNoteCon = getById("chordNoteCon");
   bassNoteCon = getById("bassNoteCon");
+  meloNoteCon = getById("meloNoteCon");
 }
 
 class DrumDisplay {
@@ -27,6 +29,9 @@ class DrumDisplay {
 DisplayElementManager.prototype.PlaceBassLine = function (bLine) {
   let bassNoteObjs = [];
   let pos = 0;
+
+  bassNoteCon.textContent = "";
+
   for (let n = 0; n < bLine.notes.length; n++) {
     let note = document.createElement("div");
     note.className = "note bass";
@@ -43,6 +48,30 @@ DisplayElementManager.prototype.PlaceBassLine = function (bLine) {
   }
 
   return bassNoteObjs;
+};
+
+DisplayElementManager.prototype.PlaceMelody = function (melo) {
+  let meloNoteObjs = [];
+  let pos = 0;
+  
+  meloNoteCon.textContent = "";
+
+  for (let n = 0; n < melo.notes.length; n++) {
+    let note = document.createElement("div");
+    note.className = "note melo";
+
+
+    note.style.left = "calc(" + pos + " * 12.5%)";
+    note.style.width = "calc(" + melo.notes[n].length + " * 12.5%)";
+    note.style.bottom = "calc(" + (melo.notes[n].num - 1 + 24) + " * 100% / var(--meloNoteAmt))";
+
+    pos += melo.notes[n].length;
+
+    meloNoteCon.appendChild(note);
+    meloNoteObjs.push(note);
+  }
+
+  return meloNoteObjs;
 };
 
 DisplayElementManager.prototype.PlaceChordProgression = function (progression) {

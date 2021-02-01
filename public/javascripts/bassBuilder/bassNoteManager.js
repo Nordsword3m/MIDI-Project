@@ -1,10 +1,3 @@
-class BassNote {
-  constructor(num, length) {
-    this.num = num;
-    this.length = length;
-  }
-}
-
 function bassLineToSchedule(bLine) {
   let pos = 0;
   let sched = new Array(256);
@@ -43,7 +36,7 @@ class BassLine {
         if (aligner[k] > 0) {
           let dist = (k - noteStart) / (256 * barLength);
           if (dist > 0) {
-            aligned.push(new BassNote(repeat(prevNoteRoot.num, new NumRange(-12, 0)), dist));
+            aligned.push(new Note(repeat(prevNoteRoot.num, new NumRange(-12, 0)), dist));
             noteStart = k;
             if (prevNoteRoot !== roots[n]) {
               bassRanges.push(new NumRange(bassRanges.length > 0 ? bassRanges[bassRanges.length - 1].max : 0, k));
@@ -54,7 +47,7 @@ class BassLine {
       }
       alignPos += roots[n].length;
     }
-    aligned.push(new BassNote(repeat(prevNoteRoot.num, new NumRange(-12, 0)), (256 - noteStart) / (256 * barLength)));
+    aligned.push(new Note(repeat(prevNoteRoot.num, new NumRange(-12, 0)), (256 - noteStart) / (256 * barLength)));
     bassRanges.push(new NumRange(bassRanges.length > 0 ? bassRanges[bassRanges.length - 1].max : 0, 256));
 
     // Reduce based on intensity
@@ -72,7 +65,7 @@ class BassLine {
       }
 
       if (!insertNote) {
-        insertNote = new BassNote(aligned[n].num, aligned[n].length);
+        insertNote = new Note(aligned[n].num, aligned[n].length);
       } else {
         insertNote = combineNotes(insertNote, aligned[n]);
       }
@@ -138,5 +131,5 @@ class BassLine {
 }
 
 function combineNotes(n1, n2) {
-  return new BassNote(n1.num, n1.length + n2.length);
+  return new Note(n1.num, n1.length + n2.length);
 }

@@ -127,15 +127,6 @@ class ChordProgression {
   }
 }
 
-class Note {
-  constructor(num, length, isRoot) {
-    this.num = num;
-    this.length = length;
-    this.isRoot = isRoot;
-    this.startOffset = 0;
-  }
-}
-
 function numToPitch(num, keyNum) {
   return (num - 1) + (keyNum - 1);
 }

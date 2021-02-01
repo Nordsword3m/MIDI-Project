@@ -37,6 +37,35 @@ function clamp(num, range) {
   return Math.min(range.max, Math.max(num, range.min));
 }
 
+function sums(curList, startList, maxLength, target) {
+  let curSum = curList.reduce((a, b) => a + b, 0);
+  let results = [];
+
+  if (curList.length < maxLength) {
+    for (let i = 0; i < startList.length; i++) {
+      let newList = [...curList];
+      newList.push(startList[i]);
+      let newSum = curSum + startList[i];
+
+      if (newSum === target) {
+        results.push(newList);
+      } else if (newSum < target) {
+        sums(newList, startList, maxLength, target).forEach((x) => results.push(x));
+      }
+    }
+  }
+  return results;
+}
+
+class Note {
+  constructor(num, length, isRoot) {
+    this.num = num;
+    this.length = length;
+    this.isRoot = isRoot;
+    this.startOffset = 0;
+  }
+}
+
 class NumRange {
   constructor(min, max) {
     this.min = min;
@@ -255,11 +284,11 @@ function getBassData() {
 
   if (!data) {
     data = {
-      "type": "bass",
-      "intensity": 0.2,
+      "type": "808",
+      "intensity": 0.65,
       "energyRamp": 0.2,
       "jumpiness": 0.25,
-      "flip": true
+      "flip": false
     };
   }
 
@@ -271,14 +300,14 @@ function getChordData() {
 
   if (!data) {
     data = {
-      "type": "minor",
-      "keyNum": 4,
-      "roots": [1, 3, 4, 2, 5, 1, 3, 4, 2, 5],
-      "lengths": [1, 1, 1, 0.5, 0.5, 1, 1, 1, 0.5, 0.5],
-      "degrees": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-      "spreads": [true, true, true, true, true, true, true, true, true, true],
-      "feels": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      "strums": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+      "type": "major",
+      "keyNum": 1,
+      "roots": [-1, 1, -2, -3, -1, 1, -2, -3],
+      "lengths": [1, 1, 1, 1, 1, 1, 1, 1],
+      "degrees": [3, 3, 2, 4, 3, 3, 2, 4],
+      "spreads": [false, false, false, false, false, false, false, false],
+      "feels": [0, 0, 0, 0, 0, 0, 0, 0],
+      "strums": [0, 0.75, 0, 0.5, 0, 0.75, 0, 0.5]
     };
   }
 
@@ -291,7 +320,7 @@ function getDrumData() {
   if (!data) {
     data = {
       "seed": "102",
-      "cloneDrums": "true",
+      "cloneDrums": false,
       "kickCohesion": "5",
       "kickCohesionMin": "4",
       "kickSpontaneity": "0.28",
@@ -542,8 +571,8 @@ async function loadHeader() {
   chordData = getChordData();
   bassData = getBassData();
 
-  mutes = {drums: false, chords: false, bass: false, ch: false, kick: false, snare: false, perc: false};
-  solos = {drums: false, chords: false, bass: false, ch: false, kick: false, snare: false, perc: false};
+  mutes = {drums: false, chords: false, bass: false, melo: false, ch: false, kick: false, snare: false, perc: false};
+  solos = {drums: false, chords: false, bass: false, melo: false, ch: false, kick: false, snare: false, perc: false};
 
   loadMuteSolos();
 
@@ -582,6 +611,15 @@ function soundSchedule() {
     if (!mutes.bass && (!soloPresent() || solos.bass)) {
       scheduleBassNotes(step);
     }
+    if (!mutes.melo && (!soloPresent() || solos.melo)) {
+      scheduleMeloNotes(step);
+    }
+  }
+}
+
+function scheduleMeloNotes(step) {
+  if (melodyPlaySchedule[step]) {
+    am.playNote(numToPitch(melodyPlaySchedule[step].num, progression.keyNum), step * stepLength, melodyPlaySchedule[step].length, "piano");
   }
 }
 

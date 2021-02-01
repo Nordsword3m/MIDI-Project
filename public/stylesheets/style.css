@@ -18,6 +18,7 @@
 
     --chordNoteAmt: 60;
     --bassNoteAmt: 36;
+    --meloNoteAmt: 36;
 }
 
 #app {
@@ -147,6 +148,11 @@ h3.vert {
 .note.bass {
     width: calc(60% / 256);
     height: calc(100% / var(--bassNoteAmt));
+}
+
+.note.melo {
+    width: calc(60% / 256);
+    height: calc(100% / var(--meloNoteAmt));
 }
 
 .note.root {

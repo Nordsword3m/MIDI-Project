@@ -25,7 +25,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get(["/", "/chords", "/drums", "/bass"], (req, res) => {
+app.get(["/", "/chords", "/drums", "/bass", "/melo"], (req, res) => {
   res.render("index.jade");
 });
 

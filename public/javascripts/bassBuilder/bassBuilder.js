@@ -48,7 +48,6 @@ function generateBassNotes() {
 function ShowBassLine() {
   generateBassNotes();
 
-  bassNoteCon.textContent = "";
   dem.PlaceBassLine(bassLine);
 
   saveBassDataValues();
