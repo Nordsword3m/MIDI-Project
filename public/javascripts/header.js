@@ -43,8 +43,7 @@ function sums(curList, startList, length, target) {
 
   if (curList.length < length) {
     for (let i = 0; i < startList.length; i++) {
-      let newList = [...curList];
-      newList.push(startList[i]);
+      let newList = curList.concat(startList[i]);
       let newSum = curSum + startList[i];
 
       if (newSum === target && newList.length === length) {
@@ -58,10 +57,11 @@ function sums(curList, startList, length, target) {
 }
 
 class Note {
-  constructor(num, length, isRoot) {
+  constructor(num, length, isRoot, isRest) {
     this.num = num;
     this.length = length;
     this.isRoot = isRoot;
+    this.isRest = isRest;
     this.startOffset = 0;
   }
 }
@@ -618,7 +618,7 @@ function soundSchedule() {
 }
 
 function scheduleMeloNotes(step) {
-  if (melodyPlaySchedule[step]) {
+  if (melodyPlaySchedule[step] && !melodyPlaySchedule[step].isRest) {
     am.playNote(numToPitch(melodyPlaySchedule[step].num, progression.keyNum), step * stepLength, melodyPlaySchedule[step].length, "piano");
   }
 }

@@ -1,0 +1,7 @@
+.meloConfigPanel {
+    padding: min(15px, 3vw);
+    background-color: var(--panelColor);
+    display: grid;
+    gap: 7px min(30px, 6vw);
+    grid-template-columns: 1fr 1fr;
+}

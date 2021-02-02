@@ -8,25 +8,38 @@ include header
         #playHead
 
 .configPanel.melo
-    .meloConfigControl
-        h3= "Repeat"
-        input.slider#repeatSlider(type="range" min="0" max="3" value="1" step="0.01" oninput="setRepeat(this.value)")
+    .meloConfigPanel
+        .meloConfigControl
+            h3= "Repeat"
+            input.slider#repeatSlider(type="range" min="0" max="3" value="1" step="0.01" oninput="setRepeat(this.value)")
 
-    .meloConfigControl
-        h3= "Complexity"
-        input.slider#complexitySlider(type="range" min="1" max="6" value="4" step="0.01" oninput="setComplexity(this.value)")
+        .meloConfigControl
+            h3= "Complexity"
+            input.slider#complexitySlider(type="range" min="1" max="6" value="4" step="0.01" oninput="setComplexity(this.value)")
 
-    .meloConfigControl
-        h3= "Uniformity"
-        input.slider#uniformitySlider(type="range" min="0" max="1" value="0.6" step="0.01" oninput="setUniformity(this.value)")
+        .meloConfigControl
+            h3= "Uniformity"
+            input.slider#uniformitySlider(type="range" min="0" max="1" value="0.6" step="0.01" oninput="setUniformity(this.value)")
 
-    .meloConfigControl
-        h3= "Rhythm"
-        input.slider#rhythmSlider(type="range" min="0" max="1" value="0.2" step="0.01" oninput="setRhythm(this.value)")
+        .meloConfigControl
+            h3= "Rhythm"
+            input.slider#rhythmSlider(type="range" min="0" max="1" value="0.2" step="0.01" oninput="setRhythm(this.value)")
 
-    .meloConfigControl
-        h3= "Skew"
-        input.slider#skewSlider(type="range" min="0" max="1" value="0.5" step="0.01" oninput="setSkew(this.value)")
+        .meloConfigControl
+            h3= "Skew"
+            input.slider#skewSlider(type="range" min="0" max="1" value="0.5" step="0.01" oninput="setSkew(this.value)")
+
+        .meloConfigControl
+            h3= "Variation"
+            input.slider#variationSlider(type="range" min="0" max="1" value="0.5" step="0.01" oninput="setVariation(this.value)")
+
+        .meloConfigControl
+            h3= "Simplify"
+            input.slider#simplifySlider(type="range" min="0" max="1" value="0.5" step="0.01" oninput="setSimplify(this.value)")
+
+        .meloConfigControl
+            h3= "Polarity"
+            input.slider#polaritySlider(type="range" min="0" max="1" value="0.5" step="0.01" oninput="setPolarity(this.value)")
 
 script.
   loadMeloBuilder();

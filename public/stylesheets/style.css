@@ -2,6 +2,7 @@
 @import "drumBuilder.css";
 @import "constructor.css";
 @import "chordBuilder.css";
+@import "meloBuilder.css";
 
 :root {
     --panelColor: #222222;
@@ -108,7 +109,15 @@ h3.vert {
     grid-template-rows: auto auto;
 }
 
-.configPanel.chords, .configPanel.bass, .configPanel.melo {
+.configPanel.melo {
+    padding: 0;
+    background-color: transparent;
+    display: grid;
+    gap: 7px 7px;
+    grid-template-rows: auto auto;
+}
+
+.configPanel.chords, .configPanel.bass {
     padding: 15px;
     display: flex;
     flex-direction: column;
