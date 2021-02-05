@@ -37,6 +37,16 @@ function clamp(num, range) {
   return Math.min(range.max, Math.max(num, range.min));
 }
 
+function numToPitch(num, keyNum) {
+  return (num - 1) + (keyNum - 1);
+}
+
+function getFromScale(scale, num) {
+  let scaleNotes = scale === "major" ? majorScale : minorScale;
+  num = num - 1;
+  return ((Math.floor(num / 7) * 12) + scaleNotes[(num + 70) % 7]);
+}
+
 function sums(curList, startList, length, target) {
   let curSum = curList.reduce((a, b) => a + b, 0);
   let results = [];
@@ -550,6 +560,13 @@ async function oneTimeLoadHeader() {
   readyStates.readyUp("headerOneTime");
 }
 
+function playFromClick(e) {
+  pm.TogglePlaying(
+    (e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth,
+    true
+  ).then();
+}
+
 async function loadHeader() {
   readyStates.declarePresence("demLoad");
   await readyStates.waitFor("headerOneTime");
@@ -586,12 +603,7 @@ async function loadHeader() {
   let disp = getById("display");
 
   if (disp) {
-    disp.addEventListener("click", function (event) {
-      pm.TogglePlaying(
-        (event.pageX - disp.offsetLeft) / disp.offsetWidth,
-        true
-      ).then();
-    });
+    disp.addEventListener("click", playFromClick);
   }
 
   getById("playButton").addEventListener("click", startPlaying);

@@ -25,7 +25,7 @@ class ChordProgression {
     this.chords = [];
 
     for (let c = 0; c < this.roots.length; c++) {
-      this.chords.push(this.drawChord(this.type, this.roots[c], pos, this.lengths[c], this.degrees[c], this.feels[c], this.strums[c]));
+      this.chords.push(this.drawChord(this.type, this.roots[c], this.lengths[c], this.degrees[c], this.feels[c], this.strums[c]));
       pos += this.lengths[c];
 
       if (c > 0) {
@@ -100,7 +100,7 @@ class ChordProgression {
     }
   }
 
-  drawChord(type, root, start, length, degree, feel) {
+  drawChord(type, root, length, degree, feel) {
     let chord = [];
 
     for (let n = 0; n < degree; n++) {
@@ -125,16 +125,6 @@ class ChordProgression {
 
     return chord;
   }
-}
-
-function numToPitch(num, keyNum) {
-  return (num - 1) + (keyNum - 1);
-}
-
-function getFromScale(scale, num) {
-  let scaleNotes = scale === "major" ? majorScale : minorScale;
-  num = num - 1;
-  return ((Math.floor(num / 7) * 12) + scaleNotes[(num + 70) % 7]);
 }
 
 function progressionToSchedule(pro) {

@@ -26,6 +26,58 @@ class DrumDisplay {
   }
 }
 
+DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
+  let note = document.createElement("div");
+  note.className = "note melo";
+
+  note.style.left = "calc(" + start + " * 12.5%)";
+  note.style.width = "calc(" + length + " * 12.5%)";
+  note.style.bottom = "calc(" + (num - 1 - 13) + " * 100% / var(--meloNoteAmt))";
+
+  meloNoteCon.appendChild(note);
+  return note;
+};
+
+DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
+  let ghost = document.createElement("div");
+  ghost.className = "note melo draw";
+
+
+  ghost.style.left = "calc(" + start + " * 12.5%)";
+  ghost.style.width = "calc(" + (8 - start) + " * 12.5%)";
+  ghost.style.bottom = "calc(" + (num - 1 - 13) + " * 100% / var(--meloNoteAmt))";
+
+  ghost.addEventListener("mousedown", (e) => StartNotePaint(num, e));
+  ;
+
+  meloNoteCon.appendChild(ghost);
+  return ghost;
+};
+
+DisplayElementManager.prototype.PlaceMelody = function (melo) {
+  let meloNoteObjs = [];
+  let pos = 0;
+
+  meloNoteCon.textContent = "";
+
+  for (let n = 0; n < melo.notes.length; n++) {
+    let note = document.createElement("div");
+    note.className = "note melo";
+
+
+    note.style.left = "calc(" + pos + " * 12.5%)";
+    note.style.width = "calc(" + melo.notes[n].length + " * 12.5%)";
+    note.style.bottom = "calc(" + (melo.notes[n].num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
+
+    pos += melo.notes[n].length;
+
+    meloNoteCon.appendChild(note);
+    meloNoteObjs.push(note);
+  }
+
+  return meloNoteObjs;
+};
+
 DisplayElementManager.prototype.PlaceBassLine = function (bLine) {
   let bassNoteObjs = [];
   let pos = 0;
@@ -48,30 +100,6 @@ DisplayElementManager.prototype.PlaceBassLine = function (bLine) {
   }
 
   return bassNoteObjs;
-};
-
-DisplayElementManager.prototype.PlaceMelody = function (melo) {
-  let meloNoteObjs = [];
-  let pos = 0;
-  
-  meloNoteCon.textContent = "";
-
-  for (let n = 0; n < melo.notes.length; n++) {
-    let note = document.createElement("div");
-    note.className = "note melo";
-
-
-    note.style.left = "calc(" + pos + " * 12.5%)";
-    note.style.width = "calc(" + melo.notes[n].length + " * 12.5%)";
-    note.style.bottom = "calc(" + (melo.notes[n].num - 1 + 24) + " * 100% / var(--meloNoteAmt))";
-
-    pos += melo.notes[n].length;
-
-    meloNoteCon.appendChild(note);
-    meloNoteObjs.push(note);
-  }
-
-  return meloNoteObjs;
 };
 
 DisplayElementManager.prototype.PlaceChordProgression = function (progression) {
