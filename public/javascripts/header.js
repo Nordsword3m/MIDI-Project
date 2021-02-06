@@ -291,7 +291,6 @@ function loadDrumSource() {
 function getBassData() {
   let data = JSON.parse(sessionStorage.getItem("bassData"));
 
-
   if (!data) {
     data = {
       "type": "808",
@@ -301,7 +300,6 @@ function getBassData() {
       "flip": false
     };
   }
-
   return data;
 }
 
@@ -320,7 +318,6 @@ function getChordData() {
       "strums": [0, 0.75, 0, 0.5, 0, 0.75, 0, 0.5]
     };
   }
-
   return data;
 }
 
@@ -348,7 +345,6 @@ function getDrumData() {
       "perc2Bars": [false, true, false, true, false, true, false, true]
     };
   }
-
   return data;
 }
 

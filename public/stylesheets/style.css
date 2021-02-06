@@ -169,6 +169,16 @@ h3.vert {
     height: calc(100% / var(--meloNoteAmt));
 }
 
+.note.drawing {
+    background-color: var(--orange);
+    box-shadow: 0 0 5px var(--orange);
+}
+
+.note.melo:not(.drawing):not(.draw):hover {
+    background-color: var(--yellow);
+    box-shadow: 0 0 5px 2px var(--orange);
+}
+
 .note.root {
     background-color: var(--purple);
     box-shadow: 0 0 5px var(--purple);

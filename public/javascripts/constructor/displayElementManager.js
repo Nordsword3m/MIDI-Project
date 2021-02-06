@@ -28,11 +28,13 @@ class DrumDisplay {
 
 DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
   let note = document.createElement("div");
-  note.className = "note melo";
+  note.className = "note melo drawing";
 
   note.style.left = "calc(" + start + " * 12.5%)";
   note.style.width = "calc(" + length + " * 12.5%)";
-  note.style.bottom = "calc(" + (num - 1 - 13) + " * 100% / var(--meloNoteAmt))";
+  note.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
+
+  //note.addEventListener("click");
 
   meloNoteCon.appendChild(note);
   return note;
@@ -41,22 +43,26 @@ DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
 DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
   let ghostCon = document.createElement("div");
   ghostCon.className = "ghostCon";
-  ghostCon.style.bottom = "calc(" + (num - 1 - 13) + " * 100% / var(--meloNoteAmt))";
+  ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
+  ghostCon.style.left = "calc(" + start + " * 12.5%)";
 
   let ghost = document.createElement("div");
   ghost.className = "note melo draw";
 
-  ghost.style.left = "calc(" + start + " * 12.5%)";
   ghost.style.width = "calc(" + (8 - start) + " * 12.5%)";
 
   ghostCon.appendChild(ghost);
 
+  ghostCon.addEventListener("mouseenter", (e) => {
+    PreviewGhostNote(num);
+    UpdateGhostStart(e, ghost);
+  });
   ghostCon.addEventListener("mousemove", (e) => UpdateGhostStart(e, ghost));
   ghostCon.addEventListener("mouseleave", () => ResetGhost(ghost));
   ghostCon.addEventListener("mousedown", (e) => StartNotePaint(e, num));
 
   meloNoteCon.appendChild(ghostCon);
-  return ghost;
+  return ghostCon;
 };
 
 DisplayElementManager.prototype.PlaceMelody = function (melo) {

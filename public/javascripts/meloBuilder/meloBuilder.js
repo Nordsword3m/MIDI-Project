@@ -41,11 +41,31 @@ function ShowGhosts(noteNums, pos) {
 }
 
 function GhostNextNotes() {
-  let possib = [1, 2, 3, 4, 5, 6, 7];
+  let possib = [];
+  let meloRange;
+  let noteRange;
 
-  possib = possib.map((n) => getFromScale(progression.type, n));
+  if (melody.getLength() === 0) {
+    meloRange = new NumRange(13, 48);
+  } else {
+    meloRange = new NumRange(melody.notes.reduce((x, n) => Math.min(x, n.num), 50), melody.notes.reduce((x, n) => Math.max(x, n.num), 0));
+  }
 
-  possib = possib.map((n) => n + 24);
+  noteRange = new NumRange(Math.min(meloRange.max - 12, meloRange.min), Math.max(meloRange.min + 12, meloRange.max));
+
+  let start;
+  for (start = 0; start < 30; start++) {
+    if (getFromScale(progression.type, start) === noteRange.min) {
+      break;
+    }
+  }
+
+  let curNote = start;
+
+  while (getFromScale(progression.type, curNote) <= noteRange.max) {
+    possib.push(getFromScale(progression.type, curNote));
+    curNote++;
+  }
 
   ghosts = ShowGhosts(possib, melody.getLength());
 }
@@ -56,18 +76,22 @@ function GetPaintLength(pageX) {
 }
 
 function StartNotePaint(e, num) {
-  ghosts.forEach((g) => g.remove());
+  for (let i = ghosts.length - 1; i >= 0; i--) {
+    ghosts[i].parentNode.removeChild(ghosts[i]);
+  }
+
   paintNum = num;
   painting = true;
-  paintStart = Math.floor(Math.max((e.pageX / $(document).width()) * 8, 0) * 8) / 8;
+  paintStart = Math.floor(Math.max((e.pageX / $(document).width()) * 8, 0, melody.getLength()) * 8) / 8;
 
   paintNote = dem.CreateDragNote(paintStart, num, 1 / 8);
 }
 
 function UpdateGhostStart(e, ghost) {
   let start = Math.floor(Math.max((e.pageX / $(document).width()) * 8, melody.getLength()) * 8) / 8;
+
   ghost.style.transition = "all 0ms";
-  ghost.style.left = "calc(" + start + " * 12.5%)";
+  ghost.style.left = (((start - melody.getLength()) / 8) * 100) + "%";
   ghost.style.width = "calc(" + (8 - start) + " * 12.5%)";
 }
 
@@ -80,24 +104,30 @@ function UpdatePaintLength(e) {
 
 function ResetGhost(ghost) {
   ghost.style.transition = "all 300ms";
-  ghost.style.left = "calc(" + melody.getLength() + " * 12.5%)";
+  ghost.style.left = "0";
   ghost.style.width = "calc(" + (8 - melody.getLength()) + " * 12.5%)";
 }
 
 function StopNotePaint(e) {
-
-  console.log(melody.notes);
-
   if (painting) {
     if (melody.getLength() < paintStart) {
       melody.notes.push(new Note(paintNum, paintStart - melody.getLength(), false, true));
     }
+
+    paintNote.classList.remove("drawing");
 
     melody.notes.push(new Note(paintNum, GetPaintLength(e.pageX)));
     painting = false;
     paintNote = null;
 
     GhostNextNotes();
+    melodyPlaySchedule = melodyToSchedule(melody);
+  }
+}
+
+function PreviewGhostNote(num) {
+  if (!painting && !pm.playing) {
+    am.playNoteNow(numToPitch(num, progression.keyNum), "piano");
   }
 }
 
@@ -114,6 +144,7 @@ async function loadMeloBuilder() {
   document.addEventListener("mouseup", (e) => StopNotePaint(e));
 
   melody = new Melody();
+  melodyPlaySchedule = melodyToSchedule(melody);
 
   GhostNextNotes();
 
