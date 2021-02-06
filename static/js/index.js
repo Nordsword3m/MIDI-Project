@@ -40,7 +40,7 @@ window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.addEventListener("click", e => {
-    let elem = e.target.parentElement.matches("[data-link]") ? e.target.parentElement : e.target;
+    let elem = e.target.parentElement && e.target.parentElement.matches("[data-link]") ? e.target.parentElement : e.target;
     if (elem.matches("[data-link]")) {
       e.preventDefault();
       navigateTo(elem.href);

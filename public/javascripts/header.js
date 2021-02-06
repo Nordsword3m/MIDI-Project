@@ -67,7 +67,7 @@ function sums(curList, startList, length, target) {
 }
 
 class Note {
-  constructor(num, length, isRoot, isRest) {
+  constructor(num, length, isRoot = false, isRest = false) {
     this.num = num;
     this.length = length;
     this.isRoot = isRoot;
