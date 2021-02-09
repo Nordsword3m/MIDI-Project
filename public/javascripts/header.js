@@ -626,8 +626,10 @@ function soundSchedule() {
 }
 
 function scheduleMeloNotes(step) {
-  if (melodyPlaySchedule[step] && !melodyPlaySchedule[step].isRest) {
-    am.playNote(numToPitch(melodyPlaySchedule[step].num, progression.keyNum), step * stepLength, melodyPlaySchedule[step].length, "piano");
+  if (melody.schedule[step].length > 0) {
+    for (let i = 0; i < melody.schedule[step].length; i++) {
+      am.playNote(numToPitch(melody.schedule[step][i].num, progression.keyNum), step * stepLength, melody.schedule[step][i].length, "piano");
+    }
   }
 }
 

@@ -1,33 +1,42 @@
 let melody;
 let melodyPlaySchedule;
 
+let noteRefs = new Map();
+
 let painting = false;
 let paintStart = 0;
 let paintNum;
 let paintNote;
 
+let dragging = false;
+let dragStart;
+let dragNoteStart;
+
 let ghosts = [];
 
 class Melody {
   constructor() {
-    this.notes = [];
+    this.schedule = new Array(256);
+
+    for (let i = 0; i < 256; i++) {
+      this.schedule[i] = [];
+    }
   }
 
-  getLength() {
-    return this.notes.reduce((x, n) => x + n.length, 0);
+  addNote(note, pos) {
+    this.schedule[(pos / 8) * 256].push(note);
   }
-}
 
-function melodyToSchedule(melo) {
-  let pos = 0;
-  let sched = new Array(256);
+  moveNote(note, pos) {
+    for (let i = 0; i < this.schedule.length; i++) {
+      if (this.schedule[i].includes(note)) {
+        this.schedule[i].splice(this.schedule[i].indexOf(note), 1);
+        break;
+      }
+    }
 
-  for (let n = 0; n
-  < melo.notes.length; n++) {
-    sched[pos * 256 * barLength] = melo.notes[n];
-    pos += melo.notes[n].length;
+    this.schedule[pos].push(note);
   }
-  return sched;
 }
 
 function ShowGhosts(noteNums, pos) {
@@ -40,18 +49,9 @@ function ShowGhosts(noteNums, pos) {
   return ghosts;
 }
 
-function GhostNextNotes() {
+function SetupScaleNotes() {
   let possib = [];
-  let meloRange;
-  let noteRange;
-
-  if (melody.getLength() === 0) {
-    meloRange = new NumRange(13, 48);
-  } else {
-    meloRange = new NumRange(melody.notes.reduce((x, n) => Math.min(x, n.num), 50), melody.notes.reduce((x, n) => Math.max(x, n.num), 0));
-  }
-
-  noteRange = new NumRange(Math.min(meloRange.max - 12, meloRange.min), Math.max(meloRange.min + 12, meloRange.max));
+  let noteRange = new NumRange(13, 48);
 
   let start;
   for (start = 0; start < 30; start++) {
@@ -67,7 +67,7 @@ function GhostNextNotes() {
     curNote++;
   }
 
-  ghosts = ShowGhosts(possib, melody.getLength());
+  ghosts = ShowGhosts(possib, 0);
 }
 
 function GetPaintLength(pageX) {
@@ -76,23 +76,11 @@ function GetPaintLength(pageX) {
 }
 
 function StartNotePaint(e, num) {
-  for (let i = ghosts.length - 1; i >= 0; i--) {
-    ghosts[i].parentNode.removeChild(ghosts[i]);
-  }
-
   paintNum = num;
   painting = true;
-  paintStart = Math.floor(Math.max((e.pageX / $(document).width()) * 8, 0, melody.getLength()) * 8) / 8;
+  paintStart = Math.floor(Math.max((e.pageX / $(document).width()) * 8, 0) * 8) / 8;
 
   paintNote = dem.CreateDragNote(paintStart, num, 1 / 8);
-}
-
-function UpdateGhostStart(e, ghost) {
-  let start = Math.floor(Math.max((e.pageX / $(document).width()) * 8, melody.getLength()) * 8) / 8;
-
-  ghost.style.transition = "all 0ms";
-  ghost.style.left = (((start - melody.getLength()) / 8) * 100) + "%";
-  ghost.style.width = "calc(" + (8 - start) + " * 12.5%)";
 }
 
 function UpdatePaintLength(e) {
@@ -102,26 +90,16 @@ function UpdatePaintLength(e) {
   }
 }
 
-function ResetGhost(ghost) {
-  ghost.style.transition = "all 300ms";
-  ghost.style.left = "0";
-  ghost.style.width = "calc(" + (8 - melody.getLength()) + " * 12.5%)";
-}
-
 function StopNotePaint(e) {
   if (painting) {
-    if (melody.getLength() < paintStart) {
-      melody.notes.push(new Note(paintNum, paintStart - melody.getLength(), false, true));
-    }
-
     paintNote.classList.remove("drawing");
 
-    melody.notes.push(new Note(paintNum, GetPaintLength(e.pageX)));
+    let newNote = new Note(paintNum, GetPaintLength(e.pageX));
+
+    melody.addNote(newNote, paintStart);
+    noteRefs.set(paintNote.id, newNote);
     painting = false;
     paintNote = null;
-
-    GhostNextNotes();
-    melodyPlaySchedule = melodyToSchedule(melody);
   }
 }
 
@@ -129,6 +107,57 @@ function PreviewGhostNote(num) {
   if (!painting && !pm.playing) {
     am.playNoteNow(numToPitch(num, progression.keyNum), "piano");
   }
+}
+
+function noteHover(e) {
+  if (!painting) {
+    let pos = e.clientX - e.target.getBoundingClientRect().left;
+
+    if (e.target.offsetWidth - pos <= window.innerWidth / 100) {
+      e.target.classList.add("endSelect");
+    } else {
+      e.target.classList.remove("endSelect");
+    }
+  }
+}
+
+function mouseMove(e) {
+  if (painting) {
+    UpdatePaintLength(e);
+  } else if (dragging) {
+    moveNote(e);
+  }
+}
+
+function moveNote(e) {
+  let dragDelta = 100 * (Math.floor(((e.clientX / $(document).width()) - dragStart / 100) * 64) / 64);
+
+  if (e.target.style.left !== "calc(" + (parseFloat(dragNoteStart) + dragDelta) + "%)") {
+    let newSchedPos = 256 * (parseFloat(dragNoteStart) + dragDelta) / 100;
+
+    melody.moveNote(noteRefs.get(e.target.id), newSchedPos);
+  }
+
+  e.target.style.left = "calc(" + dragNoteStart + "% + " + dragDelta + "%)";
+}
+
+function noteRelease(e) {
+  if (dragging) {
+    dragging = false;
+  }
+}
+
+function notePress(e) {
+  if (!painting) {
+    dragging = true;
+    dragStart = 100 * e.clientX / $(document).width();
+    dragNoteStart = e.target.style.left.substring(5, e.target.style.left.length - 2);
+  }
+}
+
+function noteMouseLeave(e) {
+  e.target.classList.remove("endSelect");
+  dragging = false;
 }
 
 async function loadMeloBuilder() {
@@ -140,13 +169,12 @@ async function loadMeloBuilder() {
     getById("display").removeEventListener("click", playFromClick);
   }
 
-  document.addEventListener("mousemove", (e) => UpdatePaintLength(e));
-  document.addEventListener("mouseup", (e) => StopNotePaint(e));
+  document.addEventListener("mousemove", mouseMove);
+  document.addEventListener("mouseup", StopNotePaint);
 
   melody = new Melody();
-  melodyPlaySchedule = melodyToSchedule(melody);
 
-  GhostNextNotes();
+  SetupScaleNotes();
 
   readyStates.readyUp("melo");
 }

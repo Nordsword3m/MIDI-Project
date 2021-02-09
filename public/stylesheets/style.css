@@ -144,11 +144,6 @@ h3.vert {
     box-shadow: 0 0 5px var(--green);
 }
 
-.note.draw:hover {
-    z-index: 30;
-    box-shadow: 0 0 5px 3px var(--blue);
-}
-
 .note.invisible {
     opacity: 0;
 }
@@ -177,6 +172,7 @@ h3.vert {
 .note.melo:not(.drawing):not(.draw):hover {
     background-color: var(--yellow);
     box-shadow: 0 0 5px 2px var(--orange);
+    cursor: move;
 }
 
 .note.root {
@@ -194,21 +190,29 @@ h3.vert {
     box-shadow: 0 0 5px var(--orange);
 }
 
+.note.startSelect {
+    border-left: 1vw solid rgba(255, 255, 255, 0.9);
+}
+
+.note.endSelect:after {
+    content: "";
+    background-color: white;
+    box-shadow: 0 0 5px white;
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: 1vw;
+    cursor: ew-resize;
+}
+
 .ghostCon {
     height: calc(100% / var(--meloNoteAmt));
     z-index: 5;
     position: absolute;
     width: 100%;
     left: 0;
-}
-
-.note.draw {
-    background-color: var(--green);
-    box-shadow: 0 0 5px var(--green);
-}
-
-.ghostCon .note.draw {
-    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
 #display {

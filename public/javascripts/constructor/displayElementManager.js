@@ -5,6 +5,8 @@ let chordNoteCon;
 let bassNoteCon;
 let meloNoteCon;
 
+let meloNoteId = 0;
+
 function DisplayElementManager() {
   this.displays = {};
   this.displays.ch = new DrumDisplay(getById("chDisp"), new Array(256));
@@ -34,7 +36,13 @@ DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
   note.style.width = "calc(" + length + " * 12.5%)";
   note.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
 
-  //note.addEventListener("click");
+  note.id = "meloNote" + meloNoteId;
+  meloNoteId++;
+
+  note.addEventListener("mousemove", noteHover);
+  note.addEventListener("mouseleave", noteMouseLeave);
+  note.addEventListener("mousedown", notePress);
+  note.addEventListener("mouseup", noteRelease);
 
   meloNoteCon.appendChild(note);
   return note;
@@ -46,19 +54,10 @@ DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
   ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
   ghostCon.style.left = "calc(" + start + " * 12.5%)";
 
-  let ghost = document.createElement("div");
-  ghost.className = "note melo draw";
-
-  ghost.style.width = "calc(" + (8 - start) + " * 12.5%)";
-
-  ghostCon.appendChild(ghost);
-
   ghostCon.addEventListener("mouseenter", (e) => {
     PreviewGhostNote(num);
-    UpdateGhostStart(e, ghost);
   });
-  ghostCon.addEventListener("mousemove", (e) => UpdateGhostStart(e, ghost));
-  ghostCon.addEventListener("mouseleave", () => ResetGhost(ghost));
+
   ghostCon.addEventListener("mousedown", (e) => StartNotePaint(e, num));
 
   meloNoteCon.appendChild(ghostCon);
