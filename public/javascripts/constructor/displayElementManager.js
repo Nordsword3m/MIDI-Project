@@ -28,7 +28,24 @@ class DrumDisplay {
   }
 }
 
-DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
+DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
+  let ghostCon = document.createElement("div");
+  ghostCon.className = "ghostCon";
+  ghostCon.dataset.num = num;
+  ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
+  ghostCon.style.left = "calc(" + start + " * 12.5%)";
+
+  ghostCon.addEventListener("mouseenter", (e) => {
+    PreviewNote(num);
+  });
+
+  ghostCon.addEventListener("mousedown", (e) => StartNotePaint(e, num));
+
+  meloNoteCon.appendChild(ghostCon);
+  return ghostCon;
+};
+
+DisplayElementManager.prototype.CreateMeloNote = function (start, num, length) {
   let note = document.createElement("div");
   note.className = "note melo drawing";
 
@@ -48,45 +65,14 @@ DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
   return note;
 };
 
-DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
-  let ghostCon = document.createElement("div");
-  ghostCon.className = "ghostCon";
-  ghostCon.dataset.num = num;
-  ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
-  ghostCon.style.left = "calc(" + start + " * 12.5%)";
-
-  ghostCon.addEventListener("mouseenter", (e) => {
-    PreviewGhostNote(num);
-  });
-
-  ghostCon.addEventListener("mousedown", (e) => StartNotePaint(e, num));
-
-  meloNoteCon.appendChild(ghostCon);
-  return ghostCon;
-};
-
 DisplayElementManager.prototype.PlaceMelody = function (melo) {
-  let meloNoteObjs = [];
-  let pos = 0;
-
-  meloNoteCon.textContent = "";
-
-  for (let n = 0; n < melo.notes.length; n++) {
-    let note = document.createElement("div");
-    note.className = "note melo";
-
-
-    note.style.left = "calc(" + pos + " * 12.5%)";
-    note.style.width = "calc(" + melo.notes[n].length + " * 12.5%)";
-    note.style.bottom = "calc(" + (melo.notes[n].num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
-
-    pos += melo.notes[n].length;
-
-    meloNoteCon.appendChild(note);
-    meloNoteObjs.push(note);
+  for (let i = 0; i < melo.length; i++) {
+    for (let n = 0; n < melo[i].length; n++) {
+      let note = this.CreateMeloNote(8 * i / 256, melo[i][n].num, melo[i][n].length);
+      note.classList.remove("drawing");
+      noteRefs.set(note.id, melo[i][n]);
+    }
   }
-
-  return meloNoteObjs;
 };
 
 DisplayElementManager.prototype.PlaceBassLine = function (bLine) {

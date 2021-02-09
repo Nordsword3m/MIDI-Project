@@ -159,6 +159,18 @@ function loadBassData() {
   }
 }
 
+function loadMelody() {
+  let meloData = JSON.parse(sessionStorage.getItem("melody"));
+
+  if (meloData) {
+    melody = new Melody(meloData);
+  } else {
+    melody = new Melody();
+  }
+
+  dem.PlaceMelody(melody.schedule);
+}
+
 //Mute/Solo variables
 let mutes;
 let solos;
@@ -592,6 +604,7 @@ async function loadHeader() {
   loadChordData();
   loadDrumData();
   loadBassData();
+  loadMelody();
 
   readyStates.readyUp("instDataLoad");
   loadTempo();

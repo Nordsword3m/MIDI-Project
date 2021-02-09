@@ -19,16 +19,21 @@ let ghosts = [];
 let erasing = false;
 
 class Melody {
-  constructor() {
-    this.schedule = new Array(256);
-
-    for (let i = 0; i < 256; i++) {
-      this.schedule[i] = [];
+  constructor(sched) {
+    if (sched) {
+      this.schedule = sched;
+    } else {
+      this.schedule = new Array(256);
+      for (let i = 0; i < 256; i++) {
+        this.schedule[i] = [];
+      }
     }
+
   }
 
   addNote(note, pos) {
     this.schedule[(pos / 8) * 256].push(note);
+    saveMelody();
   }
 
   moveNote(note, pos) {
@@ -40,6 +45,7 @@ class Melody {
     }
 
     this.schedule[pos].push(note);
+    saveMelody();
   }
 
   setNoteLength(note, length) {
@@ -49,6 +55,7 @@ class Melody {
         break;
       }
     }
+    saveMelody();
   }
 
   deleteNote(note) {
@@ -58,7 +65,12 @@ class Melody {
         break;
       }
     }
+    saveMelody();
   }
+}
+
+function saveMelody() {
+  sessionStorage.setItem("melody", JSON.stringify(melody.schedule));
 }
 
 function ShowGhosts(noteNums, pos) {
@@ -99,11 +111,12 @@ function GetPaintLength(pageX) {
 
 function StartNotePaint(e, num) {
   if (e.button === 0) {
+    PreviewNote(num);
     paintNum = num;
     painting = true;
     paintStart = Math.floor(Math.max((e.pageX / $(document).width()) * 8, 0) * 8) / 8;
 
-    paintNote = dem.CreateDragNote(paintStart, num, 1 / 8);
+    paintNote = dem.CreateMeloNote(paintStart, num, 1 / 8);
   }
 }
 
@@ -125,8 +138,8 @@ function StopNotePaint(e) {
   paintNote = null;
 }
 
-function PreviewGhostNote(num) {
-  if (!painting && !dragging && !pm.playing) {
+function PreviewNote(num, moveOverride) {
+  if ((!painting && !dragging || moveOverride) && !pm.playing) {
     am.playNoteNow(numToPitch(num, progression.keyNum), "piano");
   }
 }
@@ -153,6 +166,10 @@ function deleteNote(n) {
 function noteMouseEnter(e) {
   if (erasing) {
     deleteNote(e.target);
+  } else {
+    if (!painting) {
+      PreviewNote(noteRefs.get(e.target.id).num);
+    }
   }
 }
 
@@ -194,11 +211,10 @@ function mouseDown(e) {
 function changeNoteLength(e) {
   let dragDelta = 100 * (Math.ceil(((e.clientX / $(document).width()) - dragStart / 100) * 64) / 64);
 
-  let newLength = Math.max(100 / 64, (parseFloat(dragNoteLength) + dragDelta));
+  let newLength = Math.max(100 / 64, (100 * parseFloat(dragNoteLength) / 8 + dragDelta));
 
   if (dragNote.style.width !== "calc(" + newLength + "%)") {
     let newNoteLength = 8 * newLength / 100;
-
     melody.setNoteLength(noteRefs.get(dragNote.id), newNoteLength);
   }
 
@@ -207,8 +223,11 @@ function changeNoteLength(e) {
 
 function transposeNote(e) {
   if (e.target.classList.contains("ghostCon")) {
-    dragNote.style.bottom = e.target.style.bottom;
-    noteRefs.get(dragNote.id).num = e.target.dataset.num;
+    if (dragNote.style.bottom !== e.target.style.bottom) {
+      dragNote.style.bottom = e.target.style.bottom;
+      noteRefs.get(dragNote.id).num = e.target.dataset.num;
+      PreviewNote(e.target.dataset.num, true);
+    }
   }
 }
 
@@ -226,7 +245,7 @@ function shiftNote(e) {
   dragNote.style.left = "calc(" + newPos + "%)";
 }
 
-function noteRelease(e) {
+function noteRelease() {
   if (dragging) {
     dragging = false;
 
@@ -242,12 +261,12 @@ function noteRelease(e) {
 
       dragNote.style.width = "calc(" + newLength + "%)";
     }
-
   }
 }
 
 function notePress(e) {
-  if (!painting && e.button === 0) {
+  if (e.button === 0) {
+    PreviewNote(noteRefs.get(e.target.id).num);
     dragging = true;
     dragNote = e.target;
     dragStart = 100 * e.clientX / $(document).width();
@@ -265,6 +284,7 @@ async function loadMeloBuilder() {
 
   await readyStates.waitFor("instDataLoad");
 
+
   if (getById("display")) {
     getById("display").removeEventListener("click", playFromClick);
   }
@@ -273,8 +293,6 @@ async function loadMeloBuilder() {
   document.addEventListener("mouseup", mouseUp);
   document.addEventListener("contextmenu", (e) => e.preventDefault());
   document.addEventListener("mousedown", mouseDown);
-
-  melody = new Melody();
 
   SetupScaleNotes();
 
