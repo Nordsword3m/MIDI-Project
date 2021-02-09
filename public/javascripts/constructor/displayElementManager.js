@@ -41,8 +41,8 @@ DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
 
   note.addEventListener("mousemove", noteHover);
   note.addEventListener("mouseleave", noteMouseLeave);
+  note.addEventListener("mouseenter", noteMouseEnter);
   note.addEventListener("mousedown", notePress);
-  note.addEventListener("mouseup", noteRelease);
 
   meloNoteCon.appendChild(note);
   return note;
@@ -51,6 +51,7 @@ DisplayElementManager.prototype.CreateDragNote = function (start, num, length) {
 DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
   let ghostCon = document.createElement("div");
   ghostCon.className = "ghostCon";
+  ghostCon.dataset.num = num;
   ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
   ghostCon.style.left = "calc(" + start + " * 12.5%)";
 
