@@ -74,6 +74,10 @@ PlayManager.prototype.Playing = function () {
 
 PlayManager.prototype.SetHeadPos = function () {
   getById("playHead").style.left = this.relPlayPos * 100 + "%";
+
+  if (getById("miniPlayHead")) {
+    getById("miniPlayHead").style.left = this.relPlayPos * 100 + "%";
+  }
 };
 
 PlayManager.prototype.setPlayPos = function (pos) {

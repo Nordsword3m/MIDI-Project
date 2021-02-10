@@ -112,9 +112,6 @@ h3.vert {
 .configPanel.melo {
     padding: 0;
     background-color: transparent;
-    display: grid;
-    gap: 7px 7px;
-    grid-template-rows: auto auto;
 }
 
 .configPanel.chords, .configPanel.bass {
@@ -203,16 +200,6 @@ h3.vert {
     height: 100%;
     width: 1vw;
     cursor: ew-resize;
-}
-
-.ghostCon {
-    height: calc(100% / var(--meloNoteAmt));
-    z-index: 5;
-    position: absolute;
-    width: 100%;
-    left: 0;
-    background-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
 #display {
