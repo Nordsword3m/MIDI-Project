@@ -8,6 +8,10 @@
     align-content: center;
 }
 
+.meloConfigPanel > .icon {
+    font-size: 30px;
+}
+
 .ghostCon {
     height: calc(100% / var(--meloNoteAmt));
     z-index: 5;

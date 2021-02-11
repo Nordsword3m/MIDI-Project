@@ -343,9 +343,9 @@ h3.vert {
 
 .icon {
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-content: center;
+    align-items: center;
+
     font-size: 4vmin;
     font-style: oblique;
     font-weight: bolder;

@@ -87,6 +87,35 @@ class Melody {
 
     saveMelody();
   }
+
+  legato() {
+    let noteStart = undefined;
+    for (let p = 0; p < this.schedule.length; p++) {
+      if (this.schedule[p].length > 0) {
+        if (noteStart !== undefined) {
+          for (let n = 0; n < this.schedule[noteStart].length; n++) {
+            this.schedule[noteStart][n].length = 8 * (p - noteStart) / 256;
+          }
+        }
+        noteStart = p;
+      }
+    }
+
+    saveMelody();
+  }
+
+  staccato() {
+    for (let p = 0; p < this.schedule.length; p++) {
+      if (this.schedule[p].length > 0) {
+        for (let n = 0; n < this.schedule[p].length; n++) {
+          this.schedule[p][n].length = 1 / 8;
+        }
+      }
+
+    }
+
+    saveMelody();
+  }
 }
 
 function saveMelody() {
@@ -302,13 +331,18 @@ function noteMouseLeave(e) {
   e.target.classList.remove("endSelect");
 }
 
+function staccatoMelo() {
+  melody.staccato();
+  dem.PlaceMelody(melody.schedule);
+}
+
 function legatoMelo() {
-  
+  melody.legato();
+  dem.PlaceMelody(melody.schedule);
 }
 
 function doubleMelo() {
   melody.double();
-
   dem.PlaceMelody(melody.schedule);
 }
 
