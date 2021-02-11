@@ -1,9 +1,11 @@
 .meloConfigPanel {
-    padding: min(15px, 3vw);
+    padding: 5px;
     background-color: var(--panelColor);
-    display: grid;
-    gap: 7px min(30px, 6vw);
-    grid-template-columns: 1fr 1fr;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
 }
 
 .ghostCon {
@@ -20,7 +22,8 @@
     background-color: var(--dispColor);
     box-shadow: inset 0 0 5px 2px var(--purple);
     width: 100%;
-    height: 30px;
+    height: 50px;
+    overflow: hidden;
 }
 
 #miniPlayHead {

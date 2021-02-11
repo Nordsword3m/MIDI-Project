@@ -1,26 +1,7 @@
 #doubleChordsButton {
     position: absolute;
     left: 0;
-    margin-left: 20px;
-
-    font-size: 4vmin;
-    font-style: oblique;
-    font-weight: bolder;
-    cursor: pointer;
-
-    transition: all 100ms;
-    color: var(--iconColor);
-    text-shadow: 0 0 3px var(--iconColor);
-}
-
-#doubleChordsButton:hover {
-    color: var(--iconHoverColor);
-    text-shadow: 0 0 3px var(--iconHoverColor);
-}
-
-#doubleChordsButton:active {
-    color: var(--iconColor);
-    text-shadow: 0 0 3px var(--iconColor);
+    margin-left: 25px;
 }
 
 .chordControlPanel {

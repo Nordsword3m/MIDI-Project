@@ -83,6 +83,10 @@
     margin-left: 15px;
 }
 
+#playButton {
+    padding: 0 10px 0 5px;
+}
+
 .locBar {
     display: flex;
     align-items: center;
@@ -168,32 +172,12 @@ input[type=number] {
 
 .prefix {
     width: 5ch;
-
     display: flex;
     align-items: center;
 }
 
 #bpmSuffix, .inputBox, .prefix {
     font-size: min(max(3vw, 10px), 30px);
-}
-
-
-.icon {
-    font-size: min(45px, 4vw);
-    color: var(--iconColor);
-    text-shadow: 0 0 3px var(--iconColor);
-    transition: all 100ms;
-    margin: 1vw;
-}
-
-.icon:hover {
-    color: var(--iconHoverColor);
-    text-shadow: 0 0 3px var(--iconHoverColor);
-}
-
-.icon:active {
-    color: var(--iconColor);
-    text-shadow: 0 0 3px var(--iconColor);
 }
 
 #metronomeButton {

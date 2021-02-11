@@ -159,6 +159,7 @@ h3.vert {
 .note.melo {
     width: calc(60% / 256);
     height: calc(100% / var(--meloNoteAmt));
+    transition: all 300ms, left 0ms, width 0ms, bottom 0ms;
 }
 
 .note.drawing {
@@ -338,4 +339,29 @@ h3.vert {
 
 .slider::-moz-range-thumb:hover {
     opacity: 1;
+}
+
+.icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    font-size: 4vmin;
+    font-style: oblique;
+    font-weight: bolder;
+    cursor: pointer;
+
+    transition: all 100ms;
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
+}
+
+.icon:hover {
+    color: var(--iconHoverColor);
+    text-shadow: 0 0 3px var(--iconHoverColor);
+}
+
+.icon:active {
+    color: var(--iconColor);
+    text-shadow: 0 0 3px var(--iconColor);
 }

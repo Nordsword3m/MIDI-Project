@@ -67,6 +67,26 @@ class Melody {
     }
     saveMelody();
   }
+
+  double() {
+    let latest = 0;
+
+    for (let p = 0; p < this.schedule.length; p++) {
+      if (this.schedule[p].length > 0) {
+        for (let n = 0; n < this.schedule[p].length; n++) {
+          latest = Math.max(latest, p / 32 + this.schedule[p][n].length);
+        }
+      }
+    }
+
+    let extent = 256 * Math.max(1, Math.pow(2, Math.ceil(Math.log2(latest)))) / 8;
+
+    for (let p = 0; p < extent; p++) {
+      this.schedule[p + extent] = JSON.parse(JSON.stringify(this.schedule[p]));
+    }
+
+    saveMelody();
+  }
 }
 
 function saveMelody() {
@@ -122,7 +142,6 @@ function StartNotePaint(e, num) {
 
 function UpdatePaintLength(e) {
   if (painting) {
-    paintNote.style.transition = "all 0ms";
     paintNote.style.width = "calc(" + GetPaintLength(e.pageX) + " * 12.5%)";
   }
 }
@@ -186,11 +205,10 @@ function mouseUp(e) {
 }
 
 function mouseMove(e) {
-
-  if (!pm.playing) {
+  if (!pm.playing && curPage === "meloBuilder") {
     getById("miniPlayHead").style.left = 100 * e.pageX / $(document).width() + "%";
   }
-  
+
   if (painting) {
     UpdatePaintLength(e);
   } else if (dragging) {
@@ -216,7 +234,7 @@ function mouseDown(e) {
 function changeNoteLength(e) {
   let dragDelta = 100 * (Math.ceil(((e.clientX / $(document).width()) - dragStart / 100) * 64) / 64);
 
-  let newLength = Math.max(100 / 64, (100 * parseFloat(dragNoteLength) / 8 + dragDelta));
+  let newLength = Math.max(100 / 64, parseFloat(dragNoteLength) + dragDelta);
 
   if (dragNote.style.width !== "calc(" + newLength + "%)") {
     let newNoteLength = 8 * newLength / 100;
@@ -227,7 +245,7 @@ function changeNoteLength(e) {
 }
 
 function transposeNote(e) {
-  if (e.target.classList.contains("ghostCon")) {
+  if (e.target.classList && e.target.classList.contains("ghostCon")) {
     if (dragNote.style.bottom !== e.target.style.bottom) {
       dragNote.style.bottom = e.target.style.bottom;
       noteRefs.get(dragNote.id).num = e.target.dataset.num;
@@ -276,12 +294,22 @@ function notePress(e) {
     dragNote = e.target;
     dragStart = 100 * e.clientX / $(document).width();
     dragNoteStart = dragNote.style.left.substring(5, dragNote.style.left.length - 2);
-    dragNoteLength = dragNote.style.width.substring(5, dragNote.style.left.length - 2);
+    dragNoteLength = dragNote.style.width.substring(5, dragNote.style.width.length - 2);
   }
 }
 
 function noteMouseLeave(e) {
   e.target.classList.remove("endSelect");
+}
+
+function legatoMelo() {
+  
+}
+
+function doubleMelo() {
+  melody.double();
+
+  dem.PlaceMelody(melody.schedule);
 }
 
 async function loadMeloBuilder() {

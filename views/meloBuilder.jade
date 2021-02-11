@@ -12,6 +12,8 @@ include header
 
 .configPanel.melo
     .meloConfigPanel
+        #doubleMeloButton.icon(onclick="doubleMelo()")= "X2"
+        #legatoButton.fas.fa-angle-double-right.icon(onclick="legatoMelo()")
 
 script.
   loadMeloBuilder();

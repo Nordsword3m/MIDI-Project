@@ -9,7 +9,7 @@ include header
 
 .configPanel.chords
     .chordInfoBar
-        #doubleChordsButton(onclick="doubleChords()")= "X2"
+        #doubleChordsButton.icon(onclick="doubleChords()")= "X2"
         i.fas.fa-chevron-left.icon.disabled#leftChordArrow(onclick="setChord(curChord-1, true)")
         h3#chordPos= "Chord 1"
         i.fas.fa-chevron-right.icon#rightChordArrow(onclick="setChord(curChord+1, true)")

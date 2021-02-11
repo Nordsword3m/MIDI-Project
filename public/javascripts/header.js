@@ -144,7 +144,7 @@ function loadChordData() {
   progression.generateChords();
   chordPlaySchedule = progressionToSchedule(progression);
 
-  if (curPage === "constructor" || curPage === "chords") {
+  if (curPage === "constructor" || curPage === "chordBuilder") {
     dem.PlaceChordProgression(progression);
   }
 }
@@ -154,7 +154,7 @@ function loadBassData() {
 
   generateBassNotes();
 
-  if (curPage === "constructor" || curPage === "bass") {
+  if (curPage === "constructor" || curPage === "bassBuilder") {
     dem.PlaceBassLine(bassLine);
   }
 }
@@ -168,7 +168,9 @@ function loadMelody() {
     melody = new Melody();
   }
 
-  dem.PlaceMelody(melody.schedule);
+  if (curPage === "constructor" || curPage === "meloBuilder") {
+    dem.PlaceMelody(melody.schedule);
+  }
 }
 
 //Mute/Solo variables
@@ -393,7 +395,7 @@ function loadDrumData() {
 
   percNoteArr = dnm.CalculatePerc(drumData.perc1Bars, parseInt(drumData.perc1Pos), drumData.perc2Bars, parseInt(drumData.perc2Pos));
 
-  if (curPage === "constructor" || curPage === "durms") {
+  if (curPage === "constructor" || curPage === "durmBuilder") {
     dem.InitialiseDrumNotes();
 
     dem.Display("ch", chNoteArr);

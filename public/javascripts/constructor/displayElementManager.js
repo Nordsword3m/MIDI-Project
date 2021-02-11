@@ -35,8 +35,10 @@ DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
   ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
   ghostCon.style.left = "calc(" + start + " * 12.5%)";
 
-  ghostCon.addEventListener("mouseenter", (e) => {
-    PreviewNote(num);
+  ghostCon.addEventListener("mousedown", (e) => {
+    if (e.button === 2) {
+      PreviewNote(num);
+    }
   });
 
   ghostCon.addEventListener("mousedown", (e) => StartNotePaint(e, num));
@@ -66,6 +68,8 @@ DisplayElementManager.prototype.CreateMeloNote = function (start, num, length) {
 };
 
 DisplayElementManager.prototype.PlaceMelody = function (melo) {
+  meloNoteCon.querySelectorAll(".note").forEach((e) => e.remove());
+
   for (let i = 0; i < melo.length; i++) {
     for (let n = 0; n < melo[i].length; n++) {
       let note = this.CreateMeloNote(8 * i / 256, melo[i][n].num, melo[i][n].length);
