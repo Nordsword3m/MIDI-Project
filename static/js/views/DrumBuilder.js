@@ -4,6 +4,6 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.setTitle("Drum Builder");
-    this.viewPath = "/drums";
+    this.viewPath = "/constructor/drums";
   }
 }

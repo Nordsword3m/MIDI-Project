@@ -27,20 +27,28 @@ mixin header(page)
             h1.title= "Midi Ting Fi Real"
 
             if page === "drumBuilder"
-                a(href="/" data-link)
-                    i.fas.fa-drum.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+                a(href="/constructor" data-link)
+                    i.fas.fa-drum.icon#pageChange(onmouseover="togglePageChangeIcon();", onmouseleave="togglePageChangeIcon();")
 
             else if page === "chordBuilder"
-                a(href="/" data-link)
-                    i.fas.fa-music.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+                a(href="/constructor" data-link)
+                    i.fas.fa-music.icon#pageChange(onmouseover="togglePageChangeIcon();", onmouseleave="togglePageChangeIcon();")
 
             else if page === "bassBuilder"
-                a(href="/" data-link)
-                    i.fas.fa-guitar.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+                a(href="/constructor" data-link)
+                    i.fas.fa-guitar.icon#pageChange(onmouseover="togglePageChangeIcon();", onmouseleave="togglePageChangeIcon();")
 
             else if page === "meloBuilder"
-                a(href="/" data-link)
-                    i.fas.fa-bolt.icon#leaveInstrument(onmouseover="toggleLeaveInstrumentIcon();", onmouseleave="toggleLeaveInstrumentIcon();")
+                a(href="/constructor" data-link)
+                    i.fas.fa-bolt.icon#pageChange(onmouseover="togglePageChangeIcon();", onmouseleave="togglePageChangeIcon();")
+
+            else if page === "constructor"
+                a(href="/arranger" data-link)
+                    i.fas.fa-layer-group.icon#pageChange
+
+            else if page === "arranger"
+                a(href="/constructor" data-link)
+                    i.fas.fa-pencil-alt.icon#pageChange
 
         .toolBar
             if page === "drumBuilder"

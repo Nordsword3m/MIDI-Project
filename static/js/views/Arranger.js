@@ -3,7 +3,7 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
   constructor() {
     super();
-    this.setTitle("Bass Builder");
-    this.viewPath = "/constructor/bass";
+    this.setTitle("Arranger");
+    this.viewPath = "/arranger";
   }
 }

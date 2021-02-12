@@ -47,25 +47,6 @@ function getFromScale(scale, num) {
   return ((Math.floor(num / 7) * 12) + scaleNotes[(num + 70) % 7]);
 }
 
-function sums(curList, startList, length, target) {
-  let curSum = curList.reduce((a, b) => a + b, 0);
-  let results = [];
-
-  if (curList.length < length) {
-    for (let i = 0; i < startList.length; i++) {
-      let newList = curList.concat(startList[i]);
-      let newSum = curSum + startList[i];
-
-      if (newSum === target && newList.length === length) {
-        results.push(newList);
-      } else if (newSum < target) {
-        sums(newList, startList, length, target).forEach((x) => results.push(x));
-      }
-    }
-  }
-  return results;
-}
-
 class Note {
   constructor(num, length, isRoot = false, isRest = false) {
     this.num = num;
@@ -441,8 +422,8 @@ function saveMuteSolos() {
   sessionStorage.setItem("solos", JSON.stringify(solos));
 }
 
-function toggleLeaveInstrumentIcon() {
-  getById("leaveInstrument").classList.toggle('fa-sign-out-alt');
+function togglePageChangeIcon() {
+  getById("pageChange").classList.toggle('fa-sign-out-alt');
 }
 
 function saveTempo() {
@@ -567,6 +548,7 @@ async function oneTimeLoadHeader() {
       startPlaying();
     }
   });
+
   readyStates.readyUp("headerOneTime");
 }
 

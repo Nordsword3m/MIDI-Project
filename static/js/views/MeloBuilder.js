@@ -4,6 +4,6 @@ export default class extends AbstractView {
   constructor() {
     super();
     this.setTitle("Melody Builder");
-    this.viewPath = "/melo";
+    this.viewPath = "/constructor/melo";
   }
 }

@@ -25,27 +25,31 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get(["/", "/chords", "/drums", "/bass", "/melo"], (req, res) => {
+app.get("/*", (req, res) => {
   res.render("index.jade");
+});
+
+app.post("/arranger", (req, res) => {
+  res.render("arranger.jade");
 });
 
 app.post("/constructor", (req, res) => {
   res.render("constructor.jade");
 });
 
-app.post("/chords", (req, res) => {
+app.post("/constructor/chords", (req, res) => {
   res.render("chordBuilder.jade");
 });
 
-app.post("/drums", (req, res) => {
+app.post("/constructor/drums", (req, res) => {
   res.render("drumBuilder.jade");
 });
 
-app.post("/bass", (req, res) => {
+app.post("/constructor/bass", (req, res) => {
   res.render("bassBuilder.jade");
 });
 
-app.post("/melo", (req, res) => {
+app.post("/constructor/melo", (req, res) => {
   res.render("meloBuilder.jade");
 });
 

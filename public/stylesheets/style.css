@@ -3,6 +3,7 @@
 @import "constructor.css";
 @import "chordBuilder.css";
 @import "meloBuilder.css";
+@import "arranger.css";
 
 :root {
     --panelColor: #222222;
@@ -114,7 +115,7 @@ h3.vert {
     background-color: transparent;
 }
 
-.configPanel.chords, .configPanel.bass {
+.configPanel.chords, .configPanel.bass, .configPanel.arranger {
     padding: 15px;
     display: flex;
     flex-direction: column;

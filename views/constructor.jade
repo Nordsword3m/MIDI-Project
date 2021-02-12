@@ -6,7 +6,7 @@ include header
         #playHead
     .trackCon
         .trackButton
-            a(href="/drums" data-link)
+            a(href="/constructor/drums" data-link)
                 .i.fas.fa-drum.trackIcon
             .muteSoloSwitch
                 .muteButton(data-inst="drums" onclick="toggleMute('drums');")= "M"
@@ -20,7 +20,7 @@ include header
                 .instrumentDisp#percDisp
     .trackCon
         .trackButton
-            a(href="/chords" data-link)
+            a(href="/constructor/chords" data-link)
                 .i.fas.fa-music.trackIcon
             .muteSoloSwitch
                 .muteButton(data-inst="chords" onclick="toggleMute('chords');")= "M"
@@ -31,7 +31,7 @@ include header
                 .instrumentDisp#chordNoteCon
     .trackCon
         .trackButton
-            a(href="/bass" data-link)
+            a(href="/constructor/bass" data-link)
                 .i.fas.fa-guitar.trackIcon
             .muteSoloSwitch
                 .muteButton(data-inst="bass" onclick="toggleMute('bass');")= "M"
@@ -42,7 +42,7 @@ include header
                 .instrumentDisp#bassNoteCon
     .trackCon
         .trackButton
-            a(href="/melo" data-link)
+            a(href="/constructor/melo" data-link)
                 .i.fas.fa-bolt.trackIcon
             .muteSoloSwitch
                 .muteButton(data-inst="melo" onclick="toggleMute('melo');")= "M"
