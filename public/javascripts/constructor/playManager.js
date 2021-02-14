@@ -9,6 +9,8 @@ function PlayManager() {
   this.playPos = 0;
   this.relPlayPos = 0;
 
+  this.curPatt = 0;
+
   this.playing = false;
   this.prevPlayTime = 0;
   this.playTimerID = undefined;
@@ -55,6 +57,7 @@ PlayManager.prototype.TogglePlaying = async function (pos, play) {
     this.playTimerID = setInterval(this.Playing.bind(this), 1);
   } else {
     clearInterval(this.playTimerID);
+    this.curPatt = 0;
     this.setPlayPos(0);
     this.setNextChunk(0);
   }
@@ -73,7 +76,11 @@ PlayManager.prototype.Playing = function () {
 };
 
 PlayManager.prototype.SetHeadPos = function () {
-  getById("playHead").style.left = this.relPlayPos * 100 + "%";
+  if (curPage === "arranger") {
+    getById("playHead").style.left = (this.curPatt / arrangement.getLength() + (this.relPlayPos / arrangement.getLength())) * 100 + "%";
+  } else {
+    getById("playHead").style.left = this.relPlayPos * 100 + "%";
+  }
 
   if (getById("miniPlayHead")) {
     getById("miniPlayHead").style.left = this.relPlayPos * 100 + "%";
@@ -90,6 +97,11 @@ PlayManager.prototype.setPlayPos = function (pos) {
       this.relPlayPos--;
     }
     am.SetLoopStart(this.relPlayPos);
+
+    this.curPatt++;
+    if (this.curPatt >= arrangement.getLength()) {
+      this.curPatt = 0;
+    }
   } else if (this.relPlayPos < 0) {
     while (this.relPlayPos < 0) {
       this.relPlayPos++;

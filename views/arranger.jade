@@ -2,40 +2,45 @@ include header
 +header("arranger")
 
 .patternArrangement
-    .patternCon#chordCon
+    #arrangerPlayHeadCon
+        #playHead
+    .patternCon
         .patternInfo
             .patternLabel= "Chords"
-        .patternDisplay
+        .patternDisplay#chordsPattDisplay
 
-    .patternCon#meloCon
+    .patternCon
         .patternInfo
             .patternLabel= "Melody"
-        .patternDisplay
+        .patternDisplay#meloPattDisplay
 
-    .patternCon#bassCon
+    .patternCon
         .patternInfo
             .patternLabel= "Bass"
-        .patternDisplay
+        .patternDisplay#bassPattDisplay
 
-    .patternCon#kickCon
+    .patternCon
         .patternInfo
             .patternLabel= "Kick"
-        .patternDisplay
+        .patternDisplay#kickPattDisplay
 
-    .patternCon#snareCon
+    .patternCon
         .patternInfo
             .patternLabel= "Snare"
-        .patternDisplay
+        .patternDisplay#snarePattDisplay
 
-    .patternCon#chCon
+    .patternCon
         .patternInfo
             .patternLabel= "Hihat"
-        .patternDisplay
+        .patternDisplay#chPattDisplay
 
-    .patternCon#percCon
+    .patternCon
         .patternInfo
             .patternLabel= "Perc"
-        .patternDisplay
+        .patternDisplay#percPattDisplay
 
 .configPanel.arranger
     .spathe(style="height: 200px")
+
+script.
+  loadArranger();

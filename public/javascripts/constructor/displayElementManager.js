@@ -28,6 +28,29 @@ class DrumDisplay {
   }
 }
 
+DisplayElementManager.prototype.PlaceArrangement = function (arrangement) {
+  document.querySelectorAll(".patternDisplay").forEach((x) => x.textContent = "");
+
+  let patternAmt = arrangement.getLength();
+
+  document.documentElement.style.setProperty("--patternAmt", patternAmt);
+
+  let insts = Object.keys(arrangement.arr);
+
+  for (let p = 0; p < patternAmt; p++) {
+    insts.forEach((i) => {
+      if (arrangement.arr[i][p]) {
+        let patt = document.createElement("div");
+
+        patt.className = "pattern " + i;
+        patt.style.left = "calc(100% * " + (p / patternAmt) + ")";
+
+        getById(i + "PattDisplay").appendChild(patt);
+      }
+    });
+  }
+};
+
 DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
   let ghostCon = document.createElement("div");
   ghostCon.className = "ghostCon";

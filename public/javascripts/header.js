@@ -599,8 +599,6 @@ async function loadHeader() {
     disp.addEventListener("click", playFromClick);
   }
 
-  getById("playButton").addEventListener("click", startPlaying);
-
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
 }
 

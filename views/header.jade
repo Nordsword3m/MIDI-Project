@@ -72,7 +72,7 @@ mixin header(page)
 
                 p#metronomeButton(onclick="toggleMetronome(this);")= "1234"
 
-            i.fas.fa-play.icon#playButton
+            i.fas.fa-play.icon#playButton(onclick="startPlaying()")
 
     script.
       loadHeader();
