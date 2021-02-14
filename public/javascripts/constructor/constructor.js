@@ -3,7 +3,7 @@ let playHead;
 async function loadConstructor() {
   readyStates.declarePresence("constructor");
 
-  let playHeadCon = getById("playHeadCon");
+  let playHeadCon = getById("constructorPlayHeadCon");
 
   playHeadCon.addEventListener("click", function (event) {
     if (pm.playing) {

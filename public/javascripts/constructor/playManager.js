@@ -21,12 +21,15 @@ function PlayManager() {
 }
 
 PlayManager.prototype.NextChunk = function () {
+  let nextPatt = this.curPatt;
+
   if (this.relPlayPos + chunkSize * this.chunkPreRender >= 1) {
     am.SetLoopStart(this.relPlayPos - 1);
+    nextPatt = getNextPatt();
   }
 
   scheduleMets();
-  soundSchedule();
+  soundSchedule(nextPatt);
 
   this.setNextChunk(this.nextChunk + chunkSize);
 };
@@ -87,6 +90,10 @@ PlayManager.prototype.SetHeadPos = function () {
   }
 };
 
+function getNextPatt() {
+  return pm.curPatt >= arrangement.getLength() - 1 ? 0 : pm.curPatt + 1;
+}
+
 PlayManager.prototype.setPlayPos = function (pos) {
   let posDelta = pos - this.playPos;
   this.playPos = pos;
@@ -98,10 +105,7 @@ PlayManager.prototype.setPlayPos = function (pos) {
     }
     am.SetLoopStart(this.relPlayPos);
 
-    this.curPatt++;
-    if (this.curPatt >= arrangement.getLength()) {
-      this.curPatt = 0;
-    }
+    this.curPatt = getNextPatt();
   } else if (this.relPlayPos < 0) {
     while (this.relPlayPos < 0) {
       this.relPlayPos++;

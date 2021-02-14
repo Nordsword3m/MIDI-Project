@@ -31,12 +31,12 @@ class Arrangement {
       ["chords", "bass", "kick", "snare", "ch", "perc"]];
 
     let v2 = [["chords", "melo", "bass", "kick"],
-      ["chords", "bass", "kick", "perc"]];
+      ["chords", "melo", "bass", "kick", "ch", "perc"]];
 
     let outro = [["chords", "bass", "kick", "ch"],
       ["chords", "bass"]];
 
-    let sectionOrder = [intro, chorus, v1, chorus, v2, chorus, outro];
+    let sectionOrder = [intro, chorus, v1, chorus, v2, chorus, chorus, outro];
 
     let pattPos = 0;
 

@@ -602,21 +602,95 @@ async function loadHeader() {
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
 }
 
-function soundSchedule() {
+function soundSchedule(nextPatt) {
   for (let i = 0; i < chunkSize * 256; i++) {
     const step = pm.relNextChunk * 256 + i;
-    if (!mutes.drums && (!soloPresent() || solos.drums || solos.kick || solos.ch || solos.perc || solos.snare)) {
-      scheduleDrumNotes(step);
+
+    if (curPage === "arranger") {
+      if (arrangement.arr.chords[nextPatt]) {
+        scheduleChordNotes(step);
+      }
+
+      if (arrangement.arr.melo[nextPatt]) {
+        scheduleMeloNotes(step);
+      }
+
+      if (arrangement.arr.bass[nextPatt]) {
+        scheduleBassNotes(step);
+      }
+
+      if (arrangement.arr.kick[nextPatt]) {
+        scheduleKickNotes(step);
+      }
+
+      if (arrangement.arr.snare[nextPatt]) {
+        scheduleSnareNotes(step);
+      }
+
+      if (arrangement.arr.ch[nextPatt]) {
+        scheduleChNotes(step);
+      }
+
+      if (arrangement.arr.perc[nextPatt]) {
+        schedulePercNotes(step);
+      }
+
+    } else {
+      if (!mutes.drums && (!soloPresent() || solos.drums || solos.kick || solos.ch || solos.perc || solos.snare)) {
+        scheduleDrumNotes(step);
+      }
+      if (!mutes.chords && (!soloPresent() || solos.chords)) {
+        scheduleChordNotes(step);
+      }
+      if (!mutes.bass && (!soloPresent() || solos.bass)) {
+        scheduleBassNotes(step);
+      }
+      if (!mutes.melo && (!soloPresent() || solos.melo)) {
+        scheduleMeloNotes(step);
+      }
     }
-    if (!mutes.chords && (!soloPresent() || solos.chords)) {
-      scheduleChordNotes(step);
-    }
-    if (!mutes.bass && (!soloPresent() || solos.bass)) {
-      scheduleBassNotes(step);
-    }
-    if (!mutes.melo && (!soloPresent() || solos.melo)) {
-      scheduleMeloNotes(step);
-    }
+  }
+}
+
+function scheduleDrumNotes(step) {
+  if (!mutes.ch && (!soloPresent() || solos.ch || solos.drums && !soloInDrums())) {
+    scheduleChNotes(step);
+  }
+
+  if (!mutes.kick && (!soloPresent() || solos.kick || solos.drums && !soloInDrums())) {
+    scheduleKickNotes(step);
+  }
+
+  if (!mutes.snare && (!soloPresent() || solos.snare || solos.drums && !soloInDrums())) {
+    scheduleSnareNotes(step);
+  }
+
+  if (!mutes.perc && (!soloPresent() || solos.perc || solos.drums && !soloInDrums())) {
+    schedulePercNotes(step);
+  }
+}
+
+function scheduleChNotes(step) {
+  if (chNoteArr[step] > 0) {
+    am.play("ch", step * stepLength);
+  }
+}
+
+function scheduleKickNotes(step) {
+  if (kickNoteArr[step] > 0) {
+    am.play("kick", step * stepLength);
+  }
+}
+
+function scheduleSnareNotes(step) {
+  if (snrNoteArr[step] > 0) {
+    am.play("snr", step * stepLength);
+  }
+}
+
+function schedulePercNotes(step) {
+  if (percNoteArr[step] > 0) {
+    am.play("perc", step * stepLength);
   }
 }
 
@@ -648,30 +722,4 @@ function soloPresent() {
 
 function soloInDrums() {
   return solos.kick || solos.ch || solos.snare || solos.perc;
-}
-
-function scheduleDrumNotes(step) {
-  if (chNoteArr[step] > 0) {
-    if (!mutes.ch && (!soloPresent() || solos.ch || solos.drums && !soloInDrums())) {
-      am.play("ch", step * stepLength);
-    }
-  }
-
-  if (kickNoteArr[step] > 0) {
-    if (!mutes.kick && (!soloPresent() || solos.kick || solos.drums && !soloInDrums())) {
-      am.play("kick", step * stepLength);
-    }
-  }
-
-  if (snrNoteArr[step] > 0) {
-    if (!mutes.snare && (!soloPresent() || solos.snare || solos.drums && !soloInDrums())) {
-      am.play("snr", step * stepLength);
-    }
-  }
-
-  if (percNoteArr[step] > 0) {
-    if (!mutes.perc && (!soloPresent() || solos.perc || solos.drums && !soloInDrums())) {
-      am.play("perc", step * stepLength);
-    }
-  }
 }
