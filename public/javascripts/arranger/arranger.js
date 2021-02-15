@@ -21,8 +21,7 @@ class Arrangement {
   }
 
   setArrangement() {
-
-    let intro = [["chords"], ["chords", "bass"]];
+    let intro = [["chords"], ["chords", "ch"]];
 
     let chorus = [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
       ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]];
@@ -31,10 +30,10 @@ class Arrangement {
       ["chords", "bass", "kick", "snare", "ch", "perc"]];
 
     let v2 = [["chords", "melo", "bass", "kick"],
-      ["chords", "melo", "bass", "kick", "ch", "perc"]];
+      ["chords", "melo", "bass", "kick", "ch"]];
 
     let outro = [["chords", "bass", "kick", "ch"],
-      ["chords", "bass"]];
+      ["chords", "ch"]];
 
     let sectionOrder = [intro, chorus, v1, chorus, v2, chorus, chorus, outro];
 
@@ -52,12 +51,22 @@ class Arrangement {
   }
 }
 
-async function
+function playArrangementFromClick(e) {
+  pm.curPatt = Math.floor((e.layerX / e.target.offsetWidth) / (1 / arrangement.getLength()));
+  
+  pm.TogglePlaying(
+    (((e.layerX / e.target.offsetWidth) % (1 / arrangement.getLength())) / (1 / arrangement.getLength())),
+    true
+  ).then();
+}
 
-loadArranger() {
+async function loadArranger() {
   arrangement = new Arrangement();
 
   await readyStates.waitFor("demLoad");
+
+  getById("arrangerPlayHeadCon").addEventListener("click", playArrangementFromClick);
+
 
   dem.PlaceArrangement(arrangement);
 }
