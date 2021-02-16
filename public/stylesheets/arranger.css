@@ -19,6 +19,7 @@
 
 .floatSect {
     position: absolute;
+    background-color: var(--dispColor);
 }
 
 .hiddenSect {

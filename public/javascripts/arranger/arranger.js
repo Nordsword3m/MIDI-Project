@@ -3,7 +3,10 @@ let grabbing;
 let origSect;
 let floatSect;
 
+let timeLine;
+
 let grabStartX;
+let prevSectHov;
 
 class Arrangement {
   constructor() {
@@ -78,8 +81,9 @@ function grabSection(e) {
   floatSect.style.left = "calc(" + (e.clientX - grabStartX) + "px)";
   floatSect.innerText = origSect.innerText;
 
+  timeLine.appendChild(floatSect);
 
-  getById("timeLine").appendChild(floatSect);
+  prevSectHov = Math.floor(((floatSect.offsetLeft / timeLine.offsetWidth) - ((2 / 2) / arrangement.getLength())) / (2 / arrangement.getLength())) + 1;
 }
 
 function releaseSection(e) {
@@ -96,6 +100,16 @@ function releaseSection(e) {
 function dragSection(e) {
   if (grabbing) {
     floatSect.style.left = "calc(" + Math.min(getById("timeLine").offsetWidth - floatSect.offsetWidth, Math.max(0, (e.clientX - grabStartX))) + "px)";
+
+    let curSectHover = Math.floor(((floatSect.offsetLeft / timeLine.offsetWidth) - ((2 / 2) / arrangement.getLength())) / (2 / arrangement.getLength())) + 1;
+
+    if (curSectHover < prevSectHov) {
+      timeLine.childNodes[curSectHover].before(timeLine.childNodes[prevSectHov]);
+    } else if (curSectHover > prevSectHov) {
+      timeLine.childNodes[prevSectHov].before(timeLine.childNodes[curSectHover]);
+    }
+
+    prevSectHov = curSectHover;
   }
 }
 
@@ -115,6 +129,7 @@ async function loadArranger() {
   window.addEventListener("mousemove", dragSection);
   window.addEventListener("mouseup", releaseSection);
 
+  timeLine = getById("timeLine");
 
   dem.PlaceArrangement(arrangement);
 }
