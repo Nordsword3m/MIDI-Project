@@ -3,6 +3,37 @@
     --patternInfoWidth: 80px;
 }
 
+.songSection, .hiddenSect, .floatSect {
+    height: 100%;
+    width: calc(100% * 2 / var(--patternAmt));
+}
+
+.songSection, .floatSect {
+    background-image: linear-gradient(var(--green) 20%, transparent 100%);
+    box-shadow: 0 0 5px var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vw;
+}
+
+.floatSect {
+    position: absolute;
+}
+
+.hiddenSect {
+    color: transparent;
+}
+
+#timeLine {
+    height: 40px;
+    width: 100%;
+    background-color: var(--dispColor);
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
 #arrangerPlayHeadCon {
     position: absolute;
     right: 0;
@@ -20,40 +51,16 @@
     transition: all 300ms;
 }
 
-.pattern.chords {
+.pattern.chords, .pattern.bass, .pattern.snare, .pattern.perc {
     background-image: linear-gradient(var(--purple) 20%, transparent 100%);
     box-shadow: 0 0 5px var(--purple);
 }
 
-.pattern.melo {
+.pattern.melo, .pattern.kick, .pattern.ch {
     background-image: linear-gradient(var(--darkblue) 20%, transparent 100%);
     box-shadow: 0 0 5px var(--darkblue);
 }
 
-.pattern.bass {
-    background-image: linear-gradient(var(--purple) 20%, transparent 100%);
-    box-shadow: 0 0 5px var(--purple);
-}
-
-.pattern.kick {
-    background-image: linear-gradient(var(--darkblue) 20%, transparent 100%);
-    box-shadow: 0 0 5px var(--darkblue);
-}
-
-.pattern.snare {
-    background-image: linear-gradient(var(--purple) 20%, transparent 100%);
-    box-shadow: 0 0 5px var(--purple);
-}
-
-.pattern.ch {
-    background-image: linear-gradient(var(--darkblue) 20%, transparent 100%);
-    box-shadow: 0 0 5px var(--darkblue);
-}
-
-.pattern.perc {
-    background-image: linear-gradient(var(--purple) 20%, transparent 100%);
-    box-shadow: 0 0 5px var(--purple);
-}
 
 .patternDisplay {
     flex-grow: 1;

@@ -1,4 +1,9 @@
 let arrangement;
+let grabbing;
+let origSect;
+let floatSect;
+
+let grabStartX;
 
 class Arrangement {
   constructor() {
@@ -53,11 +58,45 @@ class Arrangement {
 
 function playArrangementFromClick(e) {
   pm.curPatt = Math.floor((e.layerX / e.target.offsetWidth) / (1 / arrangement.getLength()));
-  
+
   pm.TogglePlaying(
     (((e.layerX / e.target.offsetWidth) % (1 / arrangement.getLength())) / (1 / arrangement.getLength())),
     true
   ).then();
+}
+
+function grabSection(e) {
+  grabbing = true;
+  origSect = e.target;
+  grabStartX = e.clientX - origSect.offsetLeft;
+
+  origSect.classList.remove("songSection");
+  origSect.classList.add("hiddenSect");
+
+  floatSect = document.createElement("div");
+  floatSect.className = "floatSect";
+  floatSect.style.left = "calc(" + (e.clientX - grabStartX) + "px)";
+  floatSect.innerText = origSect.innerText;
+
+
+  getById("timeLine").appendChild(floatSect);
+}
+
+function releaseSection(e) {
+  if (grabbing) {
+    grabbing = false;
+
+    origSect.classList.add("songSection");
+    origSect.classList.remove("hiddenSect");
+
+    floatSect.remove();
+  }
+}
+
+function dragSection(e) {
+  if (grabbing) {
+    floatSect.style.left = "calc(" + Math.min(getById("timeLine").offsetWidth - floatSect.offsetWidth, Math.max(0, (e.clientX - grabStartX))) + "px)";
+  }
 }
 
 async function loadArranger() {
@@ -66,6 +105,15 @@ async function loadArranger() {
   await readyStates.waitFor("demLoad");
 
   getById("arrangerPlayHeadCon").addEventListener("click", playArrangementFromClick);
+
+  let sectObjs = getByClass("songSection");
+
+  for (let i = 0; i < sectObjs.length; i++) {
+    sectObjs[i].addEventListener("mousedown", grabSection);
+  }
+
+  window.addEventListener("mousemove", dragSection);
+  window.addEventListener("mouseup", releaseSection);
 
 
   dem.PlaceArrangement(arrangement);
