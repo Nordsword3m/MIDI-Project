@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2vw;
+    font-size: min(20px, 2vw);
 }
 
 .floatSect {

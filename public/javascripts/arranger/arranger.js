@@ -11,6 +11,35 @@ let prevSectHov;
 class Arrangement {
   constructor() {
 
+    this.arr = {};
+
+    this.structure = ["intro", "chorus", "verse 1", "chorus", "verse 2", "chorus", "chorus", "outro"];
+
+    this.sections = new Map();
+
+    this.sections.set("intro", [["chords"],
+      ["chords", "ch"]]);
+
+    this.sections.set("chorus", [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
+      ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]);
+
+    this.sections.set("verse 1", [["chords", "bass", "kick", "snare", "ch"],
+      ["chords", "bass", "kick", "snare", "ch", "perc"]]);
+
+    this.sections.set("verse 2", [["chords", "melo", "bass", "kick"],
+      ["chords", "melo", "bass", "kick", "ch"]]);
+
+    this.sections.set("outro", [["chords", "bass", "kick", "ch"],
+      ["chords", "ch"]]);
+
+    this.setArrangement();
+  }
+
+  getLength() {
+    return Object.values(this.arr).map(x => x.length).reduce((x, p) => Math.max(p, x));
+  }
+
+  setArrangement() {
     this.arr = {
       chords: [],
       melo: [],
@@ -21,41 +50,25 @@ class Arrangement {
       perc: []
     };
 
-    this.setArrangement();
-  }
-
-  getLength() {
-    return Object.values(this.arr).map(x => x.length).reduce((x, p) => Math.max(p, x));
-  }
-
-  setArrangement() {
-    let intro = [["chords"], ["chords", "ch"]];
-
-    let chorus = [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
-      ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]];
-
-    let v1 = [["chords", "bass", "kick", "snare", "ch"],
-      ["chords", "bass", "kick", "snare", "ch", "perc"]];
-
-    let v2 = [["chords", "melo", "bass", "kick"],
-      ["chords", "melo", "bass", "kick", "ch"]];
-
-    let outro = [["chords", "bass", "kick", "ch"],
-      ["chords", "ch"]];
-
-    let sectionOrder = [intro, chorus, v1, chorus, v2, chorus, chorus, outro];
-
     let pattPos = 0;
 
-    for (let s = 0; s < sectionOrder.length; s++) {
-      for (let p = 0; p < sectionOrder[s].length; p++) {
-        for (let inst = 0; inst < sectionOrder[s][p].length; inst++) {
-          this.arr[sectionOrder[s][p][inst]][pattPos] = true;
+    for (let s = 0; s < this.structure.length; s++) {
+      let curSect = this.sections.get(this.structure[s]);
+      for (let p = 0; p < curSect.length; p++) {
+        for (let inst = 0; inst < curSect[p].length; inst++) {
+          this.arr[curSect[p][inst]][pattPos] = true;
         }
-
         pattPos++;
       }
     }
+  }
+
+  swapSections(s1, s2) {
+    let temp = this.structure[s1];
+    this.structure[s1] = this.structure[s2];
+    this.structure[s2] = temp;
+
+    this.setArrangement();
   }
 }
 
@@ -103,10 +116,16 @@ function dragSection(e) {
 
     let curSectHover = Math.floor(((floatSect.offsetLeft / timeLine.offsetWidth) - ((2 / 2) / arrangement.getLength())) / (2 / arrangement.getLength())) + 1;
 
-    if (curSectHover < prevSectHov) {
-      timeLine.childNodes[curSectHover].before(timeLine.childNodes[prevSectHov]);
-    } else if (curSectHover > prevSectHov) {
-      timeLine.childNodes[prevSectHov].before(timeLine.childNodes[curSectHover]);
+    if (curSectHover !== prevSectHov) {
+      if (curSectHover < prevSectHov) {
+        timeLine.childNodes[curSectHover].before(timeLine.childNodes[prevSectHov]);
+      } else if (curSectHover > prevSectHov) {
+        timeLine.childNodes[prevSectHov].before(timeLine.childNodes[curSectHover]);
+      }
+
+      arrangement.swapSections(curSectHover, prevSectHov);
+
+      dem.PlaceArrangement(arrangement);
     }
 
     prevSectHov = curSectHover;
