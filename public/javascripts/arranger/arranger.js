@@ -3,13 +3,11 @@ let grabbing;
 let origSect;
 let floatSect;
 
-let timeLine;
-
 let grabStartX;
-
 let mouseDownSection;
-
 let selectedSect;
+
+let timeLine;
 
 class Arrangement {
   constructor() {
@@ -101,17 +99,20 @@ function playArrangementFromClick(e) {
 }
 
 function selectSect(sect) {
+
   if (selectedSect !== undefined) {
     selectedSect.classList.remove("selected");
   }
+
   selectedSect = sect;
   selectedSect.classList.add("selected");
 
   let sectHighlight = getById("sectionHighlight");
 
-  console.log([...getByClass("songSection")].indexOf(sect));
+  let sectIdx = [...getById("timeLine").childNodes].indexOf(sect);
 
-  //sectHighlight.style.left = [...getByClass("songSection")].indexOf(sect)
+  sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, sectIdx).map(x => arrangement.sections.get(x).length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
+  sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(arrangement.structure[sectIdx]).length / arrangement.getLength()) + "%)";
 }
 
 function grabSection(e) {
@@ -131,8 +132,6 @@ function grabSection(e) {
   floatSect.style.fontSize = origSect.style.fontSize;
 
   timeLine.appendChild(floatSect);
-
-  prevSectHov = Math.floor(((floatSect.offsetLeft / timeLine.offsetWidth) - ((2 / 2) / arrangement.getLength())) / (2 / arrangement.getLength())) + 1;
 }
 
 function releaseSection(e) {
@@ -157,7 +156,6 @@ function dragSection(e) {
 
     let sectRelPos = floatSect.offsetLeft / timeLine.offsetWidth;
 
-    let pattPos = 0;
     let curSect = [...origSect.parentNode.children].indexOf(origSect);
 
     let leftEdge = arrangement.structure.slice(0, curSect).map(x => arrangement.sections.get(x).length).reduce((x, t) => x + t, 0);
@@ -169,26 +167,14 @@ function dragSection(e) {
       timeLine.childNodes[curSect - 1].before(timeLine.childNodes[curSect]);
       arrangement.swapSections(curSect, curSect - 1);
       dem.PlaceArrangement(arrangement);
+      selectSect(selectedSect);
     } else if (sectRelPos > (leftEdge + (afterLength / 2)) / arrangement.getLength()) {
       timeLine.childNodes[curSect].before(timeLine.childNodes[curSect + 1]);
       arrangement.swapSections(curSect, curSect + 1);
       dem.PlaceArrangement(arrangement);
+      selectSect(selectedSect);
     }
   }
-
-  /*if (curSectHover !== prevSectHov) {
-    if (curSectHover < prevSectHov) {
-      timeLine.childNodes[curSectHover].before(timeLine.childNodes[prevSectHov]);
-    } else if (curSectHover > prevSectHov) {
-      timeLine.childNodes[prevSectHov].before(timeLine.childNodes[curSectHover]);
-    }
-
-    arrangement.swapSections(curSectHover, prevSectHov);
-
-    dem.PlaceArrangement(arrangement);
-  }
-
-  prevSectHov = curSectHover;*/
 }
 
 async function loadArranger() {
