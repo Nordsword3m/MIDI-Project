@@ -6,22 +6,21 @@ let floatSect;
 let timeLine;
 
 let grabStartX;
-let prevSectHov;
+
+let mouseDownSection;
+
+let selectedSect;
 
 class Arrangement {
   constructor() {
-
     this.arr = {};
-
     this.structure = ["intro", "chorus", "verse 1", "chorus", "verse 2", "chorus", "chorus", "outro"];
-
     this.sections = new Map();
 
     this.sections.set("intro", [["chords"],
       ["chords", "ch"]]);
 
-    this.sections.set("chorus", [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
-      ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]);
+    this.sections.set("chorus", [["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]);
 
     this.sections.set("verse 1", [["chords", "bass", "kick", "snare", "ch"],
       ["chords", "bass", "kick", "snare", "ch", "perc"]]);
@@ -61,6 +60,8 @@ class Arrangement {
         pattPos++;
       }
     }
+
+    document.documentElement.style.setProperty("--patternAmt", this.getLength());
   }
 
   swapSections(s1, s2) {
@@ -69,6 +70,24 @@ class Arrangement {
     this.structure[s2] = temp;
 
     this.setArrangement();
+  }
+}
+
+function setUpTimeLine() {
+  let timeLine = getById("timeLine");
+
+  for (let s = 0; s < arrangement.structure.length; s++) {
+    let sect = document.createElement("div");
+
+    let length = arrangement.sections.get(arrangement.structure[s]).length;
+
+    sect.className = "songSection";
+    sect.style.width = "calc(100% * " + length + " / var(--patternAmt))";
+    sect.innerText = arrangement.structure[s];
+
+    sect.style.fontSize = "calc(" + (length * 0.7) + " * 1vw + 0.7vw)";
+
+    timeLine.appendChild(sect);
   }
 }
 
@@ -81,6 +100,20 @@ function playArrangementFromClick(e) {
   ).then();
 }
 
+function selectSect(sect) {
+  if (selectedSect !== undefined) {
+    selectedSect.classList.remove("selected");
+  }
+  selectedSect = sect;
+  selectedSect.classList.add("selected");
+
+  let sectHighlight = getById("sectionHighlight");
+
+  console.log([...getByClass("songSection")].indexOf(sect));
+
+  //sectHighlight.style.left = [...getByClass("songSection")].indexOf(sect)
+}
+
 function grabSection(e) {
   grabbing = true;
   origSect = e.target;
@@ -91,8 +124,11 @@ function grabSection(e) {
 
   floatSect = document.createElement("div");
   floatSect.className = "floatSect";
+  floatSect.className += origSect.classList.contains("selected") ? " selected" : "";
   floatSect.style.left = "calc(" + (e.clientX - grabStartX) + "px)";
   floatSect.innerText = origSect.innerText;
+  floatSect.style.width = origSect.style.width;
+  floatSect.style.fontSize = origSect.style.fontSize;
 
   timeLine.appendChild(floatSect);
 
@@ -100,6 +136,7 @@ function grabSection(e) {
 }
 
 function releaseSection(e) {
+  mouseDownSection = false;
   if (grabbing) {
     grabbing = false;
 
@@ -111,29 +148,53 @@ function releaseSection(e) {
 }
 
 function dragSection(e) {
+  if (mouseDownSection && !grabbing) {
+    grabSection(e);
+  }
+
   if (grabbing) {
     floatSect.style.left = "calc(" + Math.min(getById("timeLine").offsetWidth - floatSect.offsetWidth, Math.max(0, (e.clientX - grabStartX))) + "px)";
 
-    let curSectHover = Math.floor(((floatSect.offsetLeft / timeLine.offsetWidth) - ((2 / 2) / arrangement.getLength())) / (2 / arrangement.getLength())) + 1;
+    let sectRelPos = floatSect.offsetLeft / timeLine.offsetWidth;
 
-    if (curSectHover !== prevSectHov) {
-      if (curSectHover < prevSectHov) {
-        timeLine.childNodes[curSectHover].before(timeLine.childNodes[prevSectHov]);
-      } else if (curSectHover > prevSectHov) {
-        timeLine.childNodes[prevSectHov].before(timeLine.childNodes[curSectHover]);
-      }
+    let pattPos = 0;
+    let curSect = [...origSect.parentNode.children].indexOf(origSect);
 
-      arrangement.swapSections(curSectHover, prevSectHov);
+    let leftEdge = arrangement.structure.slice(0, curSect).map(x => arrangement.sections.get(x).length).reduce((x, t) => x + t, 0);
 
+    let beforeLength = curSect > 0 ? arrangement.sections.get(arrangement.structure[curSect - 1]).length : undefined;
+    let afterLength = curSect < arrangement.structure.length - 1 ? arrangement.sections.get(arrangement.structure[curSect + 1]).length : undefined;
+
+    if (sectRelPos < (leftEdge - (beforeLength / 2)) / arrangement.getLength()) {
+      timeLine.childNodes[curSect - 1].before(timeLine.childNodes[curSect]);
+      arrangement.swapSections(curSect, curSect - 1);
+      dem.PlaceArrangement(arrangement);
+    } else if (sectRelPos > (leftEdge + (afterLength / 2)) / arrangement.getLength()) {
+      timeLine.childNodes[curSect].before(timeLine.childNodes[curSect + 1]);
+      arrangement.swapSections(curSect, curSect + 1);
       dem.PlaceArrangement(arrangement);
     }
-
-    prevSectHov = curSectHover;
   }
+
+  /*if (curSectHover !== prevSectHov) {
+    if (curSectHover < prevSectHov) {
+      timeLine.childNodes[curSectHover].before(timeLine.childNodes[prevSectHov]);
+    } else if (curSectHover > prevSectHov) {
+      timeLine.childNodes[prevSectHov].before(timeLine.childNodes[curSectHover]);
+    }
+
+    arrangement.swapSections(curSectHover, prevSectHov);
+
+    dem.PlaceArrangement(arrangement);
+  }
+
+  prevSectHov = curSectHover;*/
 }
 
 async function loadArranger() {
   arrangement = new Arrangement();
+
+  setUpTimeLine();
 
   await readyStates.waitFor("demLoad");
 
@@ -141,8 +202,11 @@ async function loadArranger() {
 
   let sectObjs = getByClass("songSection");
 
+  selectSect(sectObjs[0]);
+
   for (let i = 0; i < sectObjs.length; i++) {
-    sectObjs[i].addEventListener("mousedown", grabSection);
+    sectObjs[i].addEventListener("mousedown", () => mouseDownSection = true);
+    sectObjs[i].addEventListener("click", e => selectSect(e.target));
   }
 
   window.addEventListener("mousemove", dragSection);

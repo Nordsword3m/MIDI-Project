@@ -32,9 +32,7 @@ DisplayElementManager.prototype.PlaceArrangement = function (arrangement) {
   document.querySelectorAll(".patternDisplay").forEach((x) => x.textContent = "");
 
   let patternAmt = arrangement.getLength();
-
-  document.documentElement.style.setProperty("--patternAmt", patternAmt);
-
+  
   let insts = Object.keys(arrangement.arr);
 
   for (let p = 0; p < patternAmt; p++) {

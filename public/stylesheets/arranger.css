@@ -3,9 +3,16 @@
     --patternInfoWidth: 80px;
 }
 
+#sectionHighlight {
+    width: 12.5%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 5px white;
+}
+
 .songSection, .hiddenSect, .floatSect {
     height: 100%;
-    width: calc(100% * 2 / var(--patternAmt));
+    position: relative;
 }
 
 .songSection, .floatSect {
@@ -14,12 +21,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: min(20px, 2vw);
+}
+
+.songSection.selected, .floatSect.selected {
+    background-image: linear-gradient(var(--blue) 20%, transparent 100%);
+    box-shadow: 0 0 5px var(--blue);
+    background-color: var(--dispColor);
+    z-index: 3;
 }
 
 .floatSect {
     position: absolute;
     background-color: var(--dispColor);
+    z-index: 5;
 }
 
 .hiddenSect {
