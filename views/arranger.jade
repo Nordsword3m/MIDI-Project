@@ -42,7 +42,9 @@ include header
 
 .configPanel.arranger
     #timeLine
-    .spathe(style="height: 200px")
+    #modifyPanel
+        input#nameBox(type="text")
+    .spathe(style="height: 100px")
 
 script.
   loadArranger();

@@ -12,22 +12,37 @@ let timeLine;
 class Arrangement {
   constructor() {
     this.arr = {};
-    this.structure = ["intro", "chorus", "verse 1", "chorus", "verse 2", "chorus", "chorus", "outro"];
+    this.structure = [0, 1, 2, 1, 3, 1, 1, 4];
     this.sections = new Map();
 
-    this.sections.set("intro", [["chords"],
-      ["chords", "ch"]]);
+    this.sections.set(0, {
+      name: "INTRO",
+      parts: [["chords"],
+        ["chords", "ch"]]
+    });
 
-    this.sections.set("chorus", [["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]);
+    this.sections.set(1, {
+      name: "CHORUS",
+      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"], ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
+    });
 
-    this.sections.set("verse 1", [["chords", "bass", "kick", "snare", "ch"],
-      ["chords", "bass", "kick", "snare", "ch", "perc"]]);
+    this.sections.set(2, {
+      name: "VERSE 1",
+      parts: [["chords", "bass", "kick", "snare", "ch"],
+        ["chords", "bass", "kick", "snare", "ch", "perc"]]
+    });
 
-    this.sections.set("verse 2", [["chords", "melo", "bass", "kick"],
-      ["chords", "melo", "bass", "kick", "ch"]]);
+    this.sections.set(3, {
+      name: "VERSE 2",
+      parts: [["chords", "melo", "bass", "kick"],
+        ["chords", "melo", "bass", "kick", "ch"]]
+    });
 
-    this.sections.set("outro", [["chords", "bass", "kick", "ch"],
-      ["chords", "ch"]]);
+    this.sections.set(4, {
+      name: "OUTRO",
+      parts: [["chords", "bass", "kick", "ch"],
+        ["chords", "ch"]]
+    });
 
     this.setArrangement();
   }
@@ -50,7 +65,7 @@ class Arrangement {
     let pattPos = 0;
 
     for (let s = 0; s < this.structure.length; s++) {
-      let curSect = this.sections.get(this.structure[s]);
+      let curSect = this.sections.get(this.structure[s]).parts;
       for (let p = 0; p < curSect.length; p++) {
         for (let inst = 0; inst < curSect[p].length; inst++) {
           this.arr[curSect[p][inst]][pattPos] = true;
@@ -77,11 +92,12 @@ function setUpTimeLine() {
   for (let s = 0; s < arrangement.structure.length; s++) {
     let sect = document.createElement("div");
 
-    let length = arrangement.sections.get(arrangement.structure[s]).length;
+    let length = arrangement.sections.get(arrangement.structure[s]).parts.length;
 
     sect.className = "songSection";
     sect.style.width = "calc(100% * " + length + " / var(--patternAmt))";
-    sect.innerText = arrangement.structure[s];
+    sect.innerText = arrangement.sections.get(arrangement.structure[s]).name;
+    sect.dataset.sectId = arrangement.structure[s];
 
     sect.style.fontSize = "calc(" + (length * 0.7) + " * 1vw + 0.7vw)";
 
@@ -99,7 +115,6 @@ function playArrangementFromClick(e) {
 }
 
 function selectSect(sect) {
-
   if (selectedSect !== undefined) {
     selectedSect.classList.remove("selected");
   }
@@ -111,8 +126,10 @@ function selectSect(sect) {
 
   let sectIdx = [...getById("timeLine").childNodes].indexOf(sect);
 
-  sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, sectIdx).map(x => arrangement.sections.get(x).length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
-  sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(arrangement.structure[sectIdx]).length / arrangement.getLength()) + "%)";
+  sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, sectIdx).map(x => arrangement.sections.get(x).parts.length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
+  sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(arrangement.structure[sectIdx]).parts.length / arrangement.getLength()) + "%)";
+
+  getById("nameBox").value = arrangement.sections.get(parseInt(selectedSect.dataset.sectId)).name;
 }
 
 function grabSection(e) {
@@ -158,10 +175,10 @@ function dragSection(e) {
 
     let curSect = [...origSect.parentNode.children].indexOf(origSect);
 
-    let leftEdge = arrangement.structure.slice(0, curSect).map(x => arrangement.sections.get(x).length).reduce((x, t) => x + t, 0);
+    let leftEdge = arrangement.structure.slice(0, curSect).map(x => arrangement.sections.get(x).parts.length).reduce((x, t) => x + t, 0);
 
-    let beforeLength = curSect > 0 ? arrangement.sections.get(arrangement.structure[curSect - 1]).length : undefined;
-    let afterLength = curSect < arrangement.structure.length - 1 ? arrangement.sections.get(arrangement.structure[curSect + 1]).length : undefined;
+    let beforeLength = curSect > 0 ? arrangement.sections.get(arrangement.structure[curSect - 1]).parts.length : undefined;
+    let afterLength = curSect < arrangement.structure.length - 1 ? arrangement.sections.get(arrangement.structure[curSect + 1]).parts.length : undefined;
 
     if (sectRelPos < (leftEdge - (beforeLength / 2)) / arrangement.getLength()) {
       timeLine.childNodes[curSect - 1].before(timeLine.childNodes[curSect]);
@@ -185,6 +202,18 @@ async function loadArranger() {
   await readyStates.waitFor("demLoad");
 
   getById("arrangerPlayHeadCon").addEventListener("click", playArrangementFromClick);
+
+  getById("nameBox").addEventListener("input", (e) => {
+    arrangement.sections.get(parseInt(selectedSect.dataset.sectId)).name = e.target.value.toUpperCase();
+
+    let sectObjs = getByClass("songSection");
+    for (let i = 0; i < sectObjs.length; i++) {
+      if (sectObjs[i].dataset.sectId === selectedSect.dataset.sectId) {
+        sectObjs[i].innerText = e.target.value;
+      }
+    }
+
+  });
 
   let sectObjs = getByClass("songSection");
 
