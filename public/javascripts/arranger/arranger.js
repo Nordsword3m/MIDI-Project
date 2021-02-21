@@ -23,7 +23,7 @@ class Arrangement {
 
     this.sections.set(1, {
       name: "CHORUS",
-      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"], ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
+      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
     });
 
     this.sections.set(2, {
@@ -99,10 +99,10 @@ function setUpTimeLine() {
     sect.innerText = arrangement.sections.get(arrangement.structure[s]).name;
     sect.dataset.sectId = arrangement.structure[s];
 
-    sect.style.fontSize = "calc(" + (length * 0.7) + " * 1vw + 0.7vw)";
-
     timeLine.appendChild(sect);
   }
+
+  setSectFontSizes();
 }
 
 function playArrangementFromClick(e) {
@@ -130,12 +130,6 @@ function selectSect(sectId) {
 
   selectedSect = sectId;
 
-  let oldHighlights = getByClass("sectionHighlight");
-
-  for (let i = oldHighlights.length - 1; i >= 0; i--) {
-    oldHighlights[i].remove();
-  }
-
   let occurences = [];
 
   for (let p = 0; p < arrangement.structure.length; p++) {
@@ -144,14 +138,14 @@ function selectSect(sectId) {
     }
   }
 
-  for (let i = 0; i < occurences.length; i++) {
-    let sectHighlight = document.createElement("div");
-    sectHighlight.className = "sectionHighlight";
+  let highlights = getByClass("sectionHighlight");
 
-    sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, occurences[i]).map(x => arrangement.sections.get(x).parts.length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
-    sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(sectId).parts.length / arrangement.getLength()) + "%)";
-
-    getById("arrangerPlayHeadCon").appendChild(sectHighlight);
+  for (let i = 0; i < highlights.length; i++) {
+    if (occurences.includes(i)) {
+      highlights[i].classList.add("show");
+    } else {
+      highlights[i].classList.remove("show");
+    }
   }
 
   getById("nameBox").value = arrangement.sections.get(sectId).name;
@@ -219,6 +213,52 @@ function dragSection(e) {
   }
 }
 
+function togglePattern(inst, patt) {
+  let curVal = 0;
+  let relSect = 0;
+
+  let lengths = arrangement.structure.map(x => arrangement.sections.get(x).parts.length);
+
+  for (let i = 0; i < lengths.length; i++) {
+    curVal += lengths[i];
+
+    if (patt < curVal) {
+      relSect = i;
+      break;
+    }
+  }
+
+  if (arrangement.structure[relSect] === arrangement.structure[selectedSect]) {
+    let sectPart = patt - lengths.slice(0, relSect).reduce((t, x) => x + t, 0);
+
+    let partIdx = arrangement.sections.get(arrangement.structure[relSect]).parts[sectPart].indexOf(inst);
+
+    if (partIdx === -1) {
+      arrangement.sections.get(arrangement.structure[relSect]).parts[sectPart].push(inst);
+    } else {
+      arrangement.sections.get(arrangement.structure[relSect]).parts[sectPart].splice(partIdx, 1);
+    }
+
+    arrangement.setArrangement();
+    dem.ShowArrangement(arrangement);
+  }
+}
+
+function setSectFontSizes() {
+  let sectObjs = getByClass("songSection");
+
+  for (let i = 0; i < sectObjs.length; i++) {
+    let canvas = document.createElement("canvas");
+    let context = canvas.getContext("2d");
+    context.font = "1px " + sectObjs[i].style.fontFamily;
+    let size = (context.measureText("M".repeat(Math.max(6, sectObjs[i].innerText.length))).width / sectObjs[i].offsetWidth);
+
+    sectObjs[i].style.fontSize = (1 / size) * 10 + "px";
+  }
+}
+
+window.addEventListener("resize", setSectFontSizes);
+
 async function loadArranger() {
   arrangement = new Arrangement();
 
@@ -230,20 +270,20 @@ async function loadArranger() {
   getById("playBar").addEventListener("click", playArrangementFromClick);
 
   getById("nameBox").addEventListener("input", (e) => {
-    arrangement.sections.get(parseInt(selectedSect.dataset.sectId)).name = e.target.value.toUpperCase();
-
     let sectObjs = getByClass("songSection");
+
+    arrangement.sections.get(parseInt(sectObjs[selectedSect].dataset.sectId)).name = e.target.value.toUpperCase();
+
     for (let i = 0; i < sectObjs.length; i++) {
-      if (sectObjs[i].dataset.sectId === selectedSect.dataset.sectId) {
+      if (sectObjs[i].dataset.sectId === sectObjs[selectedSect].dataset.sectId) {
         sectObjs[i].innerText = e.target.value;
       }
     }
 
+    setSectFontSizes();
   });
 
   let sectObjs = getByClass("songSection");
-
-  selectSect(sectObjs[0].dataset.sectId);
 
   for (let i = 0; i < sectObjs.length; i++) {
     sectObjs[i].addEventListener("mousedown", () => mouseDownSection = true);
@@ -257,4 +297,6 @@ async function loadArranger() {
 
   dem.InitialiseArrangement();
   dem.ShowArrangement(arrangement);
+
+  selectSect(sectObjs[0].dataset.sectId);
 }

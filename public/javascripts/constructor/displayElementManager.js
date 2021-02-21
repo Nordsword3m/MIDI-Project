@@ -35,12 +35,38 @@ DisplayElementManager.prototype.InitialiseArrangement = function () {
 
   let insts = Object.keys(arrangement.arr);
 
+  let lengths = arrangement.structure.map(x => arrangement.sections.get(x).parts.length);
+  let curSect = 0;
+  let curLength = 0;
+
+  let prevSect;
+
   for (let p = 0; p < patternAmt; p++) {
+
+    if (p >= curLength + lengths[curSect]) {
+      curSect++;
+      curLength += lengths[curSect];
+    }
+
+    if (prevSect !== curSect) {
+      let sectHighlight = document.createElement("div");
+      sectHighlight.className = "sectionHighlight";
+      sectHighlight.style.left = "calc(100% * " + (p / patternAmt) + ")";
+      sectHighlight.style.width = "calc(100% * " + (lengths[curSect] / patternAmt) + ")";
+
+      getById("arrangerPlayHeadCon").appendChild(sectHighlight);
+
+      prevSect = curSect;
+    }
+
+
     insts.forEach((i) => {
       let patt = document.createElement("div");
 
       patt.className = "pattern " + i;
       patt.style.left = "calc(100% * " + (p / patternAmt) + ")";
+
+      patt.addEventListener("click", () => togglePattern(i, p));
 
       getById(i + "PattDisplay").appendChild(patt);
     });

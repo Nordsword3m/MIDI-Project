@@ -1,6 +1,9 @@
 include header
 +header("arranger")
 
+#playBar.arranger
+    #miniPlayHead
+
 .patternArrangement
     #arrangerPlayHeadCon
         #playHead
@@ -39,11 +42,9 @@ include header
             .patternLabel= "Perc"
         .patternDisplay#percPattDisplay
 
-#playBar.arranger
-    #miniPlayHead
+#timeLine
 
 .configPanel.arranger
-    #timeLine
     #modifyPanel
         input#nameBox(type="text")
 
