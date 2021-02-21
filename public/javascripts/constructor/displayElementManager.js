@@ -28,23 +28,33 @@ class DrumDisplay {
   }
 }
 
-DisplayElementManager.prototype.PlaceArrangement = function (arrangement) {
+DisplayElementManager.prototype.InitialiseArrangement = function () {
   document.querySelectorAll(".patternDisplay").forEach((x) => x.textContent = "");
 
   let patternAmt = arrangement.getLength();
-  
+
   let insts = Object.keys(arrangement.arr);
 
   for (let p = 0; p < patternAmt; p++) {
     insts.forEach((i) => {
-      if (arrangement.arr[i][p]) {
-        let patt = document.createElement("div");
+      let patt = document.createElement("div");
 
-        patt.className = "pattern " + i;
-        patt.style.left = "calc(100% * " + (p / patternAmt) + ")";
+      patt.className = "pattern " + i;
+      patt.style.left = "calc(100% * " + (p / patternAmt) + ")";
 
-        getById(i + "PattDisplay").appendChild(patt);
-      }
+      getById(i + "PattDisplay").appendChild(patt);
+    });
+  }
+};
+
+DisplayElementManager.prototype.ShowArrangement = function (arrangement) {
+  let patternAmt = arrangement.getLength();
+
+  let insts = Object.keys(arrangement.arr);
+
+  for (let p = 0; p < patternAmt; p++) {
+    insts.forEach((i) => {
+      getById(i + "PattDisplay").children[p].style.opacity = arrangement.arr[i][p] ? "1" : "0";
     });
   }
 };

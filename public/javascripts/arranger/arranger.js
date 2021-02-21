@@ -116,15 +116,19 @@ function playArrangementFromClick(e) {
   ).then();
 }
 
-function selectSect(sect) {
-  if (selectedSect !== undefined) {
-    selectedSect.classList.remove("selected");
+function selectSect(sectId) {
+  sectId = parseInt(sectId);
+  let sectObjs = getByClass("songSection");
+
+  for (let i = 0; i < sectObjs.length; i++) {
+    if (parseInt(sectObjs[i].dataset.sectId) === sectId) {
+      sectObjs[i].classList.add("selected");
+    } else {
+      sectObjs[i].classList.remove("selected");
+    }
   }
 
-  selectedSect = sect;
-  selectedSect.classList.add("selected");
-
-  let sectId = parseInt(sect.dataset.sectId);
+  selectedSect = sectId;
 
   let oldHighlights = getByClass("sectionHighlight");
 
@@ -140,20 +144,17 @@ function selectSect(sect) {
     }
   }
 
-  //console.log(occurences);
-
   for (let i = 0; i < occurences.length; i++) {
     let sectHighlight = document.createElement("div");
     sectHighlight.className = "sectionHighlight";
 
     sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, occurences[i]).map(x => arrangement.sections.get(x).parts.length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
-    sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(arrangement.structure[occurences[i]]).parts.length / arrangement.getLength()) + "%)";
+    sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(sectId).parts.length / arrangement.getLength()) + "%)";
 
     getById("arrangerPlayHeadCon").appendChild(sectHighlight);
-    
   }
 
-  getById("nameBox").value = arrangement.sections.get(parseInt(selectedSect.dataset.sectId)).name;
+  getById("nameBox").value = arrangement.sections.get(sectId).name;
 }
 
 function grabSection(e) {
@@ -207,12 +208,12 @@ function dragSection(e) {
     if (sectRelPos < (leftEdge - (beforeLength / 2)) / arrangement.getLength()) {
       timeLine.childNodes[curSect - 1].before(timeLine.childNodes[curSect]);
       arrangement.swapSections(curSect, curSect - 1);
-      dem.PlaceArrangement(arrangement);
+      dem.ShowArrangement(arrangement);
       selectSect(selectedSect);
     } else if (sectRelPos > (leftEdge + (afterLength / 2)) / arrangement.getLength()) {
       timeLine.childNodes[curSect].before(timeLine.childNodes[curSect + 1]);
       arrangement.swapSections(curSect, curSect + 1);
-      dem.PlaceArrangement(arrangement);
+      dem.ShowArrangement(arrangement);
       selectSect(selectedSect);
     }
   }
@@ -242,11 +243,11 @@ async function loadArranger() {
 
   let sectObjs = getByClass("songSection");
 
-  selectSect(sectObjs[0]);
+  selectSect(sectObjs[0].dataset.sectId);
 
   for (let i = 0; i < sectObjs.length; i++) {
     sectObjs[i].addEventListener("mousedown", () => mouseDownSection = true);
-    sectObjs[i].addEventListener("click", e => selectSect(e.target));
+    sectObjs[i].addEventListener("click", e => selectSect(e.target.dataset.sectId));
   }
 
   window.addEventListener("mousemove", dragSection);
@@ -254,5 +255,6 @@ async function loadArranger() {
 
   timeLine = getById("timeLine");
 
-  dem.PlaceArrangement(arrangement);
+  dem.InitialiseArrangement();
+  dem.ShowArrangement(arrangement);
 }
