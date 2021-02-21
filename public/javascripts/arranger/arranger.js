@@ -49,7 +49,7 @@ class Arrangement {
   }
 
   getLength() {
-    return Object.values(this.arr).map(x => x.length).reduce((x, p) => Math.max(p, x));
+    return this.structure.map(x => this.sections.get(x).parts.length).reduce((t, x) => t + x, 0);
   }
 
   setArrangement() {
@@ -89,6 +89,7 @@ class Arrangement {
 
 function setUpTimeLine() {
   let timeLine = getById("timeLine");
+  timeLine.textContent = "";
 
   for (let s = 0; s < arrangement.structure.length; s++) {
     let sect = document.createElement("div");
@@ -99,6 +100,9 @@ function setUpTimeLine() {
     sect.style.width = "calc(100% * " + length + " / var(--patternAmt))";
     sect.innerText = arrangement.sections.get(arrangement.structure[s]).name;
     sect.dataset.sectId = arrangement.structure[s];
+
+    sect.addEventListener("mousedown", () => mouseDownSection = true);
+    sect.addEventListener("click", e => selectSect(e.target.dataset.sectId));
 
     timeLine.appendChild(sect);
   }
@@ -150,6 +154,7 @@ function selectSect(sectId) {
   }
 
   getById("nameBox").value = arrangement.sections.get(sectId).name;
+  getById("lengthSlider").value = arrangement.sections.get(sectId).parts.length;
 }
 
 function grabSection(e) {
@@ -245,17 +250,39 @@ function togglePattern(inst, patt) {
   }
 }
 
-function fitText(classname, relSize, minChars) {
-  let sectObjs = getByClass(classname);
+function ChangePatternLength(len) {
+  let diff = len - arrangement.sections.get(selectedSect).parts.length;
+
+  if (diff > 0) {
+    for (let i = 0; i < diff; i++) {
+      arrangement.sections.get(selectedSect).parts.push(arrangement.sections.get(selectedSect).parts[arrangement.sections.get(selectedSect).parts.length - 1]);
+    }
+  } else if (diff < 0) {
+    for (let i = 0; i < -diff; i++) {
+      arrangement.sections.get(selectedSect).parts.pop();
+    }
+  }
+
+  arrangement.setArrangement();
+  dem.InitialiseArrangement();
+  dem.ShowArrangement(arrangement);
+
+  setUpTimeLine();
+  selectSect(selectedSect);
+}
+
+function ChangePatternName(nm) {
+  let sectObjs = getByClass("songSection");
+
+  arrangement.sections.get(parseInt(sectObjs[selectedSect].dataset.sectId)).name = nm.toUpperCase();
 
   for (let i = 0; i < sectObjs.length; i++) {
-    let canvas = document.createElement("canvas");
-    let context = canvas.getContext("2d");
-    context.font = "1px " + window.getComputedStyle(sectObjs[i]).getPropertyValue("font-family");
-    let size = context.measureText(sectObjs[i].innerText + ("W".repeat(Math.max(0, minChars - sectObjs[i].innerText.length)))).width / sectObjs[i].offsetWidth;
-
-    sectObjs[i].style.fontSize = (relSize / size) + "px";
+    if (sectObjs[i].dataset.sectId === sectObjs[selectedSect].dataset.sectId) {
+      sectObjs[i].innerText = nm;
+    }
   }
+
+  setSectFontSizes();
 }
 
 function setSectFontSizes() {
@@ -274,27 +301,6 @@ async function loadArranger() {
   getById("playBar").removeEventListener("click", playFromClick);
   getById("playBar").addEventListener("click", playArrangementFromClick);
 
-  getById("nameBox").addEventListener("input", (e) => {
-    let sectObjs = getByClass("songSection");
-
-    arrangement.sections.get(parseInt(sectObjs[selectedSect].dataset.sectId)).name = e.target.value.toUpperCase();
-
-    for (let i = 0; i < sectObjs.length; i++) {
-      if (sectObjs[i].dataset.sectId === sectObjs[selectedSect].dataset.sectId) {
-        sectObjs[i].innerText = e.target.value;
-      }
-    }
-
-    setSectFontSizes();
-  });
-
-  let sectObjs = getByClass("songSection");
-
-  for (let i = 0; i < sectObjs.length; i++) {
-    sectObjs[i].addEventListener("mousedown", () => mouseDownSection = true);
-    sectObjs[i].addEventListener("click", e => selectSect(e.target.dataset.sectId));
-  }
-
   window.addEventListener("mousemove", dragSection);
   window.addEventListener("mouseup", releaseSection);
 
@@ -303,5 +309,5 @@ async function loadArranger() {
   dem.InitialiseArrangement();
   dem.ShowArrangement(arrangement);
 
-  selectSect(sectObjs[0].dataset.sectId);
+  selectSect(getByClass("songSection")[0].dataset.sectId);
 }

@@ -3,23 +3,29 @@
     --patternInfoWidth: 80px;
 }
 
+#patternLengthLabel {
+    margin: auto 5px auto 10px;
+    font-size: 3vw;
+}
+
 #playBar.arranger {
     width: calc(100% - var(--patternInfoWidth));
     margin-left: auto;
 }
 
 #nameBox {
-    background-color: var(--dispColor);
-    border: 0;
     height: 40px;
     width: 30vw;
-    color: white;
     text-transform: uppercase;
-    font-size: 30px;
+    font-size: 25px;
     outline: none;
     padding: 0 5px 0 5px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px var(--purple);
+}
+
+#lengthSlider {
+    width: 150px;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 #nameBox:focus {
@@ -31,7 +37,6 @@
 }
 
 #modifyPanel {
-    margin: 20px 0 0 0;
     display: flex;
     flex-grow: 1;
 }
@@ -50,6 +55,7 @@
     z-index: 10;
     background-color: rgba(0, 0, 0, 0.6);
     box-shadow: 0 0 1px 1px white;
+    transition: 100ms;
 }
 
 .songSection:first-child {
@@ -114,6 +120,7 @@
     width: calc(100% / var(--patternAmt));
     position: absolute;
     box-sizing: border-box;
+    transition: 100ms;
 }
 
 .pattern.chords, .pattern.bass, .pattern.snare, .pattern.perc {

@@ -37,6 +37,19 @@ function clamp(num, range) {
   return Math.min(range.max, Math.max(num, range.min));
 }
 
+function fitText(classname, relSize, minChars) {
+  let fitObjs = getByClass(classname);
+
+  for (let i = 0; i < fitObjs.length; i++) {
+    let canvas = document.createElement("canvas");
+    let context = canvas.getContext("2d");
+    context.font = "1px " + window.getComputedStyle(fitObjs[i]).getPropertyValue("font-family");
+    let size = context.measureText(fitObjs[i].innerText + ("W".repeat(Math.max(0, minChars - fitObjs[i].innerText.length)))).width / fitObjs[i].offsetWidth;
+
+    fitObjs[i].style.fontSize = (relSize / size) + "px";
+  }
+}
+
 function numToPitch(num, keyNum) {
   return (num - 1) + (keyNum - 1);
 }
@@ -608,7 +621,7 @@ async function loadHeader() {
   if (getById("playBar")) {
     getById("playBar").addEventListener("click", playFromClick);
   }
-  
+
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
 }
 

@@ -35,30 +35,7 @@ DisplayElementManager.prototype.InitialiseArrangement = function () {
 
   let insts = Object.keys(arrangement.arr);
 
-  let lengths = arrangement.structure.map(x => arrangement.sections.get(x).parts.length);
-  let curSect = 0;
-  let curLength = 0;
-
-  let prevSect;
-
   for (let p = 0; p < patternAmt; p++) {
-
-    if (p >= curLength + lengths[curSect]) {
-      curSect++;
-      curLength += lengths[curSect];
-    }
-
-    if (prevSect !== curSect) {
-      let sectHighlight = document.createElement("div");
-      sectHighlight.className = "sectionHighlight";
-      sectHighlight.style.left = "calc(100% * " + (p / patternAmt) + ")";
-      sectHighlight.style.width = "calc(100% * " + (lengths[curSect] / patternAmt) + ")";
-
-      getById("arrangerPlayHeadCon").appendChild(sectHighlight);
-
-      prevSect = curSect;
-    }
-
 
     insts.forEach((i) => {
       let patt = document.createElement("div");
@@ -78,7 +55,31 @@ DisplayElementManager.prototype.ShowArrangement = function (arrangement) {
 
   let insts = Object.keys(arrangement.arr);
 
+  let lengths = arrangement.structure.map(x => arrangement.sections.get(x).parts.length);
+  let curSect = 0;
+  let curLength = 0;
+
+  let prevSect;
+  document.querySelectorAll(".sectionHighlight").forEach((e) => e.remove());
+
   for (let p = 0; p < patternAmt; p++) {
+    if (p >= curLength + lengths[curSect]) {
+      curLength += lengths[curSect];
+      curSect++;
+    }
+
+    if (prevSect !== curSect) {
+      let sectHighlight = document.createElement("div");
+      sectHighlight.className = "sectionHighlight";
+      sectHighlight.className += arrangement.structure[curSect] === selectedSect ? " show" : "";
+      sectHighlight.style.left = "calc(100% * " + (p / patternAmt) + ")";
+      sectHighlight.style.width = "calc(100% * " + (lengths[curSect] / patternAmt) + ")";
+      
+      getById("arrangerPlayHeadCon").appendChild(sectHighlight);
+
+      prevSect = curSect;
+    }
+
     insts.forEach((i) => {
       getById(i + "PattDisplay").children[p].style.opacity = arrangement.arr[i][p] ? "1" : "0";
     });
