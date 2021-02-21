@@ -124,12 +124,34 @@ function selectSect(sect) {
   selectedSect = sect;
   selectedSect.classList.add("selected");
 
-  let sectHighlight = getById("sectionHighlight");
+  let sectId = parseInt(sect.dataset.sectId);
 
-  let sectIdx = [...getById("timeLine").childNodes].indexOf(sect);
+  let oldHighlights = getByClass("sectionHighlight");
 
-  sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, sectIdx).map(x => arrangement.sections.get(x).parts.length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
-  sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(arrangement.structure[sectIdx]).parts.length / arrangement.getLength()) + "%)";
+  for (let i = oldHighlights.length - 1; i >= 0; i--) {
+    oldHighlights[i].remove();
+  }
+
+  let occurences = [];
+
+  for (let p = 0; p < arrangement.structure.length; p++) {
+    if (arrangement.structure[p] === sectId) {
+      occurences.push(p);
+    }
+  }
+
+  //console.log(occurences);
+
+  for (let i = 0; i < occurences.length; i++) {
+    let sectHighlight = document.createElement("div");
+    sectHighlight.className = "sectionHighlight";
+
+    sectHighlight.style.left = "calc(" + (100 * arrangement.structure.slice(0, occurences[i]).map(x => arrangement.sections.get(x).parts.length).reduce((x, t) => x + t, 0) / arrangement.getLength()) + "%)";
+    sectHighlight.style.width = "calc(" + (100 * arrangement.sections.get(arrangement.structure[occurences[i]]).parts.length / arrangement.getLength()) + "%)";
+
+    getById("arrangerPlayHeadCon").appendChild(sectHighlight);
+    
+  }
 
   getById("nameBox").value = arrangement.sections.get(parseInt(selectedSect.dataset.sectId)).name;
 }
