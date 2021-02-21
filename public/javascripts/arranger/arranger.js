@@ -23,7 +23,8 @@ class Arrangement {
 
     this.sections.set(1, {
       name: "CHORUS",
-      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
+      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
+        ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
     });
 
     this.sections.set(2, {
@@ -228,7 +229,7 @@ function togglePattern(inst, patt) {
     }
   }
 
-  if (arrangement.structure[relSect] === arrangement.structure[selectedSect]) {
+  if (arrangement.structure[relSect] === selectedSect) {
     let sectPart = patt - lengths.slice(0, relSect).reduce((t, x) => x + t, 0);
 
     let partIdx = arrangement.sections.get(arrangement.structure[relSect]).parts[sectPart].indexOf(inst);
@@ -244,17 +245,21 @@ function togglePattern(inst, patt) {
   }
 }
 
-function setSectFontSizes() {
-  let sectObjs = getByClass("songSection");
+function fitText(classname, relSize, minChars) {
+  let sectObjs = getByClass(classname);
 
   for (let i = 0; i < sectObjs.length; i++) {
     let canvas = document.createElement("canvas");
     let context = canvas.getContext("2d");
-    context.font = "1px " + sectObjs[i].style.fontFamily;
-    let size = (context.measureText("M".repeat(Math.max(6, sectObjs[i].innerText.length))).width / sectObjs[i].offsetWidth);
+    context.font = "1px " + window.getComputedStyle(sectObjs[i]).getPropertyValue("font-family");
+    let size = context.measureText(sectObjs[i].innerText + ("W".repeat(Math.max(0, minChars - sectObjs[i].innerText.length)))).width / sectObjs[i].offsetWidth;
 
-    sectObjs[i].style.fontSize = (1 / size) * 10 + "px";
+    sectObjs[i].style.fontSize = (relSize / size) + "px";
   }
+}
+
+function setSectFontSizes() {
+  fitText("songSection", 1, 6);
 }
 
 window.addEventListener("resize", setSectFontSizes);
