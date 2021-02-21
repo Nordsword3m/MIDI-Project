@@ -79,6 +79,26 @@ h3.vert {
     font-size: min(3vw, 16px);
 }
 
+#playBar {
+    background-color: var(--dispColor);
+    box-shadow: inset 0 0 5px 2px var(--purple);
+    width: 100%;
+    height: 50px;
+    overflow: hidden;
+}
+
+#miniPlayHead {
+    background-color: white;
+    opacity: 0.5;
+    width: 2px;
+    height: 100%;
+    margin: -0.5px;
+    box-sizing: border-box;
+    z-index: 10;
+    box-shadow: 0 0 2px white;
+    position: relative;
+}
+
 .vertHeadWrapper {
     display: inline-block;
     width: 20px;

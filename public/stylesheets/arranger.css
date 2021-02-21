@@ -3,6 +3,11 @@
     --patternInfoWidth: 80px;
 }
 
+#playBar.arranger {
+    width: calc(100% - var(--patternInfoWidth));
+    margin-left: auto;
+}
+
 #nameBox {
     background-color: var(--dispColor);
     border: 0;
@@ -21,8 +26,14 @@
     box-shadow: 0 0 5px white;
 }
 
+#infoPanel {
+    height: 100%;
+}
+
 #modifyPanel {
     margin: 20px 0 0 0;
+    display: flex;
+    flex-grow: 1;
 }
 
 #sectionHighlight {
@@ -106,7 +117,6 @@
     background-image: linear-gradient(var(--darkblue) 20%, transparent 100%);
     box-shadow: 0 0 5px var(--darkblue);
 }
-
 
 .patternDisplay {
     flex-grow: 1;

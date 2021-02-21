@@ -40,11 +40,14 @@ include header
             .patternLabel= "Perc"
         .patternDisplay#percPattDisplay
 
+#playBar.arranger
+    #miniPlayHead
+
 .configPanel.arranger
     #timeLine
     #modifyPanel
         input#nameBox(type="text")
-    .spathe(style="height: 100px")
+
 
 script.
   loadArranger();

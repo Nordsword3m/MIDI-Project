@@ -573,6 +573,12 @@ async function loadHeader() {
     getById("playButton").classList.toggle("fa-play");
   }
 
+  document.addEventListener("mousemove", e => {
+    if (!pm.playing && (curPage === "meloBuilder" || curPage === "arranger")) {
+      getById("miniPlayHead").style.left = 100 * clamp((e.pageX - getById("playBar").offsetLeft) / getById("playBar").offsetWidth, new NumRange(0, 1)) + "%";
+    }
+  });
+
   dem = new DisplayElementManager();
   readyStates.readyUp("demLoad");
 
@@ -599,6 +605,10 @@ async function loadHeader() {
     disp.addEventListener("click", playFromClick);
   }
 
+  if (getById("playBar")) {
+    getById("playBar").addEventListener("click", playFromClick);
+  }
+  
   getById("bpmSuffix").addEventListener("mousedown", () => tapTempoButton());
 }
 

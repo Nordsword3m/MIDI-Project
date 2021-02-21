@@ -106,10 +106,12 @@ function setUpTimeLine() {
 }
 
 function playArrangementFromClick(e) {
-  pm.curPatt = Math.floor((e.layerX / e.target.offsetWidth) / (1 / arrangement.getLength()));
+  let rel = (e.pageX - getById("arrangerPlayHeadCon").offsetLeft) / getById("arrangerPlayHeadCon").offsetWidth;
+
+  pm.curPatt = Math.floor(rel / (1 / arrangement.getLength()));
 
   pm.TogglePlaying(
-    (((e.layerX / e.target.offsetWidth) % (1 / arrangement.getLength())) / (1 / arrangement.getLength())),
+    ((rel % (1 / arrangement.getLength())) / (1 / arrangement.getLength())),
     true
   ).then();
 }
@@ -201,7 +203,8 @@ async function loadArranger() {
 
   await readyStates.waitFor("demLoad");
 
-  getById("arrangerPlayHeadCon").addEventListener("click", playArrangementFromClick);
+  getById("playBar").removeEventListener("click", playFromClick);
+  getById("playBar").addEventListener("click", playArrangementFromClick);
 
   getById("nameBox").addEventListener("input", (e) => {
     arrangement.sections.get(parseInt(selectedSect.dataset.sectId)).name = e.target.value.toUpperCase();

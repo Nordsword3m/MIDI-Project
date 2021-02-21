@@ -234,10 +234,6 @@ function mouseUp(e) {
 }
 
 function mouseMove(e) {
-  if (!pm.playing && curPage === "meloBuilder") {
-    getById("miniPlayHead").style.left = 100 * e.pageX / $(document).width() + "%";
-  }
-
   if (painting) {
     UpdatePaintLength(e);
   } else if (dragging) {
@@ -351,12 +347,9 @@ async function loadMeloBuilder() {
 
   await readyStates.waitFor("instDataLoad");
 
-
   if (getById("display")) {
     getById("display").removeEventListener("click", playFromClick);
   }
-
-  getById("playBar").addEventListener("click", playFromClick);
 
   document.addEventListener("mousemove", mouseMove);
   document.addEventListener("mouseup", mouseUp);

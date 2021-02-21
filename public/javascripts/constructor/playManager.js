@@ -81,13 +81,19 @@ PlayManager.prototype.Playing = function () {
 PlayManager.prototype.SetHeadPos = function () {
   if (curPage === "arranger") {
     getById("playHead").style.left = (this.curPatt / arrangement.getLength() + (this.relPlayPos / arrangement.getLength())) * 100 + "%";
+
+    if (getById("miniPlayHead")) {
+      getById("miniPlayHead").style.left = (this.curPatt / arrangement.getLength() + (this.relPlayPos / arrangement.getLength())) * 100 + "%";
+    }
   } else {
     getById("playHead").style.left = this.relPlayPos * 100 + "%";
+
+    if (getById("miniPlayHead")) {
+      getById("miniPlayHead").style.left = this.relPlayPos * 100 + "%";
+    }
   }
 
-  if (getById("miniPlayHead")) {
-    getById("miniPlayHead").style.left = this.relPlayPos * 100 + "%";
-  }
+
 };
 
 function getNextPatt() {
