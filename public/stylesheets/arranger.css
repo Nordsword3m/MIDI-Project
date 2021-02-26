@@ -3,6 +3,10 @@
     --patternInfoWidth: 80px;
 }
 
+#removeSectionButton, #cloneSectionButton, #addSectionButton {
+    margin-left: 20px;
+}
+
 #patternLengthLabel {
     margin: auto 5px auto 10px;
     font-size: 3vw;
@@ -23,7 +27,7 @@
 }
 
 #lengthSlider {
-    width: 150px;
+    flex-grow: 1;
     margin-top: auto;
     margin-bottom: auto;
 }
@@ -39,10 +43,11 @@
 #modifyPanel {
     display: flex;
     flex-grow: 1;
+    align-items: center;
 }
 
 .sectionHighlight.show {
-    box-shadow: 0 0 3px 3px white;
+    box-shadow: 0 0 3px 2px white;
     background-color: transparent;
     z-index: 15;
 }
@@ -71,7 +76,7 @@
     position: relative;
 }
 
-.songSection, .floatSect {
+.songSection:not(.hidden), .floatSect:not(.hidden) {
     background-image: linear-gradient(var(--green) 20%, transparent 100%);
     box-shadow: 0 0 5px var(--green);
     display: flex;
@@ -79,11 +84,16 @@
     justify-content: center;
 }
 
-.songSection.selected, .floatSect.selected {
+.songSection.selected:not(.hidden), .floatSect.selected:not(.hidden) {
     background-image: linear-gradient(var(--blue) 20%, transparent 100%);
     box-shadow: 0 0 5px var(--blue);
     background-color: var(--dispColor);
     z-index: 3;
+}
+
+.selected.absolute:not(.hidden) {
+    background-image: linear-gradient(var(--red) 20%, transparent 100%);
+    box-shadow: 0 0 5px var(--red);
 }
 
 .floatSect {
@@ -92,7 +102,7 @@
     z-index: 5;
 }
 
-.hiddenSect {
+.songSection.hidden {
     color: transparent;
 }
 

@@ -7,6 +7,8 @@ let grabStartX;
 let mouseDownSection;
 let selectedSect;
 
+let absoluteSelection;
+
 let timeLine;
 
 class Arrangement {
@@ -14,32 +16,33 @@ class Arrangement {
     this.arr = {};
     this.structure = [0, 1, 2, 1, 3, 1, 1, 4];
     this.sections = new Map();
+    this.sectCounter = 0;
 
-    this.sections.set(0, {
+    this.sections.set(this.sectCounter++, {
       name: "INTRO",
       parts: [["chords"],
         ["chords", "ch"]]
     });
 
-    this.sections.set(1, {
+    this.sections.set(this.sectCounter++, {
       name: "CHORUS",
       parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
         ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
     });
 
-    this.sections.set(2, {
+    this.sections.set(this.sectCounter++, {
       name: "VERSE 1",
       parts: [["chords", "bass", "kick", "snare", "ch"],
         ["chords", "bass", "kick", "snare", "ch", "perc"]]
     });
 
-    this.sections.set(3, {
+    this.sections.set(this.sectCounter++, {
       name: "VERSE 2",
       parts: [["chords", "melo", "bass", "kick"],
         ["chords", "melo", "bass", "kick", "ch"]]
     });
 
-    this.sections.set(4, {
+    this.sections.set(this.sectCounter++, {
       name: "OUTRO",
       parts: [["chords", "bass", "kick", "ch"],
         ["chords", "ch"]]
@@ -85,6 +88,26 @@ class Arrangement {
 
     this.setArrangement();
   }
+
+  remove(sect) {
+    this.structure.splice(sect, 1);
+    this.setArrangement();
+  }
+
+  copy(sect) {
+    this.structure.splice(sect + 1, 0, this.structure[sect]);
+    this.setArrangement();
+  }
+
+  add(sect) {
+    this.sections.set(this.sectCounter, {
+      name: "PART" + this.sectCounter,
+      parts: [[], []]
+    });
+
+    this.structure.splice(sect + 1, 0, this.sectCounter++);
+    this.setArrangement();
+  }
 }
 
 function setUpTimeLine() {
@@ -102,7 +125,10 @@ function setUpTimeLine() {
     sect.dataset.sectId = arrangement.structure[s];
 
     sect.addEventListener("mousedown", () => mouseDownSection = true);
-    sect.addEventListener("click", e => selectSect(e.target.dataset.sectId));
+    sect.addEventListener("click", e => {
+      let sectObjs = getByClass("songSection");
+      selectSect([...sectObjs].indexOf(e.target));
+    });
 
     timeLine.appendChild(sect);
   }
@@ -121,9 +147,11 @@ function playArrangementFromClick(e) {
   ).then();
 }
 
-function selectSect(sectId) {
-  sectId = parseInt(sectId);
+function selectSect(sect) {
   let sectObjs = getByClass("songSection");
+
+  absoluteSelection = sect;
+  let sectId = parseInt(sectObjs[sect].dataset.sectId);
 
   for (let i = 0; i < sectObjs.length; i++) {
     if (parseInt(sectObjs[i].dataset.sectId) === sectId) {
@@ -131,7 +159,10 @@ function selectSect(sectId) {
     } else {
       sectObjs[i].classList.remove("selected");
     }
+    sectObjs[i].classList.remove("absolute");
   }
+
+  sectObjs[sect].classList.add("absolute");
 
   selectedSect = sectId;
 
@@ -162,12 +193,12 @@ function grabSection(e) {
   origSect = e.target;
   grabStartX = e.clientX - origSect.offsetLeft;
 
-  origSect.classList.remove("songSection");
-  origSect.classList.add("hiddenSect");
+  origSect.classList.add("hidden");
 
   floatSect = document.createElement("div");
   floatSect.className = "floatSect";
   floatSect.className += origSect.classList.contains("selected") ? " selected" : "";
+  floatSect.className += origSect.classList.contains("absolute") ? " absolute" : "";
   floatSect.style.left = "calc(" + (e.clientX - grabStartX) + "px)";
   floatSect.innerText = origSect.innerText;
   floatSect.style.width = origSect.style.width;
@@ -181,8 +212,7 @@ function releaseSection(e) {
   if (grabbing) {
     grabbing = false;
 
-    origSect.classList.add("songSection");
-    origSect.classList.remove("hiddenSect");
+    origSect.classList.remove("hidden");
 
     floatSect.remove();
   }
@@ -209,12 +239,14 @@ function dragSection(e) {
       timeLine.childNodes[curSect - 1].before(timeLine.childNodes[curSect]);
       arrangement.swapSections(curSect, curSect - 1);
       dem.ShowArrangement(arrangement);
-      selectSect(selectedSect);
+      absoluteSelection = curSect - 1;
+      selectSect(absoluteSelection);
     } else if (sectRelPos > (leftEdge + (afterLength / 2)) / arrangement.getLength()) {
       timeLine.childNodes[curSect].before(timeLine.childNodes[curSect + 1]);
       arrangement.swapSections(curSect, curSect + 1);
       dem.ShowArrangement(arrangement);
-      selectSect(selectedSect);
+      absoluteSelection = curSect + 1;
+      selectSect(absoluteSelection);
     }
   }
 }
@@ -268,16 +300,16 @@ function ChangePatternLength(len) {
   dem.ShowArrangement(arrangement);
 
   setUpTimeLine();
-  selectSect(selectedSect);
+  selectSect(absoluteSelection);
 }
 
 function ChangePatternName(nm) {
   let sectObjs = getByClass("songSection");
 
-  arrangement.sections.get(parseInt(sectObjs[selectedSect].dataset.sectId)).name = nm.toUpperCase();
-
+  arrangement.sections.get(parseInt(sectObjs[absoluteSelection].dataset.sectId)).name = nm.toUpperCase();
+  
   for (let i = 0; i < sectObjs.length; i++) {
-    if (sectObjs[i].dataset.sectId === sectObjs[selectedSect].dataset.sectId) {
+    if (sectObjs[i].dataset.sectId === sectObjs[absoluteSelection].dataset.sectId) {
       sectObjs[i].innerText = nm;
     }
   }
@@ -287,6 +319,41 @@ function ChangePatternName(nm) {
 
 function setSectFontSizes() {
   fitText("songSection", 1, 6);
+}
+
+function removeSection() {
+  if (arrangement.structure.length > 1) {
+    arrangement.remove(absoluteSelection);
+    dem.InitialiseArrangement();
+    dem.ShowArrangement(arrangement);
+    setUpTimeLine();
+
+    if (absoluteSelection !== 0) {
+      absoluteSelection--;
+    }
+
+    selectSect(absoluteSelection);
+  }
+}
+
+function cloneSection() {
+  arrangement.copy(absoluteSelection);
+  dem.InitialiseArrangement();
+  dem.ShowArrangement(arrangement);
+  setUpTimeLine();
+
+  absoluteSelection++;
+  selectSect(absoluteSelection);
+}
+
+function addSection() {
+  arrangement.add(absoluteSelection);
+  dem.InitialiseArrangement();
+  dem.ShowArrangement(arrangement);
+  setUpTimeLine();
+
+  absoluteSelection++;
+  selectSect(absoluteSelection);
 }
 
 window.addEventListener("resize", setSectFontSizes);
@@ -309,5 +376,5 @@ async function loadArranger() {
   dem.InitialiseArrangement();
   dem.ShowArrangement(arrangement);
 
-  selectSect(getByClass("songSection")[0].dataset.sectId);
+  selectSect(0);
 }
