@@ -37,16 +37,18 @@ function clamp(num, range) {
   return Math.min(range.max, Math.max(num, range.min));
 }
 
-function fitText(classname, relSize, minChars) {
+function fitText(classname, relSize, maxVert, minChars) {
   let fitObjs = getByClass(classname);
 
   for (let i = 0; i < fitObjs.length; i++) {
     let canvas = document.createElement("canvas");
     let context = canvas.getContext("2d");
     context.font = "1px " + window.getComputedStyle(fitObjs[i]).getPropertyValue("font-family");
-    let size = context.measureText(fitObjs[i].innerText + ("W".repeat(Math.max(0, minChars - fitObjs[i].innerText.length)))).width / fitObjs[i].offsetWidth;
+    let absoluteSize = context.measureText(fitObjs[i].innerText + ("W".repeat(Math.max(0, minChars - fitObjs[i].innerText.length)))).width;
+    let horizSize = absoluteSize / fitObjs[i].offsetWidth;
+    let vertSize = absoluteSize / fitObjs[i].offsetHeight;
 
-    fitObjs[i].style.fontSize = (relSize / size) + "px";
+    fitObjs[i].style.fontSize = Math.min(relSize / horizSize, fitObjs[i].offsetHeight * maxVert) + "px";
   }
 }
 

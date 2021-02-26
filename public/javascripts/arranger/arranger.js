@@ -101,7 +101,7 @@ class Arrangement {
 
   add(sect) {
     this.sections.set(this.sectCounter, {
-      name: "PART" + this.sectCounter,
+      name: "PART " + this.sectCounter,
       parts: [[], []]
     });
 
@@ -307,7 +307,7 @@ function ChangePatternName(nm) {
   let sectObjs = getByClass("songSection");
 
   arrangement.sections.get(parseInt(sectObjs[absoluteSelection].dataset.sectId)).name = nm.toUpperCase();
-  
+
   for (let i = 0; i < sectObjs.length; i++) {
     if (sectObjs[i].dataset.sectId === sectObjs[absoluteSelection].dataset.sectId) {
       sectObjs[i].innerText = nm;
@@ -318,7 +318,7 @@ function ChangePatternName(nm) {
 }
 
 function setSectFontSizes() {
-  fitText("songSection", 1, 6);
+  fitText("songSection", 1, 0.9, 6);
 }
 
 function removeSection() {
