@@ -12,41 +12,11 @@ let absoluteSelection;
 let timeLine;
 
 class Arrangement {
-  constructor() {
+  constructor(structure, sections) {
     this.arr = {};
-    this.structure = [0, 1, 2, 1, 3, 1, 1, 4];
-    this.sections = new Map();
-    this.sectCounter = 0;
-
-    this.sections.set(this.sectCounter++, {
-      name: "INTRO",
-      parts: [["chords"],
-        ["chords", "ch"]]
-    });
-
-    this.sections.set(this.sectCounter++, {
-      name: "CHORUS",
-      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
-        ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
-    });
-
-    this.sections.set(this.sectCounter++, {
-      name: "VERSE 1",
-      parts: [["chords", "bass", "kick", "snare", "ch"],
-        ["chords", "bass", "kick", "snare", "ch", "perc"]]
-    });
-
-    this.sections.set(this.sectCounter++, {
-      name: "VERSE 2",
-      parts: [["chords", "melo", "bass", "kick"],
-        ["chords", "melo", "bass", "kick", "ch"]]
-    });
-
-    this.sections.set(this.sectCounter++, {
-      name: "OUTRO",
-      parts: [["chords", "bass", "kick", "ch"],
-        ["chords", "ch"]]
-    });
+    this.structure = structure;
+    this.sections = sections;
+    this.sectCounter = structure.reduce((x, t) => Math.max(x, t)) + 1;
 
     this.setArrangement();
   }
@@ -79,6 +49,7 @@ class Arrangement {
     }
 
     document.documentElement.style.setProperty("--patternAmt", this.getLength());
+    saveArrangement(this);
   }
 
   swapSections(s1, s2) {
@@ -309,6 +280,8 @@ function ChangePatternName(nm) {
 
   arrangement.sections.get(parseInt(sectObjs[absoluteSelection].dataset.sectId)).name = nm.toUpperCase();
 
+  arrangement.setArrangement();
+
   for (let i = 0; i < sectObjs.length; i++) {
     if (sectObjs[i].dataset.sectId === sectObjs[absoluteSelection].dataset.sectId) {
       sectObjs[i].innerText = nm;
@@ -357,13 +330,61 @@ function addSection() {
   selectSect(absoluteSelection);
 }
 
+function loadArrangement() {
+  let structureData = JSON.parse(sessionStorage.getItem("arrangementStructure"));
+  if (!structureData) {
+    structureData = [0, 1, 2, 1, 3, 1, 1, 4];
+  }
+
+  let sectionData = new Map(JSON.parse(sessionStorage.getItem("arrangementSections")));
+  if (!sectionData) {
+    sectionData = new Map();
+
+    sectionData.set(this.sectCounter++, {
+      name: "INTRO",
+      parts: [["chords"],
+        ["chords", "ch"]]
+    });
+
+    sectionData.set(this.sectCounter++, {
+      name: "CHORUS",
+      parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
+        ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
+    });
+
+    sectionData.set(this.sectCounter++, {
+      name: "VERSE 1",
+      parts: [["chords", "bass", "kick", "snare", "ch"],
+        ["chords", "bass", "kick", "snare", "ch", "perc"]]
+    });
+
+    sectionData.set(this.sectCounter++, {
+      name: "VERSE 2",
+      parts: [["chords", "melo", "bass", "kick"],
+        ["chords", "melo", "bass", "kick", "ch"]]
+    });
+
+    sectionData.set(this.sectCounter++, {
+      name: "OUTRO",
+      parts: [["chords", "bass", "kick", "ch"],
+        ["chords", "ch"]]
+    });
+  }
+
+  arrangement = new Arrangement(structureData, sectionData);
+}
+
+function saveArrangement(arr) {
+  sessionStorage.setItem("arrangementStructure", JSON.stringify(arr.structure));
+  sessionStorage.setItem("arrangementSections", JSON.stringify([...arr.sections.entries()]));
+}
+
 window.addEventListener("resize", setSectFontSizes);
 
 let mouseLeftDown = false;
 
 async function loadArranger() {
-  arrangement = new Arrangement();
-
+  loadArrangement();
   setUpTimeLine();
 
   await readyStates.waitFor("demLoad");
