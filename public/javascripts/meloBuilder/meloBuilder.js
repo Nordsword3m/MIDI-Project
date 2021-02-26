@@ -169,6 +169,18 @@ function StartNotePaint(e, num) {
   }
 }
 
+function UpdatePaintNote(e) {
+  if (painting) {
+    if (e.target.classList && e.target.classList.contains("ghostCon")) {
+      if (paintNote.style.bottom !== e.target.style.bottom) {
+        paintNote.style.bottom = e.target.style.bottom;
+        paintNum = e.target.dataset.num;
+        PreviewNote(e.target.dataset.num, true);
+      }
+    }
+  }
+}
+
 function UpdatePaintLength(e) {
   if (painting) {
     paintNote.style.width = "calc(" + GetPaintLength(e.pageX) + " * 12.5%)";
@@ -236,6 +248,7 @@ function mouseUp(e) {
 function mouseMove(e) {
   if (painting) {
     UpdatePaintLength(e);
+    UpdatePaintNote(e);
   } else if (dragging) {
     if (!endHover) {
       shiftNote(e);

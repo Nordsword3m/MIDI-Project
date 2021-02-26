@@ -287,7 +287,8 @@ function ChangePatternLength(len) {
 
   if (diff > 0) {
     for (let i = 0; i < diff; i++) {
-      arrangement.sections.get(selectedSect).parts.push(arrangement.sections.get(selectedSect).parts[arrangement.sections.get(selectedSect).parts.length - 1]);
+      let copy = JSON.parse(JSON.stringify(arrangement.sections.get(selectedSect).parts[arrangement.sections.get(selectedSect).parts.length - 1]));
+      arrangement.sections.get(selectedSect).parts.push(copy);
     }
   } else if (diff < 0) {
     for (let i = 0; i < -diff; i++) {
