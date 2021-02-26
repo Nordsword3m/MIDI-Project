@@ -359,6 +359,8 @@ function addSection() {
 
 window.addEventListener("resize", setSectFontSizes);
 
+let mouseLeftDown = false;
+
 async function loadArranger() {
   arrangement = new Arrangement();
 
@@ -371,6 +373,9 @@ async function loadArranger() {
 
   window.addEventListener("mousemove", dragSection);
   window.addEventListener("mouseup", releaseSection);
+
+  window.addEventListener("mousedown", (e) => mouseLeftDown = e.button === 0 ? true : mouseLeftDown);
+  window.addEventListener("mouseup", (e) => mouseLeftDown = e.button === 0 ? false : mouseLeftDown);
 
   timeLine = getById("timeLine");
 

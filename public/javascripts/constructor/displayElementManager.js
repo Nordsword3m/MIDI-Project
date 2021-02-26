@@ -43,7 +43,14 @@ DisplayElementManager.prototype.InitialiseArrangement = function () {
       patt.className = "pattern " + i;
       patt.style.left = "calc(100% * " + (p / patternAmt) + ")";
 
-      patt.addEventListener("click", () => togglePattern(i, p));
+      patt.addEventListener("mousedown", () => {
+        togglePattern(i, p);
+      });
+      patt.addEventListener("mouseenter", () => {
+        if (mouseLeftDown) {
+          togglePattern(i, p);
+        }
+      });
 
       getById(i + "PattDisplay").appendChild(patt);
     });
@@ -74,7 +81,7 @@ DisplayElementManager.prototype.ShowArrangement = function (arrangement) {
       sectHighlight.className += arrangement.structure[curSect] === selectedSect ? " show" : "";
       sectHighlight.style.left = "calc(100% * " + (p / patternAmt) + ")";
       sectHighlight.style.width = "calc(100% * " + (lengths[curSect] / patternAmt) + ")";
-      
+
       getById("arrangerPlayHeadCon").appendChild(sectHighlight);
 
       prevSect = curSect;
