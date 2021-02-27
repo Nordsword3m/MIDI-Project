@@ -722,7 +722,7 @@ function schedulePercNotes(step) {
 function scheduleMeloNotes(step) {
   if (melody.schedule[step].length > 0) {
     for (let i = 0; i < melody.schedule[step].length; i++) {
-      am.playNote(numToPitch(melody.schedule[step][i].num, progression.keyNum), step * stepLength, melody.schedule[step][i].length, "piano");
+      am.playNote(numToPitch(getFromScale(progression.type, melody.schedule[step][i].num), progression.keyNum), step * stepLength, melody.schedule[step][i].length, "piano");
     }
   }
 }

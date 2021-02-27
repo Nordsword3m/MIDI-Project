@@ -93,16 +93,15 @@ DisplayElementManager.prototype.ShowArrangement = function (arrangement) {
   }
 };
 
-DisplayElementManager.prototype.PlaceMelodyGhost = function (start, num) {
+DisplayElementManager.prototype.PlaceMelodyGhost = function (scale, num) {
   let ghostCon = document.createElement("div");
   ghostCon.className = "ghostCon";
   ghostCon.dataset.num = num;
-  ghostCon.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
-  ghostCon.style.left = "calc(" + start + " * 12.5%)";
+  ghostCon.style.bottom = "calc(" + (getFromScale(progression.type, num) - 1 - 12) + " * 100% / var(--meloNoteAmt))";
 
   ghostCon.addEventListener("mousedown", (e) => {
     if (e.button === 2) {
-      PreviewNote(num);
+      PreviewNote(getFromScale(progression.type, num));
     }
   });
 
@@ -118,7 +117,7 @@ DisplayElementManager.prototype.CreateMeloNote = function (start, num, length) {
 
   note.style.left = "calc(" + start + " * 12.5%)";
   note.style.width = "calc(" + length + " * 12.5%)";
-  note.style.bottom = "calc(" + (num - 1 - 12) + " * 100% / var(--meloNoteAmt))";
+  note.style.bottom = "calc(" + (getFromScale(progression.type, num) - 1 - 12) + " * 100% / var(--meloNoteAmt))";
 
   note.id = "meloNote" + meloNoteId;
   meloNoteId++;

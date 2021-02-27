@@ -9,7 +9,7 @@
 
 #patternLengthLabel {
     margin: auto 5px auto 10px;
-    font-size: 3vw;
+    font-size: min(3vw, 30px);
 }
 
 #playBar.arranger {

@@ -4,6 +4,10 @@
     margin-left: 25px;
 }
 
+.chordInfoBar .icon {
+    margin: 5px;
+}
+
 .chordControlPanel {
     display: grid;
     grid-template-columns: 1fr 1fr;

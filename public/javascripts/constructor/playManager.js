@@ -25,7 +25,9 @@ PlayManager.prototype.NextChunk = function () {
 
   if (this.relPlayPos + chunkSize * this.chunkPreRender >= 1) {
     am.SetLoopStart(this.relPlayPos - 1);
-    nextPatt = getNextPatt();
+    if (curPage === "arranger") {
+      nextPatt = getNextPatt();
+    }
   }
 
   scheduleMets();
@@ -111,7 +113,9 @@ PlayManager.prototype.setPlayPos = function (pos) {
     }
     am.SetLoopStart(this.relPlayPos);
 
-    this.curPatt = getNextPatt();
+    if (curPage === "arranger") {
+      this.curPatt = getNextPatt();
+    }
   } else if (this.relPlayPos < 0) {
     while (this.relPlayPos < 0) {
       this.relPlayPos++;

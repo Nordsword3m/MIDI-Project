@@ -134,20 +134,10 @@ function ShowGhosts(noteNums, pos) {
 
 function SetupScaleNotes() {
   let possib = [];
-  let noteRange = new NumRange(13, 48);
+  let noteRange = new NumRange(8, 28);
 
-  let start;
-  for (start = 0; start < 30; start++) {
-    if (getFromScale(progression.type, start) === noteRange.min) {
-      break;
-    }
-  }
-
-  let curNote = start;
-
-  while (getFromScale(progression.type, curNote) <= noteRange.max) {
-    possib.push(getFromScale(progression.type, curNote));
-    curNote++;
+  for (let i = noteRange.min; i <= noteRange.max; i++) {
+    possib.push(i);
   }
 
   ghosts = ShowGhosts(possib, 0);
@@ -228,7 +218,7 @@ function noteMouseEnter(e) {
     deleteNote(e.target);
   } else {
     if (!painting) {
-      PreviewNote(noteRefs.get(e.target.id).num);
+      PreviewNote(getFromScale(progression.type, noteRefs.get(e.target.id).num));
     }
   }
 }
