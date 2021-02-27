@@ -1,0 +1,29 @@
+.bassConfigControl {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    flex: 1;
+    margin-bottom: 5px;
+}
+
+.bassFlipControl {
+    margin-left: auto;
+}
+
+.bassTypeSelect {
+    margin: 10px 0 10px 0;
+    font-size: 2.5vmin;
+    height: 3ch;
+    width: 20vw;
+}
+
+.bassControls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 20px;
+}
+
+.bassMetaControls {
+    display: flex;
+    justify-content: space-between;
+}

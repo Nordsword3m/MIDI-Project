@@ -204,3 +204,10 @@
 
 .barOption:hover:not(.selected) {
 }
+
+.snareSelect {
+    margin: 30px auto 0 auto;
+    width: 80%;
+    font-size: 4vmin;
+    height: 3ch;
+}

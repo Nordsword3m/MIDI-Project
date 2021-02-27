@@ -4,6 +4,7 @@
 @import "chordBuilder.css";
 @import "meloBuilder.css";
 @import "arranger.css";
+@import "bassBuilder.css";
 
 :root {
     --panelColor: #222222;
@@ -279,10 +280,6 @@ h3.vert {
 
 .toggleSelect {
     display: flex;
-    font-size: 4vmin;
-    width: 80%;
-    height: 3ch;
-    margin: 30px auto 0 auto;
     box-shadow: 0 0 4px 1px var(--purple);
     border-radius: 5px;
 }
