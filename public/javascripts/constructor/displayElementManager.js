@@ -101,7 +101,7 @@ DisplayElementManager.prototype.PlaceMelodyGhost = function (scale, num) {
 
   ghostCon.addEventListener("mousedown", (e) => {
     if (e.button === 2) {
-      PreviewNote(getFromScale(progression.type, num));
+      PreviewNote(num);
     }
   });
 

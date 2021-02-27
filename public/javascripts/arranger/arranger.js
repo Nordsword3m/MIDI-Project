@@ -61,7 +61,15 @@ class Arrangement {
   }
 
   remove(sect) {
+    let sectId = this.structure[sect];
     this.structure.splice(sect, 1);
+
+    if (!this.structure.includes(sectId)) {
+      this.sections.delete(sectId);
+    }
+
+    console.log([...this.sections.values()].map(x => x.name));
+
     this.setArrangement();
   }
 
@@ -331,40 +339,45 @@ function addSection() {
 }
 
 function loadArrangement() {
-  let structureData = JSON.parse(sessionStorage.getItem("arrangementStructure"));
-  if (!structureData) {
-    structureData = [0, 1, 2, 1, 3, 1, 1, 4];
+  let structureData;
+  let sectionData;
+
+  try {
+    structureData = JSON.parse(sessionStorage.getItem("arrangementStructure"));
+    sectionData = new Map(JSON.parse(sessionStorage.getItem("arrangementSections")));
+  } catch (e) {
   }
 
-  let sectionData = new Map(JSON.parse(sessionStorage.getItem("arrangementSections")));
-  if (!sectionData) {
+  if (!structureData || !sectionData || sectionData.size === 0) {
+    structureData = [0, 1, 2, 1, 3, 1, 1, 4];
+
     sectionData = new Map();
 
-    sectionData.set(this.sectCounter++, {
+    sectionData.set(0, {
       name: "INTRO",
       parts: [["chords"],
         ["chords", "ch"]]
     });
 
-    sectionData.set(this.sectCounter++, {
+    sectionData.set(1, {
       name: "CHORUS",
       parts: [["chords", "melo", "bass", "kick", "snare", "ch", "perc"],
         ["chords", "melo", "bass", "kick", "snare", "ch", "perc"]]
     });
 
-    sectionData.set(this.sectCounter++, {
+    sectionData.set(2, {
       name: "VERSE 1",
       parts: [["chords", "bass", "kick", "snare", "ch"],
         ["chords", "bass", "kick", "snare", "ch", "perc"]]
     });
 
-    sectionData.set(this.sectCounter++, {
+    sectionData.set(3, {
       name: "VERSE 2",
       parts: [["chords", "melo", "bass", "kick"],
         ["chords", "melo", "bass", "kick", "ch"]]
     });
 
-    sectionData.set(this.sectCounter++, {
+    sectionData.set(4, {
       name: "OUTRO",
       parts: [["chords", "bass", "kick", "ch"],
         ["chords", "ch"]]
@@ -384,6 +397,7 @@ window.addEventListener("resize", setSectFontSizes);
 let mouseLeftDown = false;
 
 async function loadArranger() {
+  readyStates.declarePresence("arranger");
   loadArrangement();
   setUpTimeLine();
 
@@ -404,4 +418,5 @@ async function loadArranger() {
   dem.ShowArrangement(arrangement);
 
   selectSect(0);
+  readyStates.readyUp("arranger");
 }

@@ -190,7 +190,7 @@ function StopNotePaint(e) {
 
 function PreviewNote(num, moveOverride) {
   if ((!painting && !dragging || moveOverride) && !pm.playing) {
-    am.playNoteNow(numToPitch(num, progression.keyNum), "piano");
+    am.playNoteNow(numToPitch(getFromScale(progression.type, num), progression.keyNum), "piano");
   }
 }
 
@@ -218,7 +218,7 @@ function noteMouseEnter(e) {
     deleteNote(e.target);
   } else {
     if (!painting) {
-      PreviewNote(getFromScale(progression.type, noteRefs.get(e.target.id).num));
+      PreviewNote(noteRefs.get(e.target.id).num);
     }
   }
 }
