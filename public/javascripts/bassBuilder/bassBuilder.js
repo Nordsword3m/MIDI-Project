@@ -1,5 +1,4 @@
 let bassLine;
-let bassPlaySchedule;
 
 function toggleBassType() {
   bassLine.type = bassLine.type === "bass" ? "808" : "bass";
@@ -40,15 +39,19 @@ function setJumpiness(jmp) {
   ShowBassLine();
 }
 
+function setEraticity(ert) {
+  bassLine.eraticity = parseFloat(ert);
+  ShowBassLine();
+}
+
 function generateBassNotes() {
   bassLine.generateNotes();
-  bassPlaySchedule = bassLineToSchedule(bassLine);
 }
 
 function ShowBassLine() {
   generateBassNotes();
 
-  dem.PlaceBassLine(bassLine);
+  dem.PlaceBassLine(bassLine.notes);
 
   saveBassDataValues();
 }
@@ -61,6 +64,7 @@ function loadBassDataValues() {
   getById("intensitySlider").value = bassLine.intensity;
   getById("energyRampSlider").value = bassLine.energyRamp;
   getById("jumpinessSlider").value = bassLine.jumpiness;
+  getById("eraticitySlider").value = bassLine.eraticity;
 
   if (bassLine.flip) {
     getById("flipCheck").getElementsByClassName("checkIcon")[0].classList.add("checked");

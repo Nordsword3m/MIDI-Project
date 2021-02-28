@@ -146,12 +146,12 @@ function loadChordData() {
 }
 
 function loadBassData() {
-  bassLine = new BassLine(bassData.type, bassData.intensity, bassData.energyRamp, bassData.jumpiness, bassData.flip);
+  bassLine = new BassLine(bassData.type, bassData.intensity, bassData.energyRamp, bassData.jumpiness, bassData.eraticity, bassData.flip);
 
   generateBassNotes();
 
   if (curPage === "constructor" || curPage === "bassBuilder") {
-    dem.PlaceBassLine(bassLine);
+    dem.PlaceBassLine(bassLine.notes);
   }
 }
 
@@ -307,6 +307,7 @@ function getBassData() {
       "intensity": 0.65,
       "energyRamp": 0.2,
       "jumpiness": 0.25,
+      "eraticity": 0.25,
       "flip": false
     };
   }
@@ -728,8 +729,8 @@ function scheduleMeloNotes(step) {
 }
 
 function scheduleBassNotes(step) {
-  if (bassPlaySchedule[step]) {
-    am.playNote(numToPitch(bassPlaySchedule[step].num, progression.keyNum), step * stepLength, bassPlaySchedule[step].length, bassLine.type);
+  if (bassLine.notes[step]) {
+    am.playNote(numToPitch(bassLine.notes[step].num, progression.keyNum), step * stepLength, bassLine.notes[step].length, bassLine.type);
   }
 }
 

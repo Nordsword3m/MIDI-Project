@@ -145,23 +145,21 @@ DisplayElementManager.prototype.PlaceMelody = function (melo) {
 
 DisplayElementManager.prototype.PlaceBassLine = function (bLine) {
   let bassNoteObjs = [];
-  let pos = 0;
 
   bassNoteCon.textContent = "";
 
-  for (let n = 0; n < bLine.notes.length; n++) {
-    let note = document.createElement("div");
-    note.className = "note bass";
+  for (let i = 0; i < bLine.length; i++) {
+    if (bLine[i]) {
+      let note = document.createElement("div");
+      note.className = "note bass";
 
+      note.style.left = "calc(" + i / 256 + " * 100%)";
+      note.style.width = "calc(" + bLine[i].length + " * 12.5%)";
+      note.style.bottom = "calc(" + (bLine[i].num - 1 + 24) + " * 100% / var(--bassNoteAmt))";
 
-    note.style.left = "calc(" + pos + " * 12.5%)";
-    note.style.width = "calc(" + bLine.notes[n].length + " * 12.5%)";
-    note.style.bottom = "calc(" + (bLine.notes[n].num - 1 + 24) + " * 100% / var(--bassNoteAmt))";
-
-    pos += bLine.notes[n].length;
-
-    bassNoteCon.appendChild(note);
-    bassNoteObjs.push(note);
+      bassNoteCon.appendChild(note);
+      bassNoteObjs.push(note);
+    }
   }
 
   return bassNoteObjs;

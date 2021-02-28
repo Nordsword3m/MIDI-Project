@@ -19,7 +19,11 @@ include header
 
         .bassConfigControl
             h3= "Jumpiness"
-            input.slider#jumpinessSlider(type="range" min="-1" max="1" value="0.25" step="0.01" oninput="setJumpiness(this.value)")
+            input.slider#jumpinessSlider(type="range" min="-1" max="1" value="0.25" step="0.05" oninput="setJumpiness(this.value)")
+
+        .bassConfigControl
+            h3= "Eraticity"
+            input.slider#eraticitySlider(type="range" min="0" max="1" value="0.5" step="0.05" oninput="setEraticity(this.value)")
 
         .bassMetaControls
             .bassConfigControl
